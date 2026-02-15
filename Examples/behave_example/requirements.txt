@@ -1,0 +1,5 @@
+behave == 1.2.6
+behave-django
+pyhamcrest == 2.0.4
+behave-html-formatter
+allure-behave ==2.14.0

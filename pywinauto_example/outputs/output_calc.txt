@@ -1,0 +1,211 @@
+Control Identifiers:
+
+Dialog - 'Calculator'    (L1181, T198, R1683, B1008)
+['Calculator', 'Dialog', 'CalculatorDialog', 'Calculator0', 'Calculator1', 'Dialog0', 'Dialog1', 'CalculatorDialog0', 'CalculatorDialog1']
+child_window(title="Calculator", control_type="Window")
+   | 
+   | Dialog - 'Calculator'    (L1390, T199, R1672, B247)
+   | ['Calculator2', 'Dialog2', 'CalculatorDialog2']
+   | child_window(title="Calculator", auto_id="TitleBar", control_type="Window")
+   |    | 
+   |    | Menu - 'System'    (L0, T0, R0, B0)
+   |    | ['SystemMenu', 'Menu', 'System', 'System0', 'System1']
+   |    | child_window(title="System", auto_id="SystemMenuBar", control_type="MenuBar")
+   |    |    | 
+   |    |    | MenuItem - 'System'    (L0, T0, R0, B0)
+   |    |    | ['MenuItem', 'System2', 'SystemMenuItem']
+   |    |    | child_window(title="System", control_type="MenuItem")
+   |    | 
+   |    | Button - 'Minimize Calculator'    (L1465, T199, R1534, B247)
+   |    | ['Minimize Calculator', 'Minimize CalculatorButton', 'Button', 'Button0', 'Button1']
+   |    | child_window(title="Minimize Calculator", auto_id="Minimize", control_type="Button")
+   |    | 
+   |    | Button - 'Maximize Calculator'    (L1534, T199, R1603, B247)
+   |    | ['Maximize CalculatorButton', 'Button2', 'Maximize Calculator']
+   |    | child_window(title="Maximize Calculator", auto_id="Maximize", control_type="Button")
+   |    | 
+   |    | Button - 'Close Calculator'    (L1603, T199, R1672, B247)
+   |    | ['Close CalculatorButton', 'Close Calculator', 'Button3']
+   |    | child_window(title="Close Calculator", auto_id="Close", control_type="Button")
+   | 
+   | Dialog - 'Calculator'    (L1192, T199, R1672, B997)
+   | ['Calculator3', 'Dialog3', 'CalculatorDialog3']
+   | child_window(title="Calculator", control_type="Window")
+   |    | 
+   |    | Static - 'Calculator'    (L1264, T211, R1346, B235)
+   |    | ['Calculator4', 'Static', 'CalculatorStatic', 'Static0', 'Static1']
+   |    | child_window(title="Calculator", auto_id="AppName", control_type="Text")
+   |    | 
+   |    | Custom - ''    (L1192, T247, R1672, B997)
+   |    | ['CalculatorCustom', 'Custom']
+   |    | child_window(auto_id="NavView", control_type="Custom")
+   |    |    | 
+   |    |    | Button - 'Open Navigation'    (L1198, T256, R1258, B310)
+   |    |    | ['Open NavigationButton', 'Open Navigation', 'Button4']
+   |    |    | child_window(title="Open Navigation", auto_id="TogglePaneButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | Static - ''    (L0, T0, R0, B0)
+   |    |    |    | ['Static2']
+   |    |    |    | child_window(auto_id="PaneTitleTextBlock", control_type="Text")
+   |    |    | 
+   |    |    | GroupBox - ''    (L1192, T259, R1672, B990)
+   |    |    | ['GroupBox', 'CalculatorGroupBox', 'GroupBox0', 'GroupBox1']
+   |    |    |    | 
+   |    |    |    | Static - 'Expression is '    (L0, T0, R0, B0)
+   |    |    |    | ['Expression is Static', 'Static3', 'Expression is ']
+   |    |    |    | child_window(title="Expression is ", auto_id="CalculatorExpression", control_type="Text")
+   |    |    |    | 
+   |    |    |    | Static - 'Display is 36'    (L1192, T353, R1672, B466)
+   |    |    |    | ['Static4', 'Display is 36Static', 'Display is 36']
+   |    |    |    | child_window(title="Display is 36", auto_id="CalculatorResults", control_type="Text")
+   |    |    |    | 
+   |    |    |    | Button - 'Open history flyout'    (L1612, T259, R1660, B307)
+   |    |    |    | ['Open history flyout', 'Open history flyoutButton', 'Button5']
+   |    |    |    | child_window(title="Open history flyout", auto_id="HistoryButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | GroupBox - 'Memory controls'    (L1199, T468, R1667, B515)
+   |    |    |    | ['GroupBox2', 'Memory controls', 'Memory controlsGroupBox']
+   |    |    |    | child_window(title="Memory controls", auto_id="MemoryPanel", control_type="Group")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Clear all memory'    (L1199, T468, R1274, B515)
+   |    |    |    |    | ['Clear all memoryButton', 'Clear all memory', 'Button6']
+   |    |    |    |    | child_window(title="Clear all memory", auto_id="ClearMemoryButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Memory recall'    (L1277, T468, R1352, B515)
+   |    |    |    |    | ['Memory recall', 'Memory recallButton', 'Button7']
+   |    |    |    |    | child_window(title="Memory recall", auto_id="MemRecall", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Memory add'    (L1355, T468, R1431, B515)
+   |    |    |    |    | ['Memory addButton', 'Button8', 'Memory add']
+   |    |    |    |    | child_window(title="Memory add", auto_id="MemPlus", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Memory subtract'    (L1434, T468, R1509, B515)
+   |    |    |    |    | ['Memory subtractButton', 'Button9', 'Memory subtract']
+   |    |    |    |    | child_window(title="Memory subtract", auto_id="MemMinus", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Memory store'    (L1512, T468, R1588, B515)
+   |    |    |    |    | ['Memory storeButton', 'Memory store', 'Button10']
+   |    |    |    |    | child_window(title="Memory store", auto_id="memButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Open memory flyout'    (L1592, T468, R1667, B515)
+   |    |    |    |    | ['Open memory flyout', 'Button11', 'Open memory flyoutButton']
+   |    |    |    |    | child_window(title="Open memory flyout", auto_id="MemoryButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | GroupBox - 'Display controls'    (L1199, T518, R1667, B593)
+   |    |    |    | ['GroupBox3', 'Display controls', 'Display controlsGroupBox']
+   |    |    |    | child_window(title="Display controls", auto_id="DisplayControls", control_type="Group")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Percent'    (L1199, T518, R1314, B593)
+   |    |    |    |    | ['Percent', 'PercentButton', 'Button12']
+   |    |    |    |    | child_window(title="Percent", auto_id="percentButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Clear entry'    (L1316, T518, R1430, B593)
+   |    |    |    |    | ['Clear entryButton', 'Clear entry', 'Button13']
+   |    |    |    |    | child_window(title="Clear entry", auto_id="clearEntryButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Clear'    (L1434, T518, R1548, B593)
+   |    |    |    |    | ['ClearButton', 'Clear', 'Button14']
+   |    |    |    |    | child_window(title="Clear", auto_id="clearButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Backspace'    (L1553, T518, R1667, B593)
+   |    |    |    |    | ['BackspaceButton', 'Backspace', 'Button15']
+   |    |    |    |    | child_window(title="Backspace", auto_id="backSpaceButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | GroupBox - 'Standard functions'    (L1199, T596, R1548, B672)
+   |    |    |    | ['GroupBox4', 'Standard functions', 'Standard functionsGroupBox']
+   |    |    |    | child_window(title="Standard functions", auto_id="StandardFunctions", control_type="Group")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Reciprocal'    (L1199, T596, R1314, B672)
+   |    |    |    |    | ['Reciprocal', 'ReciprocalButton', 'Button16']
+   |    |    |    |    | child_window(title="Reciprocal", auto_id="invertButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Square'    (L1316, T596, R1430, B672)
+   |    |    |    |    | ['Square', 'Button17', 'SquareButton']
+   |    |    |    |    | child_window(title="Square", auto_id="xpower2Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Square root'    (L1434, T596, R1548, B672)
+   |    |    |    |    | ['Square rootButton', 'Button18', 'Square root']
+   |    |    |    |    | child_window(title="Square root", auto_id="squareRootButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | GroupBox - 'Standard operators'    (L1553, T596, R1667, B989)
+   |    |    |    | ['GroupBox5', 'Standard operators', 'Standard operatorsGroupBox']
+   |    |    |    | child_window(title="Standard operators", auto_id="StandardOperators", control_type="Group")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Divide by'    (L1553, T596, R1667, B672)
+   |    |    |    |    | ['Divide by', 'Divide byButton', 'Button19']
+   |    |    |    |    | child_window(title="Divide by", auto_id="divideButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Multiply by'    (L1553, T676, R1667, B752)
+   |    |    |    |    | ['Multiply by', 'Multiply byButton', 'Button20']
+   |    |    |    |    | child_window(title="Multiply by", auto_id="multiplyButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Minus'    (L1553, T755, R1667, B832)
+   |    |    |    |    | ['Minus', 'MinusButton', 'Button21']
+   |    |    |    |    | child_window(title="Minus", auto_id="minusButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Plus'    (L1553, T835, R1667, B911)
+   |    |    |    |    | ['PlusButton', 'Button22', 'Plus']
+   |    |    |    |    | child_window(title="Plus", auto_id="plusButton", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Equals'    (L1553, T913, R1667, B990)
+   |    |    |    |    | ['EqualsButton', 'Equals', 'Button23']
+   |    |    |    |    | child_window(title="Equals", auto_id="equalButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | GroupBox - 'Number pad'    (L1199, T676, R1548, B990)
+   |    |    |    | ['GroupBox6', 'Number padGroupBox', 'Number pad']
+   |    |    |    | child_window(title="Number pad", auto_id="NumberPad", control_type="Group")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Zero'    (L1316, T914, R1430, B990)
+   |    |    |    |    | ['ZeroButton', 'Zero', 'Button24']
+   |    |    |    |    | child_window(title="Zero", auto_id="num0Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'One'    (L1199, T835, R1314, B912)
+   |    |    |    |    | ['One', 'Button25', 'OneButton']
+   |    |    |    |    | child_window(title="One", auto_id="num1Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Two'    (L1316, T835, R1430, B912)
+   |    |    |    |    | ['Two', 'TwoButton', 'Button26']
+   |    |    |    |    | child_window(title="Two", auto_id="num2Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Three'    (L1434, T835, R1548, B912)
+   |    |    |    |    | ['ThreeButton', 'Button27', 'Three']
+   |    |    |    |    | child_window(title="Three", auto_id="num3Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Four'    (L1199, T755, R1314, B831)
+   |    |    |    |    | ['FourButton', 'Four', 'Button28']
+   |    |    |    |    | child_window(title="Four", auto_id="num4Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Five'    (L1316, T755, R1430, B831)
+   |    |    |    |    | ['Five', 'Button29', 'FiveButton']
+   |    |    |    |    | child_window(title="Five", auto_id="num5Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Six'    (L1434, T755, R1548, B831)
+   |    |    |    |    | ['SixButton', 'Six', 'Button30']
+   |    |    |    |    | child_window(title="Six", auto_id="num6Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Seven'    (L1199, T676, R1314, B753)
+   |    |    |    |    | ['SevenButton', 'Seven', 'Button31']
+   |    |    |    |    | child_window(title="Seven", auto_id="num7Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Eight'    (L1316, T676, R1430, B753)
+   |    |    |    |    | ['Eight', 'EightButton', 'Button32']
+   |    |    |    |    | child_window(title="Eight", auto_id="num8Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Nine'    (L1434, T676, R1548, B753)
+   |    |    |    |    | ['Nine', 'Button33', 'NineButton']
+   |    |    |    |    | child_window(title="Nine", auto_id="num9Button", control_type="Button")
+   |    |    |    |    | 
+   |    |    |    |    | Button - 'Decimal separator'    (L1434, T914, R1548, B990)
+   |    |    |    |    | ['Decimal separator', 'Decimal separatorButton', 'Button34']
+   |    |    |    |    | child_window(title="Decimal separator", auto_id="decimalSeparatorButton", control_type="Button")
+   |    |    |    | 
+   |    |    |    | Button - 'Positive negative'    (L1199, T914, R1314, B990)
+   |    |    |    | ['Positive negative', 'Positive negativeButton', 'Button35']
+   |    |    |    | child_window(title="Positive negative", auto_id="negateButton", control_type="Button")
+   |    |    | 
+   |    |    | Static - 'Standard'    (L1264, T261, R1387, B301)
+   |    |    | ['StandardStatic', 'Static5', 'Standard']
+   |    |    | child_window(title="Standard", auto_id="Header", control_type="Text")
+   | 
+   | Pane - ''    (L1192, T247, R1672, B997)
+   | ['CalculatorPane', 'Pane']

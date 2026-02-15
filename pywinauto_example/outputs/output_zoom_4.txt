@@ -1,0 +1,102 @@
+Control Identifiers:
+
+Dialog - 'Zoom'    (L300, T9, R1620, B999)
+['ZoomDialog', 'Dialog', 'Zoom', 'Zoom0', 'Zoom1']
+child_window(title="Zoom", control_type="Window")
+   | 
+   | TitleBar - ''    (L327, T12, R1617, B46)
+   | ['TitleBar']
+   |    | 
+   |    | Menu - 'System'    (L311, T20, R344, B53)
+   |    | ['SystemMenu', 'System', 'Menu', 'System0', 'System1']
+   |    | child_window(title="System", auto_id="MenuBar", control_type="MenuBar")
+   |    |    | 
+   |    |    | MenuItem - 'System'    (L311, T20, R344, B53)
+   |    |    | ['SystemMenuItem', 'System2', 'MenuItem']
+   |    |    | child_window(title="System", control_type="MenuItem")
+   |    | 
+   |    | Button - 'Minimize'    (L1406, T10, R1477, B46)
+   |    | ['Button', 'Minimize', 'MinimizeButton', 'Button0', 'Button1']
+   |    | child_window(title="Minimize", control_type="Button")
+   |    | 
+   |    | Button - 'Maximize'    (L1477, T10, R1547, B46)
+   |    | ['MaximizeButton', 'Button2', 'Maximize']
+   |    | child_window(title="Maximize", control_type="Button")
+   |    | 
+   |    | Button - 'Close'    (L1547, T10, R1618, B46)
+   |    | ['Close', 'Button3', 'CloseButton']
+   |    | child_window(title="Close", control_type="Button")
+   | 
+   | Pane - ''    (L303, T46, R1617, B996)
+   | ['Pane', 'ZoomPane', 'Pane0', 'Pane1', 'ZoomPane0', 'ZoomPane1']
+   |    | 
+   |    | Pane - ''    (L303, T196, R1617, B286)
+   |    | ['Pane2', 'ZoomPane2']
+   |    |    | 
+   |    |    | Pane - ''    (L303, T196, R741, B286)
+   |    |    | ['Pane3']
+   |    |    | 
+   |    |    | Static - 'Zoom'    (L741, T196, R1179, B286)
+   |    |    | ['ZoomStatic', 'Static', 'Zoom2']
+   |    |    | child_window(title="Zoom", control_type="Text")
+   |    |    | 
+   |    |    | Pane - ''    (L1179, T196, R1617, B286)
+   |    |    | ['Pane4', 'ZoomPane3']
+   |    | 
+   |    | Pane - ''    (L635, T394, R1285, B742)
+   |    | ['Pane5', 'ZoomPane4']
+   |    |    | 
+   |    |    | Pane - ''    (L635, T394, R1285, B454)
+   |    |    | ['Pane6', 'ZoomPane5']
+   |    |    | 
+   |    |    | Pane - ''    (L635, T454, R1285, B514)
+   |    |    | ['Pane7', 'ZoomPane6']
+   |    |    |    | 
+   |    |    |    | Pane - ''    (L635, T454, R691, B514)
+   |    |    |    | ['Pane8']
+   |    |    |    | 
+   |    |    |    | Button - 'Join a Meeting'    (L691, T454, R1228, B514)
+   |    |    |    | ['Button4', 'Join a Meeting', 'Join a MeetingButton']
+   |    |    |    | child_window(title="Join a Meeting", control_type="Button")
+   |    |    |    | 
+   |    |    |    | Pane - ''    (L1228, T454, R1285, B514)
+   |    |    |    | ['Pane9', 'ZoomPane7']
+   |    |    | 
+   |    |    | Pane - ''    (L635, T538, R1285, B598)
+   |    |    | ['Pane10', 'ZoomPane8']
+   |    |    |    | 
+   |    |    |    | Pane - ''    (L635, T538, R691, B598)
+   |    |    |    | ['Pane11']
+   |    |    |    | 
+   |    |    |    | Button - 'Sign Up'    (L691, T538, R1228, B598)
+   |    |    |    | ['Button5', 'Sign Up', 'Sign UpButton']
+   |    |    |    | child_window(title="Sign Up", control_type="Button")
+   |    |    |    | 
+   |    |    |    | Pane - ''    (L1228, T538, R1285, B598)
+   |    |    |    | ['Pane12', 'ZoomPane9']
+   |    |    | 
+   |    |    | Pane - ''    (L635, T622, R1285, B682)
+   |    |    | ['Pane13', 'ZoomPane10']
+   |    |    |    | 
+   |    |    |    | Pane - ''    (L635, T622, R691, B682)
+   |    |    |    | ['Pane14']
+   |    |    |    | 
+   |    |    |    | Button - 'Sign In'    (L691, T622, R1228, B682)
+   |    |    |    | ['Button6', 'Sign In', 'Sign InButton']
+   |    |    |    | child_window(title="Sign In", control_type="Button")
+   |    |    |    | 
+   |    |    |    | Pane - ''    (L1228, T622, R1285, B682)
+   |    |    |    | ['Pane15', 'ZoomPane11']
+   |    |    | 
+   |    |    | Pane - ''    (L635, T682, R1285, B742)
+   |    |    | ['Pane16', 'ZoomPane12']
+   |    | 
+   |    | Pane - ''    (L303, T742, R1617, B945)
+   |    | ['Pane17', 'ZoomPane13']
+   |    | 
+   |    | Custom - 'Version: 5.15.5 (19404)'    (L303, T945, R1617, B972)
+   |    | ['Version: 5.15.5 (19404)', 'Version: 5.15.5 (19404)Custom', 'Custom']
+   |    | child_window(title="Version: 5.15.5 (19404)", control_type="Custom")
+   |    | 
+   |    | Pane - ''    (L303, T972, R1617, B996)
+   |    | ['Pane18']
