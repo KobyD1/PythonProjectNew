@@ -1,0 +1,14 @@
+install scoop by power shell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+iwr -useb get.scoop.sh | iex
+
+
+install allure
+scoop install allure
+
+close and open the IDE
+run the test by
+
+ pytest --alluredir=allure-results tests/
+getting results by
+pytest --alluredir=allure-results tests/

@@ -1,0 +1,7 @@
+
+build
+docker-compose build --no-cach
+
+
+compose
+docker-compose up --exit-code-from tests
