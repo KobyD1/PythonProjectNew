@@ -5,6 +5,7 @@ import random
 num_rows = 1000
 data = []
 
+
 for _ in range(num_rows):
     sys_temp = round(random.uniform(14.0, 85.0), 1)
     sys_pressure = round(random.uniform(1.0, 6.0), 1)
