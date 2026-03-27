@@ -8,7 +8,7 @@ with sync_playwright() as p:
     search_menu =page.locator('[id="gh-ac"]')
     search_menu.click()
     search_menu.clear()
-    search_menu.fill("Shoes Zara")
+    search_menu.fill("Shoes Zara ")
 
     search_button = page.get_by_role("button",name="Search")
     search_button.click()
