@@ -3,12 +3,15 @@ with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
     page = browser.new_page()
     page.goto("http://www.ebay.com")
-    search = page.locator('[id="gh-ac"]')
-    search.click()
-    search.clear()
-    search.fill("Phone")
-    search_button = page.locator('[id="gh-search-btn"]')
-    search_button.click()
+
+    adv_button = page.get_by_text("Advanced")
+    adv_button.click()
+    url_adv= page.url
+    print (url_adv)
+
+
+
+
     print ("test end")
 
     browser.close()
