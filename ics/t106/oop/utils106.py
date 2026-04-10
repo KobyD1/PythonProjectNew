@@ -10,7 +10,7 @@ class utils106():
 
         avg = total / len1
         print(avg)
-        # return avg
+        return avg
 
     def print_start(self):
         print("start test ")
