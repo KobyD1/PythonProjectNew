@@ -19,6 +19,7 @@ def  print_start():
 class avg_calc_by_function_1:
     print_start()
 
+
     grades_1 = [60,45,36,89,78,90]
     grades_2 = [55,453,136,859,768,90]
 
