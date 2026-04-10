@@ -18,5 +18,12 @@ class utils106():
     def print_end(self):
         print ("Test End")
 
-    def print_text(self,text):
+        #example of default value
+
+    def print_text(self,text="Test Start"):
         print (text)
+        # example of function with more than one parameter
+    def avg_calc_by_nums(self,num1,num2,num4):
+        summery = num1+num2 + num4
+        avg= summery / 3
+        return avg
