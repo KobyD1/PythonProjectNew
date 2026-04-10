@@ -17,3 +17,6 @@ class utils106():
 
     def print_end(self):
         print ("Test End")
+
+    def print_text(self,text):
+        print (text)

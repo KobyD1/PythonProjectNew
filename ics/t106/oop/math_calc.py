@@ -3,7 +3,7 @@ from ics.t106.oop.utils106 import utils106
 
 class mathCalc:
     utils_106 = utils106()
-    utils_106.print_start()
+    utils_106.print_text("test start")
     num1=10
     num2=20
     if (num1>num2):
