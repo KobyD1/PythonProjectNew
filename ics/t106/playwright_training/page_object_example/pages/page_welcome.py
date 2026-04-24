@@ -28,3 +28,6 @@ class PageWelcome():
         login_button = self.page.get_by_text("Login")
         login_button.click()
 
+
+
+
