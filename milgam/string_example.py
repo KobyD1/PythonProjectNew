@@ -1,0 +1,13 @@
+city = "London"
+l = len(city)
+counter_o = city.count("o")
+counter_f = city.count("f")
+city_2_prefix = "Petach-"
+city_2_suffix = "Tikva"
+index = city.index("n")
+city = city.replace("L","l")
+full_city = city_2_prefix+city_2_suffix
+is_city_digit = city.isdigit()
+num_as_str = "12.3"
+is_num_digit = num_as_str.isdigit()
+print ("test end")
