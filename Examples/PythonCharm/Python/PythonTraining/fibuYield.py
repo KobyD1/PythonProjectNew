@@ -13,5 +13,5 @@ def fibo(n):
        cntr += 1
 
 
-fib_object = fibo(10)
+fib_object = fibo(10000)
 print(list(fib_object))

@@ -1,6 +1,7 @@
 import unittest
 import pytest
-from PythonCharm.Python.FixtureTraining.uttils import utils_pytest
+
+from Examples.PythonCharm.Python.FixtureTraining.uttils import utils_pytest
 
 demo_utils = utils_pytest()
 class PythonOrgSearch(unittest.TestCase):

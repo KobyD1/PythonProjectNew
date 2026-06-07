@@ -1,5 +1,4 @@
 import unittest
-from selenium import webdriver
 
 class PythonOrgSearch(unittest.TestCase):
 

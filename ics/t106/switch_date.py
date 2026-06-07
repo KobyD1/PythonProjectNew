@@ -2,8 +2,8 @@
 
 date = "D08M03Y2026"
 
-date_index_month = date.index("M")
-date_index_year = date.index("Y")
+date_index_month= date.index("M")
+date_index_year= date.index("Y")
 get_current_day = date[:date_index_month]
 get_current_month = date[date_index_month:date_index_year]
 get_current_year = date[date_index_year:]
