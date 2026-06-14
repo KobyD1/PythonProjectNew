@@ -5,12 +5,12 @@ num_2 = 4
 sum = (num_1 + num_2)* num_3
 sum =7
 # how to check if comdition did not found
-if (not sum <0  ):
+if (not sum <0):
     print ("sum is less than 0")
 
 
 # analyze the value of sum
-elif (sum == 7):
+elif (sum == 7):  # how to check equals
     print("sum equals 7")
     sum_1 = sum *2
     sum_2 = sum * 3
