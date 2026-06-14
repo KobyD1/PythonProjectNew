@@ -1,8 +1,7 @@
 import pytest
 from playwright.sync_api import sync_playwright, expect
 
-from qa09.swaglabs_pom.pages.login_page import loginPage
-from qa09.swaglabs_pom.pages.product_page import productPage
+
 
 
 
