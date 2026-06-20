@@ -19,7 +19,7 @@ def get_wnba_team_stats(team_id: int,league='nba'):
         or str(team_id)
     )
 
-    total_scored = 0
+    total_offensive_points = 0
     total_defensive_points = 0
     games_count = 0
     games_list = []   # ← נוסיף רשימה לשמירת המשחקים
@@ -60,12 +60,12 @@ def get_wnba_team_stats(team_id: int,league='nba'):
 
         # האם הקבוצה היא בית או חוץ?
         if home_name == team_name:
-            scored = home_score
+            offensive_points = home_score
             defensive_points = away_score
             opponent = away_name
             location = "בית"
         elif away_name == team_name:
-            scored = away_score
+            offensive_points = away_score
             defensive_points = home_score
             opponent = home_name
             location = "חוץ"
@@ -73,7 +73,7 @@ def get_wnba_team_stats(team_id: int,league='nba'):
             continue
 
         games_count += 1
-        total_scored += scored
+        total_offensive_points += offensive_points
         total_defensive_points += defensive_points
 
         # שמירת המשחק ברשימה
@@ -81,22 +81,22 @@ def get_wnba_team_stats(team_id: int,league='nba'):
             "date": event.get("date", "")[:10],
             "opponent": opponent,
             "location": location,
-            "scored": scored,
+            "offensive_points": offensive_points,
             "defensive_points": defensive_points
         })
 
     if games_count == 0:
         return None
 
-    avg_scored = total_scored / games_count
+    avg_offensive_points = total_offensive_points / games_count
     avg_defensive_points = total_defensive_points / games_count
-    avg_total_points = (total_scored + total_defensive_points) / games_count
-    avg_diff = (total_scored - total_defensive_points) / games_count
+    avg_total_points = (total_offensive_points + total_defensive_points) / games_count
+    avg_diff = (total_offensive_points - total_defensive_points) / games_count
 
     return {
         "team": team_name,
         "games": games_count,
-        "avg_scored": avg_scored,
+        "avg_offensive_points": avg_offensive_points,
         "avg_defensive_points": avg_defensive_points,
         "avg_total_points": avg_total_points,
         "avg_diff": avg_diff,
@@ -111,14 +111,14 @@ stats = get_wnba_team_stats(team_id)
 if stats:
     print("קבוצה:", stats["team"])
     print("משחקים:", stats["games"])
-    print("ממוצע קליעות:", round(stats["avg_scored"], 2))
+    print("ממוצע קליעות:", round(stats["avg_offensive_points"], 2))
     print("ממוצע ספיגות:", round(stats["avg_defensive_points"], 2))
     print("ממוצע נקודות למשחק:", round(stats["avg_total_points"], 2))
     print("ממוצע הפרשים:", round(stats["avg_diff"], 2))
 
     print("\n--- כל המשחקים ---")
     for g in stats["games_list"]:
-        print(f"{g['date']} | {g['location']} | נגד {g['opponent']} | {g['scored']} - {g['defensive_points']}")
+        print(f"{g['date']} | {g['location']} | נגד {g['opponent']} | {g['offensive_points']} - {g['defensive_points']}")
 
 else:
     print("לא נמצאו משחקים לקבוצה")
