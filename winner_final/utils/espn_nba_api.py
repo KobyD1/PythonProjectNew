@@ -5,7 +5,13 @@ class EspnNbaApi:
     def __init__(self):
         pass
 
-    def get_wnba_team_stats(self,team_id: int,league='nba'):
+    def clean_score(self,val):
+        try:
+            return int(val.get("value") if isinstance(val, dict) else val)
+        except:
+            return 0
+
+    def get_basketball_team_stats(self, team_id: int, league='nba'):
 
         if (league=='wnba'):
 
@@ -15,6 +21,8 @@ class EspnNbaApi:
         resp = requests.get(url)
         resp.raise_for_status()
         data = resp.json()
+        if (not resp.status_code == 200):
+            print ("$$$$$$$$ Response Code to API site.api.espn.com is not 200 check for Team ID $$$$$$$$")
 
         team_info = data.get("team") or {}
         team_name = (
@@ -54,14 +62,8 @@ class EspnNbaApi:
             home_name = home_team.get("displayName") or home_team.get("name")
             away_name = away_team.get("displayName") or away_team.get("name")
 
-            def clean_score(val):
-                try:
-                    return int(val.get("value") if isinstance(val, dict) else val)
-                except:
-                    return 0
-
-            home_score = clean_score(home.get("score"))
-            away_score = clean_score(away.get("score"))
+            home_score = self.clean_score(home.get("score"))
+            away_score = self.clean_score(away.get("score"))
 
             # does the team is home or away
             if home_name == team_name:
@@ -90,15 +92,25 @@ class EspnNbaApi:
             })
 
         if games_count == 0:
+            print ("לא נמצאו משחקים לקבוצה")
             return None
 
         avg_offensive_points = total_offensive_points / games_count
         avg_defensive_points = total_defensive_points / games_count
         avg_total_points = (total_offensive_points + total_defensive_points) / games_count
         avg_diff = (total_offensive_points - total_defensive_points) / games_count
+        print (f"******* {team_name} Data Information *******")
+        print("ממוצע קליעות:", round(avg_offensive_points, 2))
+        print("ממוצע ספיגות:", round(avg_defensive_points, 2))
+        print("ממוצע נקודות למשחק:", round(avg_total_points, 2))
+        print("ממוצע הפרשים:", round(avg_diff, 2))
+        for g in games_list:
+            print(
+                f"{g['date']} | {g['location']} | נגד {g['opponent']} | {g['offensive_points']} - {g['defensive_points']}")
 
         return {
             "team": team_name,
+            "team_id": team_id,
             "games": games_count,
             "avg_offensive_points": avg_offensive_points,
             "avg_defensive_points": avg_defensive_points,
@@ -109,20 +121,20 @@ class EspnNbaApi:
         }
 
 
-    def get_team_data(self,stats):
-        if stats:
-            print (40*"*")
-            print("קבוצה:", stats["team"])
-            print("משחקים:", stats["games"])
-            print("ממוצע קליעות:", round(stats["avg_offensive_points"], 2))
-            print("ממוצע ספיגות:", round(stats["avg_defensive_points"], 2))
-            print("ממוצע נקודות למשחק:", round(stats["avg_total_points"], 2))
-            print("ממוצע הפרשים:", round(stats["avg_diff"], 2))
-
-            print(f"\n{stats["team"]}  כל המשחקים לקבוצה  ")
-            for g in stats["games_list"]:
-                print(
-                    f"{g['date']} | {g['location']} | נגד {g['opponent']} | {g['offensive_points']} - {g['defensive_points']}")
-
-        else:
-            print("לא נמצאו משחקים לקבוצה")
+    # def print_team_data(self,stats):
+    #     if stats:
+    #         print (40*"*")
+    #         print("קבוצה:", stats["team"])
+    #         print("משחקים:", stats["games"])
+    #         print("ממוצע קליעות:", round(stats["avg_offensive_points"], 2))
+    #         print("ממוצע ספיגות:", round(stats["avg_defensive_points"], 2))
+    #         print("ממוצע נקודות למשחק:", round(stats["avg_total_points"], 2))
+    #         print("ממוצע הפרשים:", round(stats["avg_diff"], 2))
+    #
+    #         print(f"\n{stats["team"]}  כל המשחקים לקבוצה  ")
+    #         for g in stats["games_list"]:
+    #             print(
+    #                 f"{g['date']} | {g['location']} | נגד {g['opponent']} | {g['offensive_points']} - {g['defensive_points']}")
+    #
+    #     else:
+    #         print("לא נמצאו משחקים לקבוצה")
