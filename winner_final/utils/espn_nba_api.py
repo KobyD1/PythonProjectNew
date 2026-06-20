@@ -116,25 +116,8 @@ class EspnNbaApi:
             "avg_defensive_points": avg_defensive_points,
             "avg_total_points": avg_total_points,
             "avg_diff": avg_diff,
-            "games_list": games_list   # ← מחזירים גם את רשימת המשחקים
+            "games_list": games_list
 
         }
 
 
-    # def print_team_data(self,stats):
-    #     if stats:
-    #         print (40*"*")
-    #         print("קבוצה:", stats["team"])
-    #         print("משחקים:", stats["games"])
-    #         print("ממוצע קליעות:", round(stats["avg_offensive_points"], 2))
-    #         print("ממוצע ספיגות:", round(stats["avg_defensive_points"], 2))
-    #         print("ממוצע נקודות למשחק:", round(stats["avg_total_points"], 2))
-    #         print("ממוצע הפרשים:", round(stats["avg_diff"], 2))
-    #
-    #         print(f"\n{stats["team"]}  כל המשחקים לקבוצה  ")
-    #         for g in stats["games_list"]:
-    #             print(
-    #                 f"{g['date']} | {g['location']} | נגד {g['opponent']} | {g['offensive_points']} - {g['defensive_points']}")
-    #
-    #     else:
-    #         print("לא נמצאו משחקים לקבוצה")

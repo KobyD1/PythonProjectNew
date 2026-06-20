@@ -7,20 +7,52 @@ class AlgoUtils:
         print(f" Calculate Under Over for {team_a} and {team_b} with {ref}")
 
     def calculate_game_basketball_algo(self,team_a_data,team_b_data,data):
-        print(f"Calculate Game results {team_a_data} and {team_b_data}")
-        if (data["team_b"])==data["team_with_added_points"]:
-            ref_final = team_a_data['avg_diff'] -data["rate"]
-            favorite = data["team_a"]
+        result = {}
+
+        if data["description"]=="2 Teams Game Results":
+            print(f"Calculate Game results {team_a_data} and {team_b_data}")
+            if (data["team_b"])==data["team_with_added_points"]:
+                score = team_a_data['avg_diff'] -data["rate"]
+                favorite = data["team_a"]
 
 
-        else:
-            ref_final = team_b_data['avg_diff'] -data["rate"]
-            favorite = data["team_b"]
-        if ref_final>10:
-            print (f"**** High Score found favorite is {favorite} , grade = {ref_final} ****")
+            else:
+                score = team_b_data['avg_diff'] -data["rate"]
+                favorite = data["team_b"]
 
-        else:
-            print (f"**** Typical  Score found favorite is {favorite} , grade = {ref_final} ****")
+            print(f"****  Score found  , score = {score} ,favorite = {favorite} game = {data["team_a"]} VS{data["team_b"]}****")
+
+
+            result["favorite"] = favorite
+            result["score"] = score
+            return result
+
+        elif data["description"]=="2 Teams Under/Over":
+            print(f"Calculate Game results for under over {team_a_data} and {team_b_data}")
+            team_a_data["avg_offensive_points"]
+            team_b_data['avg_defensive_points']
+            avg_total =(team_a_data['avg_total_points'] +team_b_data['avg_total_points'])/2
+            if avg_total - data["rate"] >10 :
+                result["score"] = avg_total - data["rate"]+2 # bonus for high def
+                favorite = "Under"
+                print( f"***** High Under found Under/Over, avg_total = {avg_total} ,rate = {data["rate"]} game = {data["team_a"]} VS{data["team_b"]}")
+
+            elif avg_total - data["rate"] <10 :
+                favorite = "Over"
+                result["score"] = avg_total - data["rate"]+2 # bonus for high def
+                print( f"***** High Over found Under/Over, avg_total = {avg_total} ,rate = {data["rate"]} game = {data["team_a"]} VS{data["team_b"]}")
+            else:
+                print( f" Over found Under/Over, avg_total = {avg_total} ,rate = {data["rate"]} game = {data["team_a"]} VS{data["team_b"]}")
+
+                result["score"] = avg_total - data["rate"]
+
+            result["favorite"] = favorite
+            result["score"] = result["score"]
+            return result
+
+
+
+
 
 
 
