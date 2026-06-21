@@ -18,5 +18,7 @@ for data in table_data:
     results =algo_utils.calculate_game_basketball_algo(stats_a,stats_b,data)
     results_not_sorted.append(results)
 results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
-pprint(results_sorted)
+files_utils.print_result(results_sorted)
+files_utils.print_results_1(results_sorted)
+
 print ("********  End  *********")

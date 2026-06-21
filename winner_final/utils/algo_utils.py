@@ -13,16 +13,20 @@ class AlgoUtils:
             print(f"Calculate Game results {team_a_data} and {team_b_data}")
             if (data["team_b"])==data["team_with_added_points"]:
                 score = team_a_data['avg_diff'] -data["rate"]
-                favorite = data["team_a"]
+                favorite = "1"
 
 
             else:
                 score = team_b_data['avg_diff'] -data["rate"]
-                favorite = data["team_b"]
+                favorite = "2"
 
             print(f"****  Score found  , score = {score} ,favorite = {favorite} game = {data["team_a"]} VS{data["team_b"]}****")
 
+            game = data["game"].split(" ")[2].replace(".", "").strip()
+            plan = data["game"].split(" ")[0][1:2]
 
+            result["game"] = game
+            result["plan"] = plan
             result["favorite"] = favorite
             result["score"] = score
             return result
@@ -48,6 +52,11 @@ class AlgoUtils:
 
             result["favorite"] = favorite
             result["score"] = result["score"]
+            game = data["game"].split(" ")[2].replace(".", "").strip()
+            plan = data["game"].split(" ")[0][1:2]
+
+            result["game"] = game
+            result["plan"] = plan
             return result
 
 

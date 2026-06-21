@@ -34,6 +34,7 @@ class telesport_main_page:
 
             row_data= {}
             teams = row.locator(".th_td_WinnerteamsAndBetType").inner_text().strip()
+            game = row.locator(".tdWinId").inner_text()
             if teams.count("מעל") :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_uder_over(teams)
                 status_time = row.locator(".tdWinnerStatus").inner_text().strip()
@@ -43,6 +44,7 @@ class telesport_main_page:
                 row_data["rate"] = rate
                 row_data["description"] = description
                 row_data["team_with_added_points"] = team_with_added_points
+                row_data["game"] = game
 
                 score = row.locator(".tdWinScore").inner_text().strip()
                 bets = row.locator('[class*="th_td_WinnerBet"]').all()
@@ -60,6 +62,7 @@ class telesport_main_page:
                 row_data["rate"] = rate
                 row_data["description"] = description
                 row_data["team_with_added_points"] = team_with_added_points
+                row_data["game"] = game
 
                 score = row.locator(".tdWinScore").inner_text().strip()
                 bets = row.locator('[class*="th_td_WinnerBet"]').all()
@@ -76,6 +79,8 @@ class telesport_main_page:
                 print(f" שעת משחק_סטטוס: {status_time}")
                 print(f"  קבוצות: {teams}")
                 print(f"  תוצאה: {score}")
+                print(f"  פרטי משחק: {game}")
+
                 print(f"  יתרון לקבוצה : {team_with_added_points}")
 
                 row_data["team_with_added_points"] = team_with_added_points
