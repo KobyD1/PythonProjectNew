@@ -7,7 +7,7 @@ class PlaywrightMainUI():
         pass
 
 
-    def set_telesport_page(self, filter, days_count,league,is_under_over):
+    def set_telesport_page(self, filter, days_count,league):
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=False)
             page = browser.new_page()
@@ -19,7 +19,7 @@ class PlaywrightMainUI():
 
             telesport_page.set_table_filters(filter)
             telesport_page.set_table_league(league)
-            table_data = telesport_page.get_table_content(is_under_over)
+            table_data = telesport_page.get_table_content()
             print(table_data)
             l= len(table_data)
             print (57 * "*")

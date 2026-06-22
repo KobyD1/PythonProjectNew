@@ -22,13 +22,16 @@ class telesport_main_page:
     def set_date(self):
         self.page.locator("div.sportLive_calendar_left").click()
 
-    def get_table_content(self, is_uder_over = False):
+    def get_table_content(self):
         table_content = []
+
         status_time=""
         rows = self.page.locator("tr.winnerBodyTr:visible").all()
 
         actual_index = 1
         for row in rows:
+            bet_empty_counter = 0
+
             if not row.is_visible():
                 continue
 
@@ -47,10 +50,12 @@ class telesport_main_page:
                 row_data["game"] = game
 
                 score = row.locator(".tdWinScore").inner_text().strip()
-                bets = row.locator('[class*="th_td_WinnerBet"]').all()
-                for bet in bets:
-                    index = bets.index(bet)
-                    row_data[f"bet{index}"] = bet.inner_text().strip()
+                # bets = row.locator('[class*="th_td_WinnerBet"]').all()
+                # for bet in bets:
+                #     index = bets.index(bet)
+                #     row_data[f"bet{index}"] = bet.inner_text().strip()
+                #     if (bet =="-"):
+                #         bet_empty_counter =- 1
 
             elif teams.count("+") > 0 :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_game(teams)
@@ -65,14 +70,15 @@ class telesport_main_page:
                 row_data["game"] = game
 
                 score = row.locator(".tdWinScore").inner_text().strip()
-                bets = row.locator('[class*="th_td_WinnerBet"]').all()
 
-                for bet in bets:
-                    index = bets.index(bet)
-                    row_data[f"bet{index}"] = bet.inner_text().strip()
+            bets = row.locator('[class*="th_td_WinnerBet"]').all()
+            for bet in bets:
+                index = bets.index(bet)
+                row_data[f"bet{index}"] = bet.inner_text().strip()
+                if row_data[f"bet{index}"]=="-":
+                    bet_empty_counter += 1
 
-
-            if  ":"  in status_time and len(row_data)>0:
+            if  ":"  in status_time and len(row_data)>0 and bet_empty_counter <1:
                 print(f"-------------{game}-------------")
                 print(f" משחק פעיל נמצא בתכניה ")
 
@@ -168,3 +174,5 @@ class telesport_main_page:
 
     def add_row_data_to_table(self):
         pass
+
+
