@@ -21,6 +21,10 @@ class PlaywrightMainUI():
                 telesport_page.set_table_league(league)
             table_data = telesport_page.get_table_content(is_under_over)
             print(table_data)
+            l= len(table_data)
+            print (57 * "*")
+            print (f"******* Winner Analyzer Completed - found {l} games *******")
+            print (57 * "*")
 
             return table_data
 

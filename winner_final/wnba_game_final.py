@@ -11,7 +11,7 @@ algo_utils = AlgoUtils()
 table_data =playwright_main.set_telesport_page( "כדורסל",1,"wnba",is_under_over)
 results_not_sorted =[]
 for data in table_data:
-    excel_data = files_utils.get_team_ids(data, "../winner_final/data/wnba.xlsx")
+    excel_data = files_utils.get_team_ids(data, "wnba.xlsx")
 
     stats_a = espn_nba_api.get_basketball_team_stats(excel_data["ID_A"], 'wnba')
     stats_b = espn_nba_api.get_basketball_team_stats(excel_data["ID_B"], 'wnba')

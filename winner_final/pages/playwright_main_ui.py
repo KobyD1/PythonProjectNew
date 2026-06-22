@@ -34,7 +34,7 @@ class telesport_main_page:
 
             row_data= {}
             teams = row.locator(".th_td_WinnerteamsAndBetType").inner_text().strip()
-            game = row.locator(".tdWinId").inner_text()
+            game = row.locator(".tdWinId").inner_text().replace(".","")
             if teams.count("מעל") :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_uder_over(teams)
                 status_time = row.locator(".tdWinnerStatus").inner_text().strip()
@@ -73,19 +73,19 @@ class telesport_main_page:
 
 
             if  ":"  in status_time and len(row_data)>0:
-                print(f" Game Found ")
+                print(f"-------------{game}-------------")
+                print(f" משחק פעיל נמצא בתכניה ")
 
                 print(f"שורה מספר {actual_index}:")
                 print(f" שעת משחק_סטטוס: {status_time}")
                 print(f"  קבוצות: {teams}")
                 print(f"  תוצאה: {score}")
-                print(f"  פרטי משחק: {game}")
+                print(f"  פרטי משחק(תכניה) משחק: {game}")
 
                 print(f"  יתרון לקבוצה : {team_with_added_points}")
 
                 row_data["team_with_added_points"] = team_with_added_points
 
-                print("-" * 40)
 
                 table_content.append(row_data)
             actual_index += 1
@@ -93,7 +93,7 @@ class telesport_main_page:
 
     def teams_data_parser_uder_over(self,teams):
         if teams.count("(") > 1:
-            print("********" + teams)
+            print("נמצא בתכניה " + teams)
             parts = teams.split("(")
             team_part = parts[1].split(")")[0]
             number_part = parts[2].split(")")[0]
@@ -119,7 +119,7 @@ class telesport_main_page:
             return team_a,team_b,rate,description,team_with_added_points
 
         elif "מעל/מתחת" in teams:
-            print("********"+teams)
+            print("נמצא בתכניה " + teams)
             parts = teams.split("-")
             team_b = parts[1].strip()
             index_1 = parts[0].index(")")+1
@@ -140,7 +140,7 @@ class telesport_main_page:
 
     def teams_data_parser_game(self,teams):
         row_data = {}
-        print("********" + teams)
+        print( teams +"נמצא בתכניה ")
         parts = teams.split("-")
         team_b = parts[1].strip().split("(")[0].strip()
         team_a= parts[0].strip().split("(")[0].strip()
@@ -158,10 +158,9 @@ class telesport_main_page:
 
 
         num = re.sub(r'[^\d\.\-+]', '', added_points)
-        num = num.replace("..","")# משאיר רק ספרות, נקודה, + ו‑-
+        num = num.replace("..","")
         rate = float(num)
         row_data['description'] = '2 Teams Game Results'
-
 
         description = '2 Teams Game Results'
         return team_a,team_b,rate,description,team_with_added_points
