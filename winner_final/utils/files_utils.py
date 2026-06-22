@@ -38,11 +38,7 @@ class FilesUtils:
         return teams_data_excel
 
 
-    def print_result(self,results_sorted):
 
-        for row in  results_sorted:
-            print (40 * "-")
-            print (row)
 
 
     def get_team_ids(self,table_data, excel_file="wnba.xlsx"):
@@ -72,51 +68,52 @@ class FilesUtils:
                 count += 1
         return count
 
-    def print_results_1(self, results_sorted):
-        headers = ["Favorite", "Game", "Plan", "Score"]
+    def print_results(self, results_sorted):
+        if results_sorted:
+            headers = ["Favorite", "Game", "Plan", "Score"]
 
-        rows = [
-            [
-                str(item["favorite"]),
-                str(item["game"]),
-                str(item["plan"]),
-                f"{item['score']:.3f}"
+            rows = [
+                [
+                    str(item["favorite"]),
+                    str(item["game"]),
+                    str(item["plan"]),
+                    f"{item['score']*10:.2f}"
+                ]
+                for item in results_sorted
             ]
-            for item in results_sorted
-        ]
 
-        # חישוב רוחב עמודות
-        col_widths = []
-        for col in range(len(headers)):
-            max_len = max(
-                self.visual_length(headers[col]),
-                max(self.visual_length(row[col]) for row in rows)
-            )
-            col_widths.append(max_len)
+            # calc. width of Col.
+            col_widths = []
+            for col in range(len(headers)):
+                max_len = max(
+                    self.visual_length(headers[col]),
+                    max(self.visual_length(row[col]) for row in rows)
+                )
+                col_widths.append(max_len)
 
-        def build_separator(left, fill, middle, right):
-            parts = [left]
-            for i, w in enumerate(col_widths):
-                parts.append(fill * (w + 2))
-                parts.append(middle if i < len(col_widths) - 1 else right)
-            return "".join(parts)
+            def build_separator(left, fill, middle, right):
+                parts = [left]
+                for i, w in enumerate(col_widths):
+                    parts.append(fill * (w + 2))
+                    parts.append(middle if i < len(col_widths) - 1 else right)
+                return "".join(parts)
 
-        def build_row(values):
-            parts = ["│"]
-            for i, v in enumerate(values):
-                pad = col_widths[i] - self.visual_length(v)
-                parts.append(" " + v + " " * (pad + 1))
-                parts.append("│")
-            return "".join(parts)
+            def build_row(values):
+                parts = ["│"]
+                for i, v in enumerate(values):
+                    pad = col_widths[i] - self.visual_length(v)
+                    parts.append(" " + v + " " * (pad + 1))
+                    parts.append("│")
+                return "".join(parts)
 
-        print(build_separator("┌", "─", "┬", "┐"))
-        print(build_row(headers))
-        print(build_separator("├", "─", "┼", "┤"))
+            print(build_separator("┌", "─", "┬", "┐"))
+            print(build_row(headers))
+            print(build_separator("├", "─", "┼", "┤"))
 
-        for row in rows:
-            print(build_row(row))
+            for row in rows:
+                print(build_row(row))
 
-        print(build_separator("└", "─", "┴", "┘"))
+            print(build_separator("└", "─", "┴", "┘"))
 
 
 

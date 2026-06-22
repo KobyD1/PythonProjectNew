@@ -17,8 +17,8 @@ class PlaywrightMainUI():
                 telesport_page.set_date()
                 time.sleep(2)
 
-                telesport_page.set_table_filters(filter)
-                telesport_page.set_table_league(league)
+            telesport_page.set_table_filters(filter)
+            telesport_page.set_table_league(league)
             table_data = telesport_page.get_table_content(is_under_over)
             print(table_data)
             l= len(table_data)

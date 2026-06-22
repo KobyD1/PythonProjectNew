@@ -11,19 +11,83 @@ class EspnNbaApi:
         except:
             return 0
 
-    def get_basketball_team_stats(self, team_id: int, league='nba'):
+    def get_basketball_team_stats(self, team_id: int,is_under_over ,  league='nba'):
+        try:
+            if (is_under_over):
 
-        if (league=='wnba'):
+                url = f"https://site.api.espn.com/apis/site/v2/sports/basketball/{league}/teams/{team_id}/schedule"
+                resp = requests.get(url)
+                resp.raise_for_status()
+                data = resp.json()
+                team_data = self.under_over_parser(data,team_id)
+                return team_data
 
-            url = f"https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/{team_id}/schedule"
+            else:
+                url = f"https://site.api.espn.com/apis/site/v2/sports/basketball/{league}/teams/{team_id}"
+                resp = requests.get(url)
+                resp.raise_for_status()
+                data = resp.json()
+                team_data = self.game_result_parser(data,team_id)
+                return team_data
+
+        except:
+            print ("get basketball_team_stats error")
+            return {}
+
+
+
+
+
+    def game_result_parser (self, data,team_id):
+        team_data = data.get("team", {})
+        record_items = team_data.get("record", {}).get("items", [])
+
+        if record_items:
+            current_record = record_items[0]
+            stats_list = current_record.get("stats", [])
+
+            def get_stat_value(stat_name):
+                stat = next((item for item in stats_list if item.get("name") == stat_name), None)
+                return stat.get("value") if stat else None
+
+            balance_summary = current_record.get("summary", "N/A")
+
+            win_percentage = get_stat_value("winPercent")
+
+            league_position = get_stat_value("playoffSeed") or get_stat_value("leagueWinPercentRank")
+            games_behind = get_stat_value("gamesBehind")
+            total_points_scored = get_stat_value("pointsFor")
+            avg_points_per_game = get_stat_value("avgPointsFor")
+            seed = int(league_position) if league_position is not None else 'N/A'
+
+            avg_points_against = get_stat_value("avgPointsAgainst")
+            # calculate avg diff
+            if avg_points_per_game is not None and avg_points_against is not None:
+                avg_diff = avg_points_per_game - avg_points_against
+
+            print(f"קבוצה: {team_data.get('displayName')}")
+            print("-" * 30)
+            print(f"  🏆 מיקום בליגה (Seed): {seed}")
+            print(f"📊 מאזן (Summary): {balance_summary}")
+            print(f"📊 ממוצע הפרשים  : {avg_diff}")
+
+
+            # הצגת אחוזי ההצלחה בפורמט של אחוזים (למשל 75.0%)
+            print(f"📈 אחוזי הצלחה: {win_percentage * 100:.1f}%")
+            print(f"📉 משחקים מהמקום הראשון (Games Behind): {games_behind}")
+            print(f"🏀 סך נקודות זכות העונה: {total_points_scored}")
+            print(f"📊 ממוצע נקודות למשחק: {avg_points_per_game}")
+            return {
+                "Seed":seed,
+                "balance_summary":balance_summary,
+                "avg_diff":avg_diff,
+                "win_percentage":win_percentage * 100
+            }
+
         else:
-            url = f"https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/{team_id}/schedule"
-        resp = requests.get(url)
-        resp.raise_for_status()
-        data = resp.json()
-        if (not resp.status_code == 200):
-            print ("$$$$$$$$ Response Code to API site.api.espn.com is not 200 check for Team ID $$$$$$$$")
+            print("לא נמצאו נתונים.")
 
+    def under_over_parser(self,data,team_id):
         team_info = data.get("team") or {}
         team_name = (
             team_info.get("displayName")

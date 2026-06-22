@@ -2,8 +2,8 @@ from winner_final.utils.algo_utils import AlgoUtils
 from winner_final.utils.espn_nba_api import EspnNbaApi
 from winner_final.utils.files_utils import FilesUtils
 from winner_final.utils.playwright_telersport_ui import PlaywrightMainUI
-from pprint import pprint
-is_under_over = True
+is_under_over = False
+
 espn_nba_api = EspnNbaApi()
 playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
@@ -13,12 +13,17 @@ results_not_sorted =[]
 for data in table_data:
     excel_data = files_utils.get_team_ids(data, "wnba.xlsx")
 
-    stats_a = espn_nba_api.get_basketball_team_stats(excel_data["ID_A"], 'wnba')
-    stats_b = espn_nba_api.get_basketball_team_stats(excel_data["ID_B"], 'wnba')
+    stats_a = espn_nba_api.get_basketball_team_stats(excel_data["ID_A"],is_under_over, 'wnba')
+    stats_b = espn_nba_api.get_basketball_team_stats(excel_data["ID_B"], is_under_over,'wnba')
+    if stats_a == {} or stats_b == {} :
+        print ("results by API did not found ")
+        continue
+
+
+
     results =algo_utils.calculate_game_basketball_algo(stats_a,stats_b,data)
     results_not_sorted.append(results)
 results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
-files_utils.print_result(results_sorted)
-files_utils.print_results_1(results_sorted)
+files_utils.print_results(results_sorted)
 
 print ("********  End  *********")
