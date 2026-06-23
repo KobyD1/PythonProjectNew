@@ -70,14 +70,15 @@ class FilesUtils:
 
     def print_results(self, results_sorted):
         if results_sorted:
-            headers = ["Favorite", "Game", "Plan", "Score"]
+            headers = ["Favorite", "Game", "Plan", "Score", "Bet"]
 
             rows = [
                 [
                     str(item["favorite"]),
                     str(item["game"]),
                     str(item["plan"]),
-                    f"{item['score']*10:.2f}"
+                    f"{item['score']*10:.2f}",
+                    str(item["bet"]),
                 ]
                 for item in results_sorted
             ]

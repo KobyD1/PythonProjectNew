@@ -22,30 +22,37 @@ class AlgoUtils:
                     score = score_b - team_a_data['avg_diff']
                     if score > 0:
                         favorite = "2"
+                        result["bet"] = data["bet2"]
+
 
                     else:
                         favorite = "1"
                         score = score * -1
+                        result["bet"] = data["bet1"]
+
                 elif data["team_a"] == team_added:
                     score_a = team_a_data['avg_diff'] + rate
                     score = score_a - team_b_data['avg_diff']
                     if score > 0:
                         favorite = "1"
+                        result["bet"] = data["bet1"]
+
                     else :
                         favorite = "2"
+                        result["bet"] = data["bet2"]
+
                         score = score * -1
                     team_to_add,score_add = self.presentage_calculator(team_a_data, team_b_data,favorite)
                     if team_to_add ==favorite:
                         score =score+score_add
                         print (f"adding bonus {score_add} for presentage found ")
-                print(f"****  Score found  , score = {score} ,favorite = {favorite} game = {data["team_a"]} VS{data["team_b"]}****")
-                game = data["game"].split(" ")[2].replace(".", "").strip()
-                plan = data["game"].split(" ")[0][1:2]
+                print(f"****  Score found, score = {score} ,favorite = {favorite} game = {data["team_a"]} VS {data["team_b"]} ****")
 
-                result["game"] = game
-                result["plan"] = plan
+
                 result["favorite"] = favorite
                 result["score"] = score
+                result = self.data_parser(data,result)
+
                 return result
 
             case  "2 Teams Under/Over":
@@ -62,20 +69,28 @@ class AlgoUtils:
                     print(
                         f" Under/Over results, avg_total = {avg_total} ,rate = {data["rate"]} game = {data["team_a"]} VS{data["team_b"]}")
 
-                if diff>0 :
+                if diff>0 : # case of Over
                     result["favorite"]="1"
-                else:
-                    result["favorite"]="0"
+                    result["bet"] = data["bet1"]
+                else:  # case of Under
+                    result["favorite"]="2"
+                    result["bet"] = data["bet2"]
 
-                game = data["game"].split(" ")[2].replace(".", "").strip()
-                plan = data["game"].split(" ")[0][1:2]
+                result = self.data_parser(data,result)
 
-                result["game"] = game
-                result["plan"] = plan
+
                 return result
 
             case "2 Teams 3 points Under/Over":
              pass
+
+    def data_parser(self,data,result):
+        game = data["game"].split(" ")[2].replace(".", "").strip()
+        plan = data["game"].split(" ")[0][1:2]
+
+        result["game"] = game
+        result["plan"] = plan
+        return result
 
     def presentage_calculator(self,team_a_data,team_b_data,favorite):
         score_add = (team_b_data['win_percentage'] - team_a_data['win_percentage']) / 10

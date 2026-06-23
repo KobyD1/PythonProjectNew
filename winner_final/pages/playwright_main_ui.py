@@ -50,12 +50,8 @@ class telesport_main_page:
                 row_data["game"] = game
 
                 score = row.locator(".tdWinScore").inner_text().strip()
-                # bets = row.locator('[class*="th_td_WinnerBet"]').all()
-                # for bet in bets:
-                #     index = bets.index(bet)
-                #     row_data[f"bet{index}"] = bet.inner_text().strip()
-                #     if (bet =="-"):
-                #         bet_empty_counter =- 1
+                row_data, bet_empty_counter = self.bet_parser(row, row_data)
+
 
             elif teams.count("+") > 0 :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_game(teams)
@@ -70,13 +66,8 @@ class telesport_main_page:
                 row_data["game"] = game
 
                 score = row.locator(".tdWinScore").inner_text().strip()
+            row_data,bet_empty_counter = self.bet_parser(row,row_data)
 
-            bets = row.locator('[class*="th_td_WinnerBet"]').all()
-            for bet in bets:
-                index = bets.index(bet)
-                row_data[f"bet{index}"] = bet.inner_text().strip()
-                if row_data[f"bet{index}"]=="-":
-                    bet_empty_counter += 1
 
             if  ":"  in status_time and len(row_data)>0 and bet_empty_counter <1:
                 print(f"-------------{game}-------------")
@@ -174,5 +165,18 @@ class telesport_main_page:
 
     def add_row_data_to_table(self):
         pass
+
+    def bet_parser(self,row,row_data):
+
+        bets = row.locator('[class*="th_td_WinnerBet"]').all()
+        for bet in bets:
+            bet_empty_counter = 0
+            index = bets.index(bet)
+            if "." in bet.inner_text():
+                row_data[f"bet{index}"] = bet.inner_text().strip()
+                if row_data[f"bet{index}"] == "-":
+                    bet_empty_counter += 1
+
+        return row_data,bet_empty_counter
 
 
