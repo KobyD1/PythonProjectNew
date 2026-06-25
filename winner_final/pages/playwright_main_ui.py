@@ -38,7 +38,7 @@ class telesport_main_page:
             row_data= {}
             teams = row.locator(".th_td_WinnerteamsAndBetType").inner_text().strip()
             game = row.locator(".tdWinId").inner_text().replace(".","")
-            if teams.count("מעל") :
+            if teams.count("מעל")or teams.count("טווחים") :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_uder_over(teams)
                 status_time = row.locator(".tdWinnerStatus").inner_text().strip()
                 row_data["status_time"] = status_time
@@ -88,51 +88,63 @@ class telesport_main_page:
             actual_index += 1
         return table_content
 
-    def teams_data_parser_uder_over(self,teams):
-        if teams.count("(") > 1:
-            print("נמצא בתכניה " + teams)
-            parts = teams.split("(")
-            team_part = parts[1].split(")")[0]
-            number_part = parts[2].split(")")[0]
-            team = team_part.strip()
-            rate = float(number_part)
-            team_b = "not found"
-            description = '1 Team Under/Over'
-            team_with_added_points = ""
+    def teams_data_parser_uder_over(self, teams):
+        match teams:
+            case _ if teams.count("(") > 1:
+                print("נמצא בתכניה " + teams)
+                parts = teams.split("(")
+                team_part = parts[1].split(")")[0]
+                number_part = parts[2].split(")")[0]
+                team = team_part.strip()
+                rate = float(number_part)
+                team_b = "not found"
+                description = '1 Team Under/Over'
+                team_with_added_points = ""
 
-            return team,team_b,rate,description,team_with_added_points
+                return team, team_b, rate, description, team_with_added_points
 
-        elif "שלשות" in teams:
-            parts = teams.split("-")
-            team_b = parts[1].strip()
-            index_1 = parts[0].index(")") + 1
-            index_2 = parts[0].index("(")
+            case _ if "שלשות" in teams:
+                parts = teams.split("-")
+                team_b = parts[1].strip()
+                index_1 = parts[0].index(")") + 1
+                index_2 = parts[0].index("(")
 
-            team_a = parts[0][index_1:].strip()
-            rate = float(parts[0][index_2 + 1:index_1 - 1].strip())
-            description = '2 Teams 3 points Under/Over'
-            team_with_added_points = "not found"
+                team_a = parts[0][index_1:].strip()
+                rate = float(parts[0][index_2 + 1:index_1 - 1].strip())
+                description = '2 Teams 3 points Under/Over'
+                team_with_added_points = "not found"
 
-            return team_a,team_b,rate,description,team_with_added_points
+                return team_a, team_b, rate, description, team_with_added_points
 
-        elif "מעל/מתחת" in teams:
-            print("נמצא בתכניה " + teams)
-            parts = teams.split("-")
-            team_b = parts[1].strip()
-            index_1 = parts[0].index(")")+1
-            index_2 = parts[0].index("(")
+            case _ if "מעל/מתחת" in teams:
+                print("נמצא בתכניה " + teams)
+                parts = teams.split("-")
+                team_b = parts[1].strip()
+                index_1 = parts[0].index(")") + 1
+                index_2 = parts[0].index("(")
 
-            team_a = parts[0][index_1:].strip()
-            rate = float(parts[0][index_2+1:index_1-1].strip())
-            description = '2 Teams Under/Over'
-            team_with_added_points = "not found"
+                team_a = parts[0][index_1:].strip()
+                rate = float(parts[0][index_2 + 1:index_1 - 1].strip())
+                description = '2 Teams Under/Over'
+                team_with_added_points = "not found"
+
+                return team_a, team_b, rate, description, team_with_added_points
 
 
-            return team_a,team_b,rate,description,team_with_added_points
+            case _ if "טווחים" in teams:
+                teams = teams[teams.index(")")+1:]
+                parts = teams.split("-")
+                team_b = parts[1].strip()
+                team_a = parts[0].strip()
 
+                rate = None
+                description = '2 Teams Under/Over 2-3 Range'
+                team_with_added_points = None
 
-        else:
-            return "not found","not found","not found","not found"
+                return team_a, team_b, rate, description, team_with_added_points
+
+            case _:
+                return "not found", "not found", "not found", "not found"
 
 
     def teams_data_parser_game(self,teams):
