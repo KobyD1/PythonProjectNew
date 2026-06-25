@@ -19,7 +19,7 @@ for data in table_data:
     stats_a = espn_nba_api.get_basketball_team_stats(excel_data["ID_A"],is_under_over, 'wnba')
     stats_b = espn_nba_api.get_basketball_team_stats(excel_data["ID_B"], is_under_over,'wnba')
     if stats_a == {} or stats_b == {} or stats_a == None or stats_b == None :
-        print ("did not analyze :results by API did not found, missing info at form .... ")
+        print ("did not analyze :results by API did not found, missing info at form ... ")
         continue
 
 
