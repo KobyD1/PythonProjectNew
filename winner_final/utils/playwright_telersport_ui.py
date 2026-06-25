@@ -29,7 +29,6 @@ class PlaywrightMainUI():
 
 
             table_data = telesport_page.get_table_content()
-            print(table_data)
             l= len(table_data)
             print (57 * "*")
             print (f"******* Winner Analyzer Completed - found {l} games *******")

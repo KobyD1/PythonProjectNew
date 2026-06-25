@@ -10,6 +10,4 @@ set script_path=%project_root%\winner_final
 cd /d %script_path%
 
 set PYTHONPATH=%project_root%
-
-@REM python table_game_no_filter.py > output_%timestamp%.txt 2>&1
-python table_game_no_filter.py
+table_game_no_filter.py > "C:\Users\Public\Winner\games\output_%timestamp%.txt" 2>&1
