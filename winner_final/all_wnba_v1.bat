@@ -10,4 +10,4 @@ set PYTHONPATH=%project_root%
 
 @REM pip install pandas
 @REM playwright install
-"C:\Users\USER\AppData\Local\Programs\Python\Python313\python.exe" wnba_game_final.py
+"C:\Users\USER\AppData\Local\Programs\Python\Python313\python.exe" wnba_game_final.py > "C:\Users\Public\Winner\results\output_%timestamp%.txt" 2>&1
