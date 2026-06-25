@@ -6,7 +6,13 @@ class telesport_main_page:
     def __init__(self,page):
         self.page = page
 
-    def set_table_filters(self,title = "כדורגל"):
+    def set_table_filters(self,index = 2):
+        title=""
+        if index == 1 :
+            title = "כדורסל"
+        if index == 2:
+            title = "כדורגל"
+        self.page.locator("div.ddlTitleFilters").wait_for(state="visible")
         self.page.locator("div.ddlTitleFilters").click()
         self.page.locator("#ddlBoxFilters").get_by_text(title).click()
         print (f"success to click on {title}")
