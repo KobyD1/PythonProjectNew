@@ -137,8 +137,13 @@ class telesport_main_page:
 
     def teams_data_parser_game(self,teams):
         row_data = {}
+        parts = []
         print( teams +"נמצא בתכניה ")
-        parts = teams.split("-")
+        index= teams.index("-")
+        parts.append(teams[:index])
+        parts.append(teams[index+1:])
+
+
         team_b = parts[1].strip().split("(")[0].strip()
         team_a= parts[0].strip().split("(")[0].strip()
 
