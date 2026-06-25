@@ -1,5 +1,7 @@
 import time
 from playwright.sync_api import sync_playwright, expect
+
+from winner_final.globals import FILTER
 from winner_final.pages.playwright_main_ui import telesport_main_page
 
 class PlaywrightMainUI():
@@ -7,7 +9,7 @@ class PlaywrightMainUI():
         pass
 
 
-    def set_telesport_page(self, filter, days_count,league):
+    def set_telesport_page(self, title_index, days_count,league):
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=False)
             page = browser.new_page()
@@ -17,8 +19,15 @@ class PlaywrightMainUI():
                 telesport_page.set_date()
                 time.sleep(2)
 
-            telesport_page.set_table_filters(filter)
-            telesport_page.set_table_league(league)
+
+            match title_index:
+                 case 0:
+                    print (" Run without filters ")
+                 case 1:
+                    telesport_page.set_table_filters(filter)
+                    telesport_page.set_table_league(league)
+
+
             table_data = telesport_page.get_table_content()
             print(table_data)
             l= len(table_data)
