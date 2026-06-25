@@ -1,4 +1,4 @@
-from winner_final.globals import DAYS
+from winner_final.globals import DAYS, PATH_PROGRAM_TEXT
 from winner_final.utils.algo_utils import AlgoUtils
 from winner_final.utils.espn_nba_api import EspnNbaApi
 from winner_final.utils.files_utils import FilesUtils
@@ -28,5 +28,7 @@ for data in table_data:
     results_not_sorted.append(results)
 results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
 files_utils.print_results(results_sorted)
+files_utils.wrote_to_text_file(table_data, PATH_PROGRAM_TEXT,"program")
+
 
 print ("********  End  *********")
