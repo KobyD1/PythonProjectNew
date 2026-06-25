@@ -1,4 +1,4 @@
-from winner_final.globals import DAYS, PATH_PROGRAM_TEXT
+from winner_final.globals import DAYS, PATH_PROGRAM_TEXT, FILTER
 from winner_final.utils.algo_utils import AlgoUtils
 from winner_final.utils.espn_nba_api import EspnNbaApi
 from winner_final.utils.files_utils import FilesUtils
@@ -8,7 +8,7 @@ espn_nba_api = EspnNbaApi()
 playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
 algo_utils = AlgoUtils()
-table_data =playwright_main.set_telesport_page( "כדורסל",DAYS,"wnba")
+table_data =playwright_main.set_telesport_page( FILTER,DAYS,"wnba")
 results_not_sorted =[]
 for data in table_data:
     excel_data = files_utils.get_team_ids(data, "wnba.xlsx")
