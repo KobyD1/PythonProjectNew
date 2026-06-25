@@ -1,6 +1,5 @@
-from asyncio.windows_events import NULL
-import os
-import unicodedata
+
+from datetime import datetime
 
 import pandas as pd
 
@@ -115,6 +114,20 @@ class FilesUtils:
                 print(build_row(row))
 
             print(build_separator("└", "─", "┴", "┘"))
+
+
+    def wrote_to_text_file(self,list,path , prefix):
+        timestamp = datetime.now().strftime("%m_%d_%H_%M")
+        file = path+"/results/"+prefix+"_"+timestamp+".txt"
+        with open(file, "w", encoding="utf-8") as f:
+            f.write(f"Timestamp: {timestamp}\n")
+            f.write("-" * 40 + "\n")
+
+            for item in list:
+                f.write(str(item) + "\n")
+
+
+
 
 
 

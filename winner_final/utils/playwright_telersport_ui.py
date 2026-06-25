@@ -9,7 +9,7 @@ class PlaywrightMainUI():
         pass
 
 
-    def set_telesport_page(self, title_index, days_count,league):
+    def set_telesport_page(self, title_index, days_count,league="nba"):
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=False)
             page = browser.new_page()
