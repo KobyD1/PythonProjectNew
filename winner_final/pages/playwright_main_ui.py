@@ -156,12 +156,10 @@ class telesport_main_page:
 
 
 
-        added_points =part_with_ref.split("-")[0].replace(")","")
+        added_points =part_with_ref.split(")")[0].replace(")","")
 
-
-        num = re.sub(r'[^\d\.\-+]', '', added_points)
-        num = num.replace("..","")
-        rate = float(num)
+        num= re.findall(r"\d+", added_points)
+        rate = float(num[0])
         row_data['description'] = '2 Teams Game Results'
 
         description = '2 Teams Game Results'
