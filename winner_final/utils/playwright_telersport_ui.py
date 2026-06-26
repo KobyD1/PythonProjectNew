@@ -24,6 +24,7 @@ class PlaywrightMainUI():
                  case 0:
                     print (" Run without filters ")
                  case 1:
+
                     telesport_page.set_table_filters(title_index)
                     telesport_page.set_table_league(league)
 

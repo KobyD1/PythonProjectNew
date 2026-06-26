@@ -1,5 +1,6 @@
 
 from datetime import datetime
+import unicodedata
 
 import pandas as pd
 
@@ -57,8 +58,6 @@ class FilesUtils:
             return None
 
     def visual_length(self, text):
-        """ מחשב אורך ויזואלי נכון גם לעברית וגם לאנגלית """
-        import unicodedata
         count = 0
         for ch in text:
             if unicodedata.bidirectional(ch) in ("R", "AL"):
@@ -119,8 +118,8 @@ class FilesUtils:
     def wrote_to_text_file(self,list,path , prefix):
         timestamp = datetime.now().strftime("%m_%d_%H_%M")
         file = path+"/results/"+prefix+"_"+timestamp+".txt"
+        print (f"Writing to file : {file}")
         with open(file, "w", encoding="utf-8") as f:
-            f.write(f"Timestamp: {timestamp}\n")
             f.write("-" * 40 + "\n")
 
             for item in list:
