@@ -81,7 +81,7 @@ class telesport_main_page:
                 print(f"  יחס הימורים ל1  : {row_data["bet1"]}")
                 if "bet3" in row_data:
                     print(f"  יחס הימורים ל2  : {row_data['bet3']}")
-                    print(f"  יחס הימורים לx  : {row_data["bet2"]}")
+                    print(f"  יחס הימורים לתיקו  : {row_data["bet2"]}")
                 else:
                     print(f"  יחס הימורים ל2  : {row_data['bet2']}")
 
@@ -183,12 +183,6 @@ class telesport_main_page:
             rate = 0.0
 
 
-        # if parts[0].count("+") > 0:
-        #     part_with_ref = parts[0]
-        #     team_with_added_points = team_a
-        # else:
-        #     part_with_ref = parts[1]
-        #     team_with_added_points = team_b
 
         if team_with_added_points==team_a or team_with_added_points==team_b:
             added_points =part_with_ref.split(")")[0].replace(")","")
