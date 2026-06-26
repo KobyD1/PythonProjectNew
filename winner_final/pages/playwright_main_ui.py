@@ -78,16 +78,18 @@ class telesport_main_page:
 
             if  ":"  in row_data["status_time"] and len(row_data)>0 and bet_empty_counter <1:
                 print(f"---- משחק פעיל נמצא בתכניה ----")
-                print(f"  יחס הימורים ל1  : {row_data["bet1"]}")
                 if "bet3" in row_data:
-                    print(f"  יחס הימורים ל2  : {row_data['bet3']}")
-                    print(f"  יחס הימורים לתיקו  : {row_data["bet2"]}")
+                    print(
+                        f" יחסי הימורים ל: תיקו- {row_data['bet2']}, "
+                        f"2 - {row_data['bet3']}, "
+                        f"1 - {row_data['bet1']}"
+                    )
+
                 else:
-                    print(f"  יחס הימורים ל2  : {row_data['bet2']}")
+                    print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
 
                 print(f" שעת משחק_סטטוס: {row_data["status_time"]}")
                 print(f"  משחק: {teams}")
-                print(f"  תוצאה: {score}")
                 print(f"  פרטי משחק תכניה: {row_data["program"]}")
                 print(f"  פרטי משחק משחק: {row_data["game_in_program"]}")
 
