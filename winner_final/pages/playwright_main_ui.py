@@ -28,6 +28,23 @@ class telesport_main_page:
     def set_date(self):
         self.page.locator("div.sportLive_calendar_left").click()
 
+    def row_data_parser(self,row,team_a,team_b,rate,description,team_with_added_points):
+        row_data = {}
+        game = row.locator(".tdWinId").inner_text().replace(".", "")
+
+        status_time = row.locator(".tdWinnerStatus").inner_text().strip()
+
+        row_data["status_time"] = status_time
+        row_data["team_a"] = team_a
+        row_data["team_b"] = team_b
+        row_data["rate"] = rate
+        row_data["description"] = description
+        row_data["team_with_added_points"] = team_with_added_points
+        row_data["game"] = game
+        row_data["program"] = row_data["game"].split(")")[0].replace("(", "")
+        row_data["game_in_program"] = row_data["game"].split(")")[1].strip()
+        return row_data
+
     def get_table_content(self):
         table_content = []
 
@@ -41,51 +58,38 @@ class telesport_main_page:
             if not row.is_visible():
                 continue
 
-            row_data= {}
             teams = row.locator(".th_td_WinnerteamsAndBetType").inner_text().strip()
-            game = row.locator(".tdWinId").inner_text().replace(".","")
             if teams.count("מעל")or teams.count("טווחים") :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_uder_over(teams)
-                status_time = row.locator(".tdWinnerStatus").inner_text().strip()
-                row_data["status_time"] = status_time
-                row_data["team_a"] = team_a
-                row_data["team_b"] = team_b
-                row_data["rate"] = rate
-                row_data["description"] = description
-                row_data["team_with_added_points"] = team_with_added_points
-                row_data["game"] = game
+                row_data = self.row_data_parser(row,team_a,team_b,rate,description,team_with_added_points)
+
 
                 score = row.locator(".tdWinScore").inner_text().strip()
                 row_data, bet_empty_counter = self.bet_parser(row, row_data)
 
-
-            elif teams.count("+") > 0 :
+            else:
+            # elif teams.count("+") > 0 :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_game(teams)
-
-                status_time = row.locator(".tdWinnerStatus").inner_text().strip()
-                row_data["status_time"] = status_time
-                row_data["team_a"] = team_a
-                row_data["team_b"] = team_b
-                row_data["rate"] = rate
-                row_data["description"] = description
-                row_data["team_with_added_points"] = team_with_added_points
-                row_data["game"] = game
+                row_data = self.row_data_parser(row,team_a,team_b,rate,description,team_with_added_points)
 
                 score = row.locator(".tdWinScore").inner_text().strip()
-            row_data,bet_empty_counter = self.bet_parser(row,row_data)
+                row_data,bet_empty_counter = self.bet_parser(row,row_data)
 
 
-            if  ":"  in status_time and len(row_data)>0 and bet_empty_counter <1:
-                print(f"-------------{game}-------------")
-                print(f" משחק פעיל נמצא בתכניה ")
+            if  ":"  in row_data["status_time"] and len(row_data)>0 and bet_empty_counter <1:
+                print(f"---- משחק פעיל נמצא בתכניה ----")
+                print(f"  יחס הימורים ל1  : {row_data["bet1"]}")
+                if "bet3" in row_data:
+                    print(f"  יחס הימורים ל2  : {row_data['bet3']}")
+                    print(f"  יחס הימורים לx  : {row_data["bet2"]}")
+                else:
+                    print(f"  יחס הימורים ל2  : {row_data['bet2']}")
 
-                print(f"שורה מספר {actual_index}:")
-                print(f" שעת משחק_סטטוס: {status_time}")
-                print(f"  קבוצות: {teams}")
+                print(f" שעת משחק_סטטוס: {row_data["status_time"]}")
+                print(f"  משחק: {teams}")
                 print(f"  תוצאה: {score}")
-                print(f"  פרטי משחק(תכניה) משחק: {game}")
-
-                print(f"  יתרון לקבוצה : {team_with_added_points}")
+                print(f"  פרטי משחק תכניה: {row_data["program"]}")
+                print(f"  פרטי משחק משחק: {row_data["game_in_program"]}")
 
                 row_data["team_with_added_points"] = team_with_added_points
 
@@ -97,7 +101,6 @@ class telesport_main_page:
     def teams_data_parser_uder_over(self, teams):
         match teams:
             case _ if teams.count("(") > 1:
-                print("נמצא בתכניה " + teams)
                 parts = teams.split("(")
                 team_part = parts[1].split(")")[0]
                 number_part = parts[2].split(")")[0]
@@ -123,7 +126,6 @@ class telesport_main_page:
                 return team_a, team_b, rate, description, team_with_added_points
 
             case _ if "מעל/מתחת" in teams:
-                print("נמצא בתכניה " + teams)
                 parts = teams.split("-")
                 team_b = parts[1].strip()
                 index_1 = parts[0].index(")") + 1
@@ -151,34 +153,48 @@ class telesport_main_page:
 
             case _:
                 return "not found", "not found", "not found", "not found"
-
+    def parse_teams_under_over(self):
+        pass
 
     def teams_data_parser_game(self,teams):
         row_data = {}
         parts = []
-        print( teams +"נמצא בתכניה ")
         index= teams.index("-")
         parts.append(teams[:index])
         parts.append(teams[index+1:])
 
+        if (parts[1].count("(") > 0):
+            team_b = parts[1].strip().split("(")[0].strip()
+            team_a = parts[0].strip()
 
-        team_b = parts[1].strip().split("(")[0].strip()
-        team_a= parts[0].strip().split("(")[0].strip()
-
-        if parts[0].count("+") > 0:
-            part_with_ref = parts[0]
-            team_with_added_points = team_a
-        else:
             part_with_ref = parts[1]
             team_with_added_points = team_b
+        if (parts[0].count("(") > 0):
+
+            team_a= parts[0].strip().split("(")[0].strip()
+            part_with_ref = parts[0]
+            team_with_added_points = team_a
+            team_b = parts[1].strip()
+        else:
+            team_a = parts[0].strip()
+            team_b = parts[1].strip()
+            part_with_ref = None
+            team_with_added_points=None
+            rate = 0.0
 
 
+        # if parts[0].count("+") > 0:
+        #     part_with_ref = parts[0]
+        #     team_with_added_points = team_a
+        # else:
+        #     part_with_ref = parts[1]
+        #     team_with_added_points = team_b
 
-        added_points =part_with_ref.split(")")[0].replace(")","")
-
-        num= re.findall(r"\d+", added_points)
-        rate = float(num[0])
-        row_data['description'] = '2 Teams Game Results'
+        if team_with_added_points==team_a or team_with_added_points==team_b:
+            added_points =part_with_ref.split(")")[0].replace(")","")
+            num= re.findall(r"\d+", added_points)
+            rate = float(num[0])
+            row_data['description'] = '2 Teams Game Results'
 
         description = '2 Teams Game Results'
         return team_a,team_b,rate,description,team_with_added_points
