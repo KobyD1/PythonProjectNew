@@ -1,4 +1,5 @@
 import re
+from asyncio.windows_events import NULL
 
 
 class telesport_main_page:
@@ -127,6 +128,15 @@ class telesport_main_page:
 
                 return team_a, team_b, rate, description, team_with_added_points
 
+
+            case _ if "מעל/מתחת שערים" in teams and "-" not in teams:
+                parts = teams.split(")")
+                player = parts[1].strip()
+                rate = re.findall(r"\d+", parts[0])
+                description = '1 Player Under/Over'
+                return player, NULL, rate, description, NULL
+
+
             case _ if "מעל/מתחת" in teams:
                 parts = teams.split("-")
                 team_b = parts[1].strip()
@@ -171,7 +181,7 @@ class telesport_main_page:
 
             part_with_ref = parts[1]
             team_with_added_points = team_b
-        if (parts[0].count("(") > 0):
+        elif (parts[0].count("(") > 0):
 
             team_a= parts[0].strip().split("(")[0].strip()
             part_with_ref = parts[0]

@@ -19,7 +19,7 @@ class PlaywrightMainUI():
                 telesport_page.set_date()
                 time.sleep(2)
 
-
+            page.reload()
             match title_index:
                  case 0:
                     print (" Run without filters ")
@@ -27,7 +27,6 @@ class PlaywrightMainUI():
 
                     telesport_page.set_table_filters(title_index)
                     telesport_page.set_table_league(league)
-
 
             table_data = telesport_page.get_table_content()
             l= len(table_data)

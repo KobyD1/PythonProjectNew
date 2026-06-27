@@ -1,6 +1,7 @@
-
+import os
 from datetime import datetime
 import unicodedata
+from fpdf import FPDF
 
 import pandas as pd
 
@@ -115,15 +116,40 @@ class FilesUtils:
             print(build_separator("└", "─", "┴", "┘"))
 
 
-    def wrote_to_text_file(self,list,path , prefix):
-        timestamp = datetime.now().strftime("%m_%d_%H_%M")
-        file = path+"/results/"+prefix+"_"+timestamp+".txt"
-        print (f"Writing to file : {file}")
-        with open(file, "w", encoding="utf-8") as f:
-            f.write("-" * 40 + "\n")
 
-            for item in list:
-                f.write(str(item) + "\n")
+    def save_output(self, items, path, prefix, file_type="pdf"):
+
+
+        timestamp = datetime.now().strftime("%m_%d_%H_%M")
+        filename = f"{prefix}_{timestamp}.{file_type}"
+        full_path = os.path.join(path, "results", filename)
+
+        print(f"Saving file to : {full_path}")
+
+        os.makedirs(os.path.join(path, "results"), exist_ok=True)
+
+        if file_type == "txt":
+            with open(full_path, "w", encoding="utf-8") as f:
+                f.write("-" * 40 + "\n")
+                for item in items:
+                    f.write(str(item) + "\n")
+
+        elif file_type == "pdf":
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.add_font("DejaVu", "", "utils/dejavu-sans/ttf/DejaVuSans.ttf", uni=True)
+            pdf.set_font("DejaVu", size=12)
+            pdf.cell(0, 10, "-" * 40, ln=True)
+            for item in items:
+                pdf.cell(0, 10, str(item), ln=True)
+
+            pdf.output(full_path)
+
+        else:
+            raise ValueError("file_type must be 'txt' or 'pdf'")
+
+        return full_path
+
 
 
 

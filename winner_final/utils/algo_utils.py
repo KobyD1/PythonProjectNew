@@ -17,31 +17,58 @@ class AlgoUtils:
                 team_added = data["team_with_added_points"]
                 rate = data["rate"]
 
+                # if data["team_b"] == team_added:
+                #     score_b = team_b_data['avg_diff'] + rate
+                #     score = score_b - team_a_data['avg_diff']
+                #     if score > 0:
+                #         favorite = "2"
+                #         result["bet"] = data["bet2"]
+                #
+                #
+                #     else:
+                #         favorite = "1"
+                #         score = score * -1
+                #         result["bet"] = data["bet1"]
+                #
+                # elif data["team_a"] == team_added:
+                #     score_a = team_a_data['avg_diff'] + rate
+                #     score = score_a - team_b_data['avg_diff']
+                #     if score > 0:
+                #         favorite = "1"
+                #         result["bet"] = data["bet1"]
+                #
+                #     else :
+                #         favorite = "2"
+                #         result["bet"] = data["bet2"]
+                #
+                #         score = score * -1
+
                 if data["team_b"] == team_added:
-                    score_b = team_b_data['avg_diff'] + rate
-                    score = score_b - team_a_data['avg_diff']
-                    if score > 0:
-                        favorite = "2"
-                        result["bet"] = data["bet2"]
+                    added_diff = team_b_data['avg_diff']
+                    other_diff = team_a_data['avg_diff']
+                    bet_added = data["bet2"]
+                    bet_other = data["bet1"]
+                    favorite_added = "2"
+                    favorite_other = "1"
 
+                else:
+                    added_diff = team_a_data['avg_diff']
+                    other_diff = team_b_data['avg_diff']
+                    bet_added = data["bet1"]
+                    bet_other = data["bet2"]
+                    favorite_added = "1"
+                    favorite_other = "2"
 
-                    else:
-                        favorite = "1"
-                        score = score * -1
-                        result["bet"] = data["bet1"]
+                score = added_diff + rate - other_diff
 
-                elif data["team_a"] == team_added:
-                    score_a = team_a_data['avg_diff'] + rate
-                    score = score_a - team_b_data['avg_diff']
-                    if score > 0:
-                        favorite = "1"
-                        result["bet"] = data["bet1"]
+                if score > 0:
+                    favorite = favorite_added
+                    result["bet"] = bet_added
+                else:
+                    favorite = favorite_other
+                    result["bet"] = bet_other
+                    score = -score
 
-                    else :
-                        favorite = "2"
-                        result["bet"] = data["bet2"]
-
-                        score = score * -1
                     team_to_add,score_add = self.presentage_calculator(team_a_data, team_b_data,favorite)
                     if team_to_add ==favorite:
                         score =score+score_add

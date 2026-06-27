@@ -22,8 +22,6 @@ for data in table_data:
         print ("did not analyze :results by API did not found, missing info at form ... ")
         continue
 
-
-
     results =algo_utils.calculate_game_basketball_algo(stats_a,stats_b,data)
     results_not_sorted.append(results)
 results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
