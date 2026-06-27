@@ -1,9 +1,19 @@
 import os
 from datetime import datetime
 import unicodedata
+import os
 from fpdf import FPDF
-
 import pandas as pd
+import os
+
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from bidi.algorithm import get_display
+import arabic_reshaper
+from reportlab.platypus import SimpleDocTemplate, Paragraph
 
 from winner_final.globals import EXCEL_PREFIX
 
@@ -116,8 +126,7 @@ class FilesUtils:
             print(build_separator("└", "─", "┴", "┘"))
 
 
-
-    def save_output(self, items, path, prefix, file_type="pdf"):
+    def save_output(self, items, path, prefix, file_type="txt"):
 
 
         timestamp = datetime.now().strftime("%m_%d_%H_%M")
@@ -132,21 +141,9 @@ class FilesUtils:
             with open(full_path, "w", encoding="utf-8") as f:
                 f.write("-" * 40 + "\n")
                 for item in items:
+                    item.pop("description", None)
                     f.write(str(item) + "\n")
 
-        elif file_type == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.add_font("DejaVu", "", "utils/dejavu-sans/ttf/DejaVuSans.ttf", uni=True)
-            pdf.set_font("DejaVu", size=12)
-            pdf.cell(0, 10, "-" * 40, ln=True)
-            for item in items:
-                pdf.cell(0, 10, str(item), ln=True)
-
-            pdf.output(full_path)
-
-        else:
-            raise ValueError("file_type must be 'txt' or 'pdf'")
 
         return full_path
 
@@ -156,3 +153,36 @@ class FilesUtils:
 
 
 
+
+    def convert_txt_folder_to_pdf(self,folder_path):
+        pdfmetrics.registerFont(TTFont("DejaVu", "DejaVuSans.ttf"))
+
+        styles = getSampleStyleSheet()
+        style = styles["Normal"]
+        style.fontName = "DejaVu"
+        style.fontSize = 12
+        style.leading = 16
+        style.rightIndent = 0
+        style.leftIndent = 0
+
+        for filename in os.listdir(folder_path):
+            if filename.lower().endswith(".txt"):
+                txt_path = os.path.join(folder_path, filename)
+                pdf_path = os.path.join(folder_path, filename[:-4] + ".pdf")
+
+                doc = SimpleDocTemplate(pdf_path, pagesize=A4,
+                                        rightMargin=40, leftMargin=40,
+                                        topMargin=40, bottomMargin=40)
+
+                story = []
+
+                with open(txt_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        # עיבוד עברית: reshaping + bidi
+                        reshaped = arabic_reshaper.reshape(line)
+                        bidi_text = get_display(reshaped)
+
+                        story.append(Paragraph(bidi_text, style))
+
+                doc.build(story)
+                print(f"נוצר PDF: {pdf_path}")

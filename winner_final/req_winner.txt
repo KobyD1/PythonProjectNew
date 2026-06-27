@@ -3,3 +3,4 @@ pytest-playwright == 0.6.0
 pandas
 openpyxl
 fpdf == 1.7.2
+python-bidi

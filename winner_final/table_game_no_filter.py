@@ -7,8 +7,9 @@ from winner_final.utils.playwright_telersport_ui import PlaywrightMainUI
 playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
 algo_utils = AlgoUtils()
-table_data =playwright_main.set_telesport_page(0,0,"wnba")
-files_utils.save_output(table_data, PATH_PROGRAM_TEXT,"program","pdf")
+table_data =playwright_main.set_telesport_page(1,1,"wnba")
+path = files_utils.save_output(table_data, PATH_PROGRAM_TEXT,"program")
+files_utils.convert_txt_folder_to_pdf(PATH_PROGRAM_TEXT+"/results")
 
 
 print ("********  End  *********")
