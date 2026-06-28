@@ -21,11 +21,12 @@ def digits_summery_by_int  (num_to_analyze):
     else:
         print(f"{num_to_analyze} is not correct")
 
-    return summery
+    return summery,num_to_analyze
 
 
 number ="123"
 number_as_int = 234
 sum = digits_summery_by_str(number)
 digits_summery_by_str("1234")
-sum_as_int = digits_summery_by_int(number_as_int)
+summery,num_to_analyze = digits_summery_by_int(number_as_int)
+print ("test End")
