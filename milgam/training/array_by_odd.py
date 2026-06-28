@@ -4,7 +4,7 @@ even_summery = 0
 
 for num in nums:
     if num % 2 == 0:
-        print ("Even num found the value is"+" { "+f"{num} ")
+        print ("Even num found the value is"," { "+f"{num} ","")
         even_summery+=num
 
     else:
