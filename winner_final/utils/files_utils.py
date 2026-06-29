@@ -200,3 +200,15 @@ class FilesUtils:
 
                 doc.build(story)
                 print(f"Created  PDF: {pdf_path}")
+
+    def wrote_to_text_file(self,list,path , prefix):
+        timestamp = datetime.now().strftime("%m_%d_%H_%M")
+        file = path+"/results/"+prefix+"_"+timestamp+".txt"
+        print (f"Writing to file : {file}")
+        with open(file, "w", encoding="utf-8") as f:
+            f.write("-" * 40 + "\n")
+
+            for item in list:
+                f.write(str(item) + "\n")
+
+
