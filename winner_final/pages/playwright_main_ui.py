@@ -48,22 +48,20 @@ class telesport_main_page:
         return row_data
 
     def get_table_content(self):
-        table_content = []
-        row_data_to_print = {}
-        table_content_to_print = []
 
+        table_content = []
 
         status_time=""
         rows = self.page.locator("tr.winnerBodyTr:visible").all()
 
         actual_index = 1
         for row in rows:
-            bet_empty_counter = 0
 
             if not row.is_visible():
                 continue
 
             teams = row.locator(".th_td_WinnerteamsAndBetType").inner_text().strip()
+            teams=teams.replace("\xa0", "")
             if teams.count("מעל")or teams.count("טווחים") :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_uder_over(teams)
                 row_data = self.row_data_parser(row,team_a,team_b,rate,description,team_with_added_points)
@@ -73,7 +71,6 @@ class telesport_main_page:
                 row_data, bet_empty_counter = self.bet_parser(row, row_data)
 
             else:
-            # elif teams.count("+") > 0 :
                 team_a,team_b,rate,description,team_with_added_points = self.teams_data_parser_game(teams)
                 row_data = self.row_data_parser(row,team_a,team_b,rate,description,team_with_added_points)
 
@@ -91,21 +88,15 @@ class telesport_main_page:
                     )
 
 
-
-
-
-
                 else:
                     print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
 
 
                 print(f" שעת משחק_סטטוס: {row_data["status_time"]}")
                 print(f"  משחק: {teams}")
+
                 print(f"  פרטי משחק תכניה: {row_data["program"]}")
                 print(f"  פרטי משחק משחק: {row_data["game_in_program"]}")
-
-
-
                 row_data["team_with_added_points"] = team_with_added_points
                 table_content.append(row_data)
             actual_index += 1

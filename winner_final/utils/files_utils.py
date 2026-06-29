@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 import unicodedata
-import os
+import sys
 from fpdf import FPDF
 import pandas as pd
 import os
@@ -153,6 +153,18 @@ class FilesUtils:
 
 
 
+    def get_file_name(self,path,prefix):
+        timestamp = datetime.now().strftime("%m_%d_%H_%M")
+        filename = f"{prefix}_{timestamp}.txt"
+        full_path = os.path.join(path, "results", filename)
+
+        return full_path
+
+        print(f"Saving file to : {full_path}")
+
+
+
+
 
     def convert_txt_folder_to_pdf(self,folder_path):
         pdfmetrics.registerFont(TTFont("DejaVu", "DejaVuSans.ttf"))
@@ -178,11 +190,13 @@ class FilesUtils:
 
                 with open(txt_path, "r", encoding="utf-8") as f:
                     for line in f:
-                        # עיבוד עברית: reshaping + bidi
+                        line = line.replace("\xa0", "")
+
                         reshaped = arabic_reshaper.reshape(line)
                         bidi_text = get_display(reshaped)
+                        bidi_text
 
                         story.append(Paragraph(bidi_text, style))
 
                 doc.build(story)
-                print(f"נוצר PDF: {pdf_path}")
+                print(f"Created  PDF: {pdf_path}")
