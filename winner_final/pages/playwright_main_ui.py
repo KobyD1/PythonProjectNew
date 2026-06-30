@@ -21,7 +21,15 @@ class telesport_main_page:
     def set_table_league(self,league="wnba"):
         self.page.get_by_text("ליגות").nth(0).click()
         if league == "wnba":
-            self.page.locator("#checkbox_1663").click()
+
+
+            loc = self.page.locator("#checkbox_1663")
+            if loc.is_visible():
+                loc.click()
+
+            loc = self.page.locator("#checkbox_18128992")
+            if loc.is_visible():
+                loc.click()
 
         self.page.locator("div.sportlive_LeagueSelect_btnFilter").click()
         print (f"success to click on {league}")
@@ -165,12 +173,14 @@ class telesport_main_page:
                 return team_a, team_b, rate, description, team_with_added_points
 
             case _:
-                return "not found", "not found", "not found", "not found"
+                return "not found", "not found", "not found", "not found", "not found"
     def parse_teams_under_over(self):
         pass
 
     def teams_data_parser_game(self,teams):
         row_data = {}
+        team_a = ""
+        team_b = ""
         parts = []
         index= teams.index("-")
         parts.append(teams[:index])
@@ -189,12 +199,12 @@ class telesport_main_page:
             team_with_added_points = team_a
             team_b = parts[1].strip()
         else:
-            team_a = parts[0].strip()
+            if parts[0].count(" ") < 3:
+                team_a = parts[0].strip()
             team_b = parts[1].strip()
             part_with_ref = None
-            team_with_added_points=None
+            team_with_added_points="not found"
             rate = 0.0
-
 
 
         if team_with_added_points==team_a or team_with_added_points==team_b:

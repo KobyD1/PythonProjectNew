@@ -19,7 +19,7 @@ class PlaywrightMainUI():
                 telesport_page.set_date()
                 time.sleep(2)
 
-            page.reload()
+            # page.reload()
             match title_index:
                  case 0:
                     print (" Run without filters ")
