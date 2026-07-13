@@ -24,6 +24,8 @@ with sync_playwright() as p:
         price_text = price.inner_text()
         print(price_text)
 
+        price_text_ils = price_text.replace("$","ILS")
+
 
     url = page.url
 
