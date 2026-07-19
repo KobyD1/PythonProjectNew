@@ -29,7 +29,6 @@ class TestSwaglabsLogin():
 
     def test_swaglabs_login_error_message(self,setup_playwright_swaglabs):
         page = setup_playwright_swaglabs
-        product_page = ProductPage(page)
         welcome_page = WelcomePage(page)
 
         welcome_page.login_by_user_password("failure","secret_sauce")
@@ -38,4 +37,14 @@ class TestSwaglabsLogin():
         exp_text = "Epic sadface: Username and password do not match any user in this service"
         assert exp_text == act_text , "Error message is not as expected"
         assert is_visible ==True , "Error message did not apears in case of incorrect login"
+        print ("test end")
+
+
+    def test_swaglabs_product_page_title(self,setup_playwright_swaglabs):
+        page = setup_playwright_swaglabs
+        product_page = ProductPage(page)
+        welcome_page = WelcomePage(page)
+
+        welcome_page.login_by_user_password("standard_user","secret_sauce")
+        product_page.get_title()
         print ("test end")
