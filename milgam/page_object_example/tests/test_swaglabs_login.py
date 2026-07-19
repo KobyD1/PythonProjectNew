@@ -33,6 +33,9 @@ class TestSwaglabsLogin():
         welcome_page = WelcomePage(page)
 
         welcome_page.login_by_user_password("failure","secret_sauce")
-        is_visible = welcome_page.get_error_message()
-        assert is_visible == True , "Login did not success as expected"
+        is_visible = welcome_page.get_error_message_visible()
+        act_text = welcome_page.get_error_message_text()
+        exp_text = "Epic sadface: Username and password do not match any user in this service"
+        assert exp_text == act_text , "Error message is not as expected"
+        assert is_visible ==True , "Error message did not apears in case of incorrect login"
         print ("test end")

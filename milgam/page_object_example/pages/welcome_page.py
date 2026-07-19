@@ -20,8 +20,15 @@ class WelcomePage:
         login_button.click()
 
 
-    def get_error_message(self):
+    def get_error_message_visible(self):
         error_massage = self.page.locator("div[class='error-message-container error']")
         is_visible = error_massage.is_visible()
         print ("into get_error_message")
         return is_visible
+
+    def get_error_message_text(self):
+        error_massage = self.page.locator("div[class='error-message-container error']")
+        text = error_massage.inner_text()
+
+        print ("into get_error_message")
+        return text
