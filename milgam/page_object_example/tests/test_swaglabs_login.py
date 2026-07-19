@@ -9,8 +9,8 @@ class TestSwaglabsLogin():
         product_page = ProductPage(page)
         welcome_page = WelcomePage(page)
 
-        welcome_page.login_by_user_password()
-        welcome_page.get_error_message()
+        welcome_page.login_by_user_password("standard_user","secret_sauce")
+        assert page.url == "https://www.saucedemo.com/inventory.html" , "Login did not success as expecrted"
 
 
         print ("test end")
