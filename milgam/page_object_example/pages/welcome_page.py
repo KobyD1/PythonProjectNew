@@ -21,5 +21,7 @@ class WelcomePage:
 
 
     def get_error_message(self):
-        error_massage = self.page.locator("div[class='error-message-container.error']")
+        error_massage = self.page.locator("div[class='error-message-container error']")
+        is_visible = error_massage.is_visible()
         print ("into get_error_message")
+        return is_visible
