@@ -46,5 +46,6 @@ class TestSwaglabsLogin():
         welcome_page = WelcomePage(page)
 
         welcome_page.login_by_user_password("standard_user","secret_sauce")
-        product_page.get_title()
+        title_text =product_page.get_title()
+        assert title_text == "Swag Labs","Product page title is not as expected"
         print ("test end")
