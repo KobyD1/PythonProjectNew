@@ -15,6 +15,8 @@ index = full_name.index(" ")
 first_name_short = full_name[:index].strip()
 last_name = full_name[index+1:].strip()
 print (f"first name is {first_name_short},last name is {last_name}")
+full_name_swap = last_name_1+" "+first_name
+
 if len(last_name) > len(first_name_short):
     print ("The last name is longer than first name")
 else:
