@@ -2,6 +2,24 @@ class AlgoUtils:
     def __init__(self):
         pass
 
+    def calculate_football_algo(self, team_a_data, team_b_data):
+         position_diff = int(team_a_data["Position"].iloc[0])-int(team_b_data["Position"].iloc[0])
+         points_diff = int(team_a_data["Points"].iloc[0]) - int(team_b_data["Points"].iloc[0])
+         if (abs(position_diff>10)):
+             print ("Teams  found for Bancker Algo by position")
+             points = abs(position_diff)*10
+             if (abs(points_diff > 10)):
+                 print("Teams  found for Bancker Algo by points")
+                 points = points + (abs(points_diff) * 10)
+             # add points in case of home
+             if int(team_a_data["Position"].iloc[0]) > int(team_b_data["Position"].iloc[0]):
+                 points+=20
+                 return points
+
+
+         else :
+             print ("Teams positions diff are not for Bancker Algo")
+             return 0
 
     def under_over_algo(self,team_a,team_b,ref):
         print(f" Calculate Under Over for {team_a} and {team_b} with {ref}")
@@ -17,31 +35,6 @@ class AlgoUtils:
                 team_added = data["team_with_added_points"]
                 rate = data["rate"]
 
-                # if data["team_b"] == team_added:
-                #     score_b = team_b_data['avg_diff'] + rate
-                #     score = score_b - team_a_data['avg_diff']
-                #     if score > 0:
-                #         favorite = "2"
-                #         result["bet"] = data["bet2"]
-                #
-                #
-                #     else:
-                #         favorite = "1"
-                #         score = score * -1
-                #         result["bet"] = data["bet1"]
-                #
-                # elif data["team_a"] == team_added:
-                #     score_a = team_a_data['avg_diff'] + rate
-                #     score = score_a - team_b_data['avg_diff']
-                #     if score > 0:
-                #         favorite = "1"
-                #         result["bet"] = data["bet1"]
-                #
-                #     else :
-                #         favorite = "2"
-                #         result["bet"] = data["bet2"]
-                #
-                #         score = score * -1
 
                 if data["team_b"] == team_added:
                     added_diff = team_b_data['avg_diff']
@@ -94,7 +87,7 @@ class AlgoUtils:
                 elif diff < 10 and diff >-10 :
                     result["score"] = diff
                     print(
-                        f" Under/Over results, avg_total = {avg_total} ,rate = {data["rate"]} game = {data["team_a"]} VS{data["team_b"]}")
+                        f"***** Under/Over results, ממוצע נקודות למשחק = {avg_total} |ערך נקודות מטופס = {data["rate"]}| game = {data["team_a"]} VS{data["team_b"]} *****")
 
                 if diff>0 : # case of Over
                     result["favorite"]="1"

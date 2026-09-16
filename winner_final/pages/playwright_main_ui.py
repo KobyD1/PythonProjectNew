@@ -20,17 +20,18 @@ class telesport_main_page:
 
     def set_table_league(self,league="wnba"):
         self.page.get_by_text("ליגות").nth(0).click()
-        if league == "wnba":
+        match league:
+            case "wnba":
+                loc = self.page.locator("#checkbox_1663")
+            case "spain":
+                loc = self.page.locator("#checkbox_248")
+            case _:
+                print("league not found")
+                loc = None
 
 
-            loc = self.page.locator("#checkbox_1663")
-            if loc.is_visible():
-                loc.click()
-
-            loc = self.page.locator("#checkbox_18128992")
-            if loc.is_visible():
-                loc.click()
-
+        if loc.is_visible():
+            loc.click()
         self.page.locator("div.sportlive_LeagueSelect_btnFilter").click()
         print (f"success to click on {league}")
 
@@ -54,6 +55,71 @@ class telesport_main_page:
             row_data["program"] = row_data["game"].split(")")[0].replace("(", "")
             row_data["game_in_program"] = row_data["game"].split(")")[1].strip()
         return row_data
+
+    def get_football_table_content(self):
+
+        table_content = []
+
+        status_time=""
+        rows = self.page.locator("tr.winnerBodyTr:visible").all()
+
+        actual_index = 1
+        for row in rows:
+
+            if not row.is_visible():
+                continue
+
+            teams = row.locator(".th_td_WinnerteamsAndBetType").inner_text().strip()
+            teams=teams.replace("\xa0", "")
+
+            match True:
+
+
+                case _ if any(term in teams for term in ["מאצ'אפ", "כן/לא", "מחצית", "דקה"]):
+                    print("Not Rellevant game found")
+                    continue
+
+                case _ if any(term in teams for term in ["שערים", "טווחים"]):
+                    team_a, team_b, rate, description, team_with_added_points = self.teams_data_parser_uder_over(teams)
+                    row_data = self.row_data_parser(row, team_a, team_b, rate, description, team_with_added_points)
+                    score = row.locator(".tdWinScore").inner_text().strip()
+                    row_data, bet_empty_counter = self.bet_parser(row, row_data)
+
+                case _ if "(" not in teams:
+                    team_a, team_b, rate, description, team_with_added_points = self.teams_data_parser_game(teams)
+                    row_data = self.row_data_parser(row, team_a, team_b, rate, description, team_with_added_points)
+                    score = row.locator(".tdWinScore").inner_text().strip()
+                    row_data, bet_empty_counter = self.bet_parser(row, row_data)
+
+                case _:
+                    print("Not Rellevant game found")
+                    continue
+
+
+
+
+
+            if  ":"  in row_data["status_time"] and len(row_data)>0 and bet_empty_counter <1:
+                print(f"---- משחק פעיל נמצא בתכניה ----")
+                if "bet3" in row_data:
+                    print(
+                        f" יחסי הימורים ל: תיקו- {row_data['bet2']}, "
+                        f" 2 - {row_data['bet3']}, "
+                        f" 1 - {row_data['bet1']}"
+                    )
+
+
+                else:
+                    print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
+
+
+                print(f" שעת משחק: {row_data["status_time"]}")
+                print(f"  משחק: {teams}")
+                print(f"  פרטי משחק (תכניה-משחק): {row_data["program"]} - {row_data["game_in_program"]}")
+                row_data["team_with_added_points"] = team_with_added_points
+                table_content.append(row_data)
+            actual_index += 1
+        return table_content
 
     def get_table_content(self):
 
@@ -100,11 +166,10 @@ class telesport_main_page:
                     print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
 
 
-                print(f" שעת משחק_סטטוס: {row_data["status_time"]}")
+                print(f" שעת משחק: {row_data["status_time"]}")
                 print(f"  משחק: {teams}")
 
-                print(f"  פרטי משחק תכניה: {row_data["program"]}")
-                print(f"  פרטי משחק משחק: {row_data["game_in_program"]}")
+                print(f"  פרטי משחק (תכניה-משחק): {row_data["program"]} - {row_data["game_in_program"]}")
                 row_data["team_with_added_points"] = team_with_added_points
                 table_content.append(row_data)
             actual_index += 1

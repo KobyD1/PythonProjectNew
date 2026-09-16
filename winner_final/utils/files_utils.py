@@ -23,6 +23,23 @@ class FilesUtils:
         pass
 
 
+    def get_teams_names_from_excel(self,excel_file: str, team_a: str, team_b: str):
+
+
+        teams_data_excel = {}
+        df = pd.read_excel(EXCEL_PREFIX + excel_file)
+        teams_telesport = df["Telesport"]
+        team_a_data = df[teams_telesport == team_a]
+        result_a = team_a_data.iloc[0].to_dict()
+        team_b_data = df[teams_telesport == team_b]
+        print (team_b_data)
+
+        result_b = team_b_data.iloc[0].to_dict()
+        teams_data_excel["team_a"] = result_a["Team"].strip()
+        teams_data_excel["team_b"] = result_b["Team"].strip()
+        return teams_data_excel
+
+
 
 
     def get_team_data_from_excel(self,excel_path: str, team_a: str, team_b: str):
@@ -49,8 +66,10 @@ class FilesUtils:
         return teams_data_excel
 
 
-
-
+    def get_teams(self,team_a,team_b, excel_file):
+        path = EXCEL_PREFIX + excel_file
+        teams_telesport = self.get_team_data_from_excel(path, team_a, team_b)
+        print ("break")
 
     def get_team_ids(self,table_data, excel_file="wnba.xlsx"):
         path= EXCEL_PREFIX+excel_file
@@ -195,7 +214,6 @@ class FilesUtils:
                         reshaped = arabic_reshaper.reshape(line)
                         bidi_text = get_display(reshaped)
                         bidi_text
-
                         story.append(Paragraph(bidi_text, style))
 
                 doc.build(story)
