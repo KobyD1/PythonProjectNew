@@ -7,11 +7,13 @@ with sync_playwright() as p:
     help=page.get_by_role(role="link",name="HELP")
     help.click()
     help_url= page.url
+    help_text = help.inner_text()
     if help_url=="https://www.zara.com/il/en/help-center":
         print ("test success")
 
     else:
         print ("test fail")
+
 
 
 
