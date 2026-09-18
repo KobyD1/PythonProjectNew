@@ -9,7 +9,7 @@ class PlaywrightMainUI():
         pass
 
 
-    def set_telesport_page(self, title_index, days_count,league="nba"):
+    def set_telesport_page(self,days_count, type,league="nba"):
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=False,
@@ -25,14 +25,14 @@ class PlaywrightMainUI():
                 telesport_page.set_date()
 
             # page.reload()
-            match title_index:
+            match type:
                  case 0:
                     print (" Run without filters ")
                     table_data = telesport_page.get_table_content()
 
                  case 1:
                     print (" Run in basketball mode ")
-                    telesport_page.set_table_filters(title_index)
+                    telesport_page.set_table_filters(type)
                     telesport_page.set_table_league(league)
                     table_data = telesport_page.get_table_content()
 
@@ -42,9 +42,8 @@ class PlaywrightMainUI():
                     table_data = telesport_page.get_football_table_content()
 
 
-            l= len(table_data)
             print (57 * "*")
-            print (f"******* Winner Analyzer Completed - found {l} games *******")
+            print (f"******* Winner Analyzer Completed - found {len(table_data)} games *******")
             print (57 * "*")
 
             return table_data

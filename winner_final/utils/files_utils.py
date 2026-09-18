@@ -32,7 +32,6 @@ class FilesUtils:
         team_a_data = df[teams_telesport == team_a]
         result_a = team_a_data.iloc[0].to_dict()
         team_b_data = df[teams_telesport == team_b]
-        print (team_b_data)
 
         result_b = team_b_data.iloc[0].to_dict()
         teams_data_excel["team_a"] = result_a["Team"].strip()
@@ -96,7 +95,56 @@ class FilesUtils:
                 count += 1
         return count
 
-    def print_results(self, results_sorted):
+    def print_results(self, results_sorted ,headers,title="Results"):
+        print(f"\033[1m{title}\033[0m")
+        if results_sorted:
+
+            rows = [
+                [
+                    str(item["favorite"]),
+                    str(item["game"]),
+                    str(item["plan"]),
+                    f"{item['score']:.2f}",
+                    str(item["bet"]),
+                    str(item["avg_total"]) ,
+                ]
+                for item in results_sorted
+            ]
+
+            # calc. width of Col.
+            col_widths = []
+            for col in range(len(headers)):
+                max_len = max(
+                    self.visual_length(headers[col]),
+                    max(self.visual_length(row[col]) for row in rows)
+                )
+                col_widths.append(max_len)
+
+            def build_separator(left, fill, middle, right):
+                parts = [left]
+                for i, w in enumerate(col_widths):
+                    parts.append(fill * (w + 2))
+                    parts.append(middle if i < len(col_widths) - 1 else right)
+                return "".join(parts)
+
+            def build_row(values):
+                parts = ["│"]
+                for i, v in enumerate(values):
+                    pad = col_widths[i] - self.visual_length(v)
+                    parts.append(" " + v + " " * (pad + 1))
+                    parts.append("│")
+                return "".join(parts)
+
+            print(build_separator("┌", "─", "┬", "┐"))
+            print(build_row(headers))
+            print(build_separator("├", "─", "┼", "┤"))
+
+            for row in rows:
+                print(build_row(row))
+
+            print(build_separator("└", "─", "┴", "┘"))
+
+    def print_results_basketball(self, results_sorted):
         if results_sorted:
             headers = ["Favorite", "Game", "Plan", "Score", "Bet"]
 
@@ -105,7 +153,7 @@ class FilesUtils:
                     str(item["favorite"]),
                     str(item["game"]),
                     str(item["plan"]),
-                    f"{item['score']*10:.2f}",
+                    f"{item['score']:.2f}",
                     str(item["bet"]),
                 ]
                 for item in results_sorted

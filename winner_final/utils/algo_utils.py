@@ -2,27 +2,63 @@ class AlgoUtils:
     def __init__(self):
         pass
 
-    def calculate_football_algo(self, team_a_data, team_b_data):
-         position_diff = int(team_a_data["Position"].iloc[0])-int(team_b_data["Position"].iloc[0])
-         points_diff = int(team_a_data["Points"].iloc[0]) - int(team_b_data["Points"].iloc[0])
-         if (abs(position_diff>10)):
+    def calc_football_bancker_algo(self, team_a_data, team_b_data):
+         points = 0
+         favorite = ""
+         position_diff = int(team_a_data["Position"])-int(team_b_data["Position"])
+         position_diff_abs = abs(position_diff)
+         points_diff = int(team_a_data["Points"]) - int(team_b_data["Points"])
+         points_diff = abs(points_diff)
+         if position_diff_abs>9:
              print ("Teams  found for Bancker Algo by position")
-             points = abs(position_diff)*10
-             if (abs(points_diff > 10)):
-                 print("Teams  found for Bancker Algo by points")
-                 points = points + (abs(points_diff) * 10)
-             # add points in case of home
-             if int(team_a_data["Position"].iloc[0]) > int(team_b_data["Position"].iloc[0]):
-                 points+=20
-                 return points
+             points = position_diff_abs*10
+         if (points_diff > 9):
+             print("Teams  found for Bancker Algo by points")
+             points = points + (points_diff * 10)
+             # add points in case of home and calculate favorite
+         if position_diff > 0 :
+             points+=20
+             favorite = "team_a"
+         else:
+             favorite = "team_b"
+
+         print(f"{points}  points found favorite = {favorite} ")
+         return points,favorite
 
 
-         else :
-             print ("Teams positions diff are not for Bancker Algo")
-             return 0
+    def calc_football_under_over_algo(self,team_a,team_b, desc):
+        bonus = 0
+        favorite = ""
+        team_a_avg_total = team_a["avgTotalGoals"]
+        team_b_avg_total = team_b["avgTotalGoals"]
+        avg_total = (team_a_avg_total + team_b_avg_total) / 2
+        if abs(team_a_avg_total - team_a_avg_total)<0.5:
+            bonus += 10
+        if desc == "2 Teams Under/Over 2-3 Range":
 
-    def under_over_algo(self,team_a,team_b,ref):
-        print(f" Calculate Under Over for {team_a} and {team_b} with {ref}")
+            match avg_total:
+                case x if x < 1.1:
+                    favorite = 1
+                    bonus += 20
+                case x if 1.6 <= x < 2.5:
+                    favorite = 3
+                case x if x > 2.9:
+                    favorite = 2
+                    high_bonus = (avg_total-3)*15
+                    bonus =bonus+ 30 +high_bonus
+                case _:
+                    print("Other scoring range")
+                    favorite = 0
+
+
+
+
+
+        elif desc == "2 Teams Under/Over":
+            pass
+        print (f"Summery  - Bonus: {bonus} ,favorite: {favorite} , avg_total: {avg_total}")
+        return bonus , favorite,avg_total
+
 
     def calculate_game_basketball_algo(self,team_a_data,team_b_data,data):
         result = {}

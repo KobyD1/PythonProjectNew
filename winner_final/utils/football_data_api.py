@@ -8,9 +8,67 @@ class FootballDataApi:
         self.url = f"https://api.football-data.org/v4/competitions/"
         self.headers = {"X-Auth-Token": "6e8b3c65a58f4a05b874d72fe4170fd7"}
 
+    def get_teams_data(self, league, teams=None) -> list[dict]:
+        response = requests.get(
+            f"{self.url}{league}/standings", headers=self.headers
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        # נרמול רשימת הקבוצות המבוקשות (מטפל ברשימה או מחרוזת בודדת)
+        if isinstance(teams, str):
+            teams = [teams]
+        elif teams is None:
+            teams = []
+
+        target_teams = [t.lower() for t in teams if t]
+
+        teams_data = []
+
+        for entry in data["standings"][0]["table"]:
+            team_name = entry["team"]["name"]
+
+            # סינון לפי רשימת הקבוצות
+            if target_teams and not any(
+                    t in team_name.lower() for t in target_teams
+            ):
+                continue
+
+            played = entry["playedGames"]
+            goals_for = entry["goalsFor"]
+            goals_against = entry["goalsAgainst"]
+            total_goals = goals_for + goals_against
+
+            if played > 0:
+                teams_data.append(
+                    {
+                        "Position": int(entry["position"]),
+                        "Team": team_name,
+                        "Points": int(entry["points"]),
+                        "avgGoalsFor": round(goals_for / played, 2),
+                        "avgGoalsAgainst": round(goals_against / played, 2),
+                        "avgTotalGoals": round(total_goals / played, 2),
+                    }
+                )
+
+        # הדפסת הנתונים עבור כל קבוצה שנמצאה
+        if teams_data:
+            for team in teams_data:
+                print(
+                    f" {team['Team']} Position: {team['Position']}, Points: {team['Points']}"
+                )
+                print(
+                    f"Avg Goals : For - {team['avgGoalsFor']}, Against - {team['avgGoalsAgainst']}, Total - {team['avgTotalGoals']}\n"
+                )
+        else:
+            print("No teams matching the search criteria were found.")
+
+        # החזרת ה-list המכיל את המילונים
+        return teams_data
     # PL (England), PD (Spain), SA (Italy)
     def get_team_data(self,league,team=""):
         response = requests.get(f"{self.url}{league}/standings", headers=self.headers)
+        response.raise_for_status()
         data = response.json()
 
         teams_data = []
@@ -32,22 +90,18 @@ class FootballDataApi:
                         "Position": int(entry["position"]),
                         "Team": team_name,
                         "Points": int(entry["points"]),
-                        "Avg Goals For": round(goals_for / played, 2),
-                        "Avg Goals Against": round(goals_against / played, 2),
-                        "Avg Total Goals": round(total_goals / played, 2),
+                        "avgGoalsFor": round(goals_for / played, 2),
+                        "avgGoalsAgainst": round(goals_against / played, 2),
+                        "avgTotalGoals": round(total_goals / played, 2),
                     }
                 )
 
         df = pd.DataFrame(teams_data)
 
         if not df.empty:
-            print(df.to_string(index=False))
+            print(f" {teams_data[0]['Team']} Position: {teams_data[0]["Position"]}, Points: {teams_data[0]["Points"]}")
+            print (f"Avg Goals : For -{teams_data[0]['avgGoalsFor']},Against -{teams_data[0]['avgGoalsAgainst']},Total -{teams_data[0]['avgTotalGoals']}")
         else:
             print("No team matching the search criteria was found.")
         return df
 
-    def is_valid_data(self, data):
-     if (data.get("team_a").count("(")+data.get("team_b").count("(")>0):
-        return False
-     if (data.get("team_a").count("(")+data.get("team_b").count("(")>0):
-        return False
