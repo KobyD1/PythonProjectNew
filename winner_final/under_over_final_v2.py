@@ -12,12 +12,12 @@ algo_utils = AlgoUtils()
 
 TARGET_DESCRIPTION = "2 Teams Under/Over 2-3 Range"
 EXCEL_FILE = "football_all.xlsx"
-DAY = 1
+DAY = 0
 
 
-def process_league_games(DAY: int, page: int, league_name: str, league_code: str) -> list[dict]:
+def process_league_games(day: int, type: int, league_name: str, league_code: str) -> list[dict]:
     results = []
-    table_data = playwright_main.set_telesport_page(DAY, page, league_name)
+    table_data = playwright_main.set_telesport_page(day, type, league_name)
 
     for data in table_data:
         team_a = data.get("team_a")
@@ -55,13 +55,13 @@ def process_league_games(DAY: int, page: int, league_name: str, league_code: str
 
 def main():
     targets = [
-        (2, 2, "spain", "PD"),
-        (2, 1, "england", "PL"),
+        ( "spain", "PD"),
+        (  "england", "PL"),
     ]
 
     results_not_sorted = []
-    for day, page, league_name, league_code in targets:
-        results_not_sorted.extend(process_league_games(DAY, page, league_name, league_code))
+    for   league_name, league_code in targets:
+        results_not_sorted.extend(process_league_games(DAY, 2, league_name, league_code))
 
     headers = ["Favorite", "Game", "Plan", "Score", "Bet", "Avg Goals"]
     results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
