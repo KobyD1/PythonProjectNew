@@ -3,27 +3,27 @@ class AlgoUtils:
         pass
 
     def calc_football_bancker_algo(self, team_a_data, team_b_data):
-         points = 0
-         favorite = ""
+         scores = 0
+         favorite = 0
          position_diff = int(team_a_data["Position"])-int(team_b_data["Position"])
          position_diff_abs = abs(position_diff)
          points_diff = int(team_a_data["Points"]) - int(team_b_data["Points"])
          points_diff = abs(points_diff)
          if position_diff_abs>9:
              print ("Teams  found for Bancker Algo by position")
-             points = position_diff_abs*10
-         if (points_diff > 9):
-             print("Teams  found for Bancker Algo by points")
-             points = points + (points_diff * 10)
-             # add points in case of home and calculate favorite
-         if position_diff > 0 :
-             points+=20
-             favorite = "team_a"
-         else:
-             favorite = "team_b"
+             scores = position_diff_abs*10
+             if (points_diff > 9):
+                 print("Teams  found for Bancker Algo by points")
+                 scores = scores + (points_diff * 10)
+                 # add points in case of home and calculate favorite
+             if position_diff > 0 :
+                 scores+=20
+                 favorite = 2
+             else:
+                 favorite = 1
 
-         print(f"{points}  points found favorite = {favorite} ")
-         return points,favorite
+         print(f"{scores}  scores found favorite = {favorite} ")
+         return scores,favorite
 
 
     def calc_football_under_over_algo(self,team_a,team_b, desc):

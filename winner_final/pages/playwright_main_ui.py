@@ -25,6 +25,9 @@ class telesport_main_page:
                 loc = self.page.locator("#checkbox_1663")
             case "spain":
                 loc = self.page.locator("#checkbox_248")
+
+            case "england":
+                loc = self.page.locator("#checkbox_90")
             case _:
                 print("league not found")
                 loc = None
@@ -32,6 +35,11 @@ class telesport_main_page:
 
         if loc.is_visible():
             loc.click()
+        else:
+            print (45 * "*")
+            print ("*****   ERROR : לא נמצאו ליגה פעילה בתכניה   *****")
+            print (45 * "*")
+
         self.page.locator("div.sportlive_LeagueSelect_btnFilter").click()
         print (f"success to click on {league}")
 
@@ -60,7 +68,6 @@ class telesport_main_page:
 
         table_content = []
 
-        status_time=""
         rows = self.page.locator("tr.winnerBodyTr:visible").all()
 
         actual_index = 1
@@ -82,13 +89,11 @@ class telesport_main_page:
                 case _ if any(term in teams for term in ["שערים", "טווחים"]):
                     team_a, team_b, rate, description, team_with_added_points = self.teams_data_parser_uder_over(teams)
                     row_data = self.row_data_parser(row, team_a, team_b, rate, description, team_with_added_points)
-                    score = row.locator(".tdWinScore").inner_text().strip()
                     row_data, bet_empty_counter = self.bet_parser(row, row_data)
 
                 case _ if "(" not in teams:
                     team_a, team_b, rate, description, team_with_added_points = self.teams_data_parser_game(teams)
                     row_data = self.row_data_parser(row, team_a, team_b, rate, description, team_with_added_points)
-                    score = row.locator(".tdWinScore").inner_text().strip()
                     row_data, bet_empty_counter = self.bet_parser(row, row_data)
 
                 case _:
@@ -102,9 +107,12 @@ class telesport_main_page:
             if  ":"  in row_data["status_time"] and len(row_data)>0 and bet_empty_counter <1:
                 print(f"---- משחק פעיל נמצא בתכניה ----")
                 if "bet3" in row_data:
+                    row_data['bet2'], row_data['bet3'] = row_data['bet3'], row_data['bet2']
+
                     print(
-                        f" יחסי הימורים ל: תיקו- {row_data['bet2']}, "
-                        f" 2 - {row_data['bet3']}, "
+
+                    f" יחסי הימורים ל: תיקו- {row_data['bet3']}, "
+                        f" 2 - {row_data['bet2']}, "
                         f" 1 - {row_data['bet1']}"
                     )
 

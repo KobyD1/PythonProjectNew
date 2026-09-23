@@ -1,3 +1,4 @@
+import time
 
 import pandas as pd
 import requests
@@ -12,10 +13,13 @@ class FootballDataApi:
         response = requests.get(
             f"{self.url}{league}/standings", headers=self.headers
         )
-        response.raise_for_status()
+        if (response.status_code == 429):
+            print ("429 found sleep and re-running.")
+            time.sleep(30)
+            response = requests.get(f"{self.url}{league}/standings", headers=self.headers)
+
         data = response.json()
 
-        # נרמול רשימת הקבוצות המבוקשות (מטפל ברשימה או מחרוזת בודדת)
         if isinstance(teams, str):
             teams = [teams]
         elif teams is None:
@@ -28,7 +32,6 @@ class FootballDataApi:
         for entry in data["standings"][0]["table"]:
             team_name = entry["team"]["name"]
 
-            # סינון לפי רשימת הקבוצות
             if target_teams and not any(
                     t in team_name.lower() for t in target_teams
             ):
@@ -51,7 +54,6 @@ class FootballDataApi:
                     }
                 )
 
-        # הדפסת הנתונים עבור כל קבוצה שנמצאה
         if teams_data:
             for team in teams_data:
                 print(
@@ -63,7 +65,6 @@ class FootballDataApi:
         else:
             print("No teams matching the search criteria were found.")
 
-        # החזרת ה-list המכיל את המילונים
         return teams_data
     # PL (England), PD (Spain), SA (Italy)
     def get_team_data(self,league,team=""):

@@ -23,6 +23,8 @@ manager_app.py - אפליקציית ניהול להרצת הסקריפטים ב�
   "interpreter"    - מפרש Python אחר להרצת הסקריפטים (ברירת מחדל: המפרש שמריץ את המנג'ר)
   "days_var"       - שם המשתנה שנכתב ב-globals.py (ברירת מחדל: "DAYS")
   "days_options"   - רשימת הערכים בתיבת "ימים" (ברירת מחדל: 1,2,3,5,7,10,14,21,30)
+  "error_marker"   - regex שקובע מתי נפתח באנר השגיאה (ברירת מחדל: המילה המדויקת ERROR,
+                     רגישה לאותיות רישיות - Traceback/Exception רגיל לא מפעילים אותו)
 """
 from __future__ import annotations
 
@@ -68,6 +70,9 @@ DEFAULT_DAYS_OPTIONS = ["1", "2", "3", "5", "7", "10", "14", "21", "30"]
 ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 ERR_RE = re.compile(r"\b(error|exception|critical|fatal|failed)\b", re.I)
 WARN_RE = re.compile(r"\bwarn(ing)?\b", re.I)
+# הבאנר הקופץ נדלק רק על המילה המדויקת ERROR (רגיש לאותיות רישיות) - לא על
+# "error" קטן, לא כחלק ממילה אחרת (למשל TclError), ולא בגלל Traceback/Exception סתם.
+ERROR_WORD_RE = re.compile(r"\bERROR\b")
 URL_RE = re.compile(r"https?://(?:localhost|127\.0\.0\.1):\d+")
 STREAMLIT_RE = re.compile(r"^\s*(?:import|from)\s+streamlit\b", re.M)
 
@@ -92,13 +97,14 @@ DEFAULT_COLORS = {
     "run": "#188038", "stop": "#c5221f", "restart": "#e37400",
     "refresh": "#5f6368", "colors": "#7b1fa2",
     "open": "#1a73e8", "clear": "#5f6368", "save": "#1a73e8", "copy": "#1a73e8",
+    "error_bg": "#c5221f",
 }
 COLOR_LABELS = {
     "bg": "רקע החלון", "log_bg": "רקע הלוג", "summary_bg": "רקע טבלת הסיכום",
     "run": "כפתור: הרץ", "stop": "כפתור: עצור", "restart": "כפתור: הפעל מחדש",
     "refresh": "כפתור: רענן", "colors": "כפתור: צבעים",
     "open": "כפתור: פתח בדפדפן", "clear": "כפתור: נקה", "save": "כפתור: שמור לוג",
-    "copy": "כפתור: העתק סיכום",
+    "copy": "כפתור: העתק סיכום", "error_bg": "רקע הודעת שגיאה (ERROR)",
 }
 HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 PALETTE_DARK = {"out": "#d4d4d4", "err": "#f48771", "warn": "#e5c07b",
@@ -347,6 +353,10 @@ class ManagerApp(tk.Tk):
                 self.cfg.get("summary_marker") or DEFAULT_SUMMARY_PATTERN, re.I)
         except re.error:
             self.summary_re = re.compile(DEFAULT_SUMMARY_PATTERN, re.I)
+        try:
+            self.error_re = re.compile(self.cfg.get("error_marker") or ERROR_WORD_RE.pattern)
+        except re.error:
+            self.error_re = ERROR_WORD_RE
 
         self.mode_var = tk.StringVar(value="auto")
         self.days_var_name = str(self.cfg.get("days_var") or DEFAULT_DAYS_VAR)
@@ -359,6 +369,8 @@ class ManagerApp(tk.Tk):
         self.clear_on_run = tk.BooleanVar(value=True)
         self.hide_summary = tk.BooleanVar(value=bool(self.cfg.get("hide_summary", False)))
         self.buttons: dict[str, ColorButton] = {}
+        self.err_active_task: Optional[str] = None
+        self.err_count = 0
 
         self._build_ui()
         self.refresh_tasks()
@@ -398,7 +410,25 @@ class ManagerApp(tk.Tk):
         self.status_lbl = ttk.Label(self, anchor="w", padding=(8, 3))
         self.status_lbl.pack(side="bottom", fill="x")
 
+        # ── באנר שגיאות: מוסתר כברירת מחדל, מופיע בכל פעם שנכתב ERROR בלוגים ──
+        self.err_banner = tk.Frame(self, bd=0)
+        self.err_icon = tk.Label(self.err_banner, text="⚠", font=("Segoe UI", 12, "bold"),
+                                 bd=0, pady=6)
+        self.err_icon.pack(side="left", padx=(10, 4))
+        self.err_lbl = tk.Label(self.err_banner, text="", font=("Segoe UI", 10, "bold"),
+                                anchor="w", justify="left", bd=0, pady=6)
+        self.err_lbl.pack(side="left", fill="x", expand=True)
+        self.err_goto_btn = tk.Button(self.err_banner, text="עבור ללוג", bd=0,
+                                      relief="flat", cursor="hand2",
+                                      command=self._goto_error)
+        self.err_goto_btn.pack(side="right", padx=(4, 6), pady=6)
+        self.err_close_btn = tk.Button(self.err_banner, text="✕", bd=0, relief="flat",
+                                       cursor="hand2", command=self._hide_error)
+        self.err_close_btn.pack(side="right", padx=(4, 10), pady=6)
+        # לא נארז (pack) עד שיש שגיאה בפועל - ר' _show_error / _hide_error
+
         paned = ttk.PanedWindow(self, orient="horizontal")
+        self.main_paned = paned
         paned.pack(fill="both", expand=True, padx=8, pady=(8, 4))
         left = ttk.Frame(paned)
         right = ttk.Frame(paned)
@@ -538,6 +568,13 @@ class ManagerApp(tk.Tk):
         s.configure("TPanedwindow", background=bg)
         self._style_text(self.text, c["log_bg"])
         self._style_text(self.sum_text, c["summary_bg"])
+        err_fg = contrast_fg(c["error_bg"])
+        self.err_banner.configure(bg=c["error_bg"])
+        for w in (self.err_icon, self.err_lbl):
+            w.configure(bg=c["error_bg"], fg=err_fg)
+        for w in (self.err_goto_btn, self.err_close_btn):
+            w.configure(bg=c["error_bg"], fg=err_fg, activebackground=shade(c["error_bg"], -0.15),
+                       activeforeground=err_fg, highlightthickness=0)
         for key, b in self.buttons.items():
             b.paint(c[key])
         self._update_header()
@@ -777,6 +814,8 @@ class ManagerApp(tk.Tk):
         self._reset_summary(t)                 # סיכום חדש לכל הרצה
         if t.name == self.selected:
             self._render_summary(t)
+        if self.err_active_task == t.name:
+            self._hide_error()
         self._sys(t, f"▶ [{time.strftime('%H:%M:%S')}] {subprocess.list2cmdline(cmd)}")
         self._update_row(t)
         threading.Thread(target=self._reader, args=(t.name, t.run_id, proc),
@@ -914,6 +953,8 @@ class ManagerApp(tk.Tk):
                 continue
             if kind == "line":
                 line, tag = self._classify(t, payload)
+                if self.error_re.search(line):
+                    self._show_error(t, line)
                 in_summary = self._feed_summary(t, line)
                 if not (in_summary and self.hide_summary.get()):
                     t.log.append((line, tag))
@@ -942,6 +983,28 @@ class ManagerApp(tk.Tk):
         t.log.append(item)
         if t.name == self.selected:
             self._append_lines([item])
+
+    # ── באנר שגיאות (מעל הלוג, מציג ERROR מכל סקריפט שרץ) ──
+    def _show_error(self, t: Task, line: str) -> None:
+        self.err_count += 1
+        self.err_active_task = t.name
+        text = line.strip() or "(שורה ריקה)"
+        if len(text) > 300:
+            text = text[:300] + "…"
+        self.err_lbl.config(text=text)
+        if not self.err_banner.winfo_ismapped():
+            self.err_banner.pack(side="top", fill="x", before=self.main_paned)
+
+    def _hide_error(self) -> None:
+        self.err_banner.pack_forget()
+        self.err_active_task = None
+
+    def _goto_error(self) -> None:
+        name = self.err_active_task
+        if name and self.tree.exists(name):
+            self.tree.selection_set(name)
+            self.on_select()
+        self._hide_error()
 
     # ── תצוגת הלוג ──
     def _clear_widget(self) -> None:
