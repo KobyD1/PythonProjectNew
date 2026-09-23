@@ -13,6 +13,7 @@ manager_app.py - אפליקציית ניהול להרצת הסקריפטים ב�
   * הרצה של כמה סקריפטים במקביל, לוג נפרד לכל אחד
   * טבלת Summary שהסקריפט מדפיס מזוהה ומוצגת בשדה נפרד מהלוג
   * צבע לכל כפתור ולכל רקע (כפתור "🎨 צבעים"), נשמר בין הרצות
+  * תיבת "ימים" נפתחת (dropdown) שכותבת מיד DAYS = <ערך> לתוך globals.py
   * עצירה של כל עץ התהליכים (כולל תהליכי-בן של קבצי .bat)
 
 הגדרות מתקדמות בקובץ .manager_config.json (אופציונלי):
@@ -20,6 +21,8 @@ manager_app.py - אפליקציית ניהול להרצת הסקריפטים ב�
   "names"          - שמות תצוגה לקבצים,  {"file.py": "השם שלי"}
   "visible"        - אילו קבצים מוצגים,  {"globals.py": false}
   "interpreter"    - מפרש Python אחר להרצת הסקריפטים (ברירת מחדל: המפרש שמריץ את המנג'ר)
+  "days_var"       - שם המשתנה שנכתב ב-globals.py (ברירת מחדל: "DAYS")
+  "days_options"   - רשימת הערכים בתיבת "ימים" (ברירת מחדל: 1,2,3,5,7,10,14,21,30)
 """
 from __future__ import annotations
 
@@ -56,6 +59,11 @@ MAX_ITEMS_PER_TICK = 2000       # מגבלת שורות לעיבוד בכל רי
 
 # קבצי עזר שאינם נועדו להרצה ישירה - מוסתרים כברירת מחדל
 HELPER_FILES = {"__init__.py", "globals.py", "uiutils.py", Path(__file__).name.lower()}
+
+# ── תיבת "ימים" (days) שנכתבת ישירות ל-globals.py ──
+GLOBALS_FILE = BASE_DIR / "globals.py"
+DEFAULT_DAYS_VAR = "DAYS"                              # שם המשתנה שנכתב/נקרא ב-globals.py
+DEFAULT_DAYS_OPTIONS = ["1", "2", "3", "5", "7", "10", "14", "21", "30"]
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 ERR_RE = re.compile(r"\b(error|exception|critical|fatal|failed)\b", re.I)
@@ -239,6 +247,42 @@ def discover() -> list[tuple[str, Path, str, bool]]:
     return items
 
 
+def _days_pattern(var_name: str) -> re.Pattern:
+    return re.compile(rf"^([ \t]*{re.escape(var_name)}[ \t]*=[ \t]*).*$", re.M)
+
+
+def read_days_from_globals(var_name: str) -> Optional[str]:
+    """קורא את הערך הנוכחי של DAYS (או שם אחר) מתוך globals.py, אם קיים."""
+    try:
+        text = GLOBALS_FILE.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    m = _days_pattern(var_name).search(text)
+    if not m:
+        return None
+    return m.group(0).split("=", 1)[1].strip()
+
+
+def write_days_to_globals(var_name: str, value: str) -> None:
+    """
+    כותב `VAR = value` לתוך globals.py: מחליף את השורה אם המשתנה כבר קיים,
+    ואחרת מוסיף שורה חדשה בסוף הקובץ (יוצר את הקובץ אם הוא לא קיים).
+    """
+    try:
+        text = GLOBALS_FILE.read_text(encoding="utf-8")
+    except OSError:
+        text = ""
+    pattern = _days_pattern(var_name)
+    new_line = f"{var_name} = {value}"
+    if pattern.search(text):
+        text = pattern.sub(new_line, text, count=1)
+    else:
+        if text and not text.endswith("\n"):
+            text += "\n"
+        text += new_line + "\n"
+    GLOBALS_FILE.write_text(text, encoding="utf-8")
+
+
 @dataclass
 class Task:
     name: str
@@ -246,7 +290,6 @@ class Task:
     base_kind: str                       # py | bat | pip
     detected_streamlit: bool = False
     mode: str = "auto"                   # auto | python | streamlit  (רק ל-py)
-    args: str = ""
     alias: str = ""                      # שם תצוגה (ריק = שם הקובץ)
     proc: Optional[subprocess.Popen] = None
     status: str = "idle"                 # idle | running | done | failed | stopped
@@ -305,8 +348,12 @@ class ManagerApp(tk.Tk):
         except re.error:
             self.summary_re = re.compile(DEFAULT_SUMMARY_PATTERN, re.I)
 
-        self.args_var = tk.StringVar()
         self.mode_var = tk.StringVar(value="auto")
+        self.days_var_name = str(self.cfg.get("days_var") or DEFAULT_DAYS_VAR)
+        self.days_options = list(self.cfg.get("days_options") or DEFAULT_DAYS_OPTIONS)
+        initial_days = (read_days_from_globals(self.days_var_name)
+                        or str(self.cfg.get("last_days", "")) or self.days_options[0])
+        self.days_value = tk.StringVar(value=initial_days)
         self.autoscroll = tk.BooleanVar(value=True)
         self.wrap = tk.BooleanVar(value=False)
         self.clear_on_run = tk.BooleanVar(value=True)
@@ -382,18 +429,26 @@ class ManagerApp(tk.Tk):
         opts = ttk.LabelFrame(left, text="הרצה", padding=8)
         opts.pack(fill="x", pady=(8, 0))
         opts.columnconfigure(1, weight=1)
-        ttk.Label(opts, text="ארגומנטים:").grid(row=0, column=0, sticky="w")
-        ttk.Entry(opts, textvariable=self.args_var).grid(row=0, column=1, sticky="ew",
-                                                         padx=(6, 0))
-        ttk.Label(opts, text="מצב הרצה:").grid(row=1, column=0, sticky="w", pady=(6, 0))
+        ttk.Label(opts, text="מצב הרצה:").grid(row=0, column=0, sticky="w")
         self.mode_cb = ttk.Combobox(opts, values=("auto", "python", "streamlit"),
                                     textvariable=self.mode_var, state="readonly",
                                     width=12)
-        self.mode_cb.grid(row=1, column=1, sticky="w", padx=(6, 0), pady=(6, 0))
+        self.mode_cb.grid(row=0, column=1, sticky="w", padx=(6, 0))
         self.mode_cb.bind("<<ComboboxSelected>>", self.on_mode_change)
 
+        ttk.Label(opts, text=f"ימים ({self.days_var_name}):").grid(
+            row=1, column=0, sticky="w", pady=(6, 0))
+        self.days_cb = ttk.Combobox(opts, values=self.days_options,
+                                    textvariable=self.days_value, width=12)
+        self.days_cb.grid(row=1, column=1, sticky="w", padx=(6, 0), pady=(6, 0))
+        self.days_cb.bind("<<ComboboxSelected>>", self.on_days_change)
+        self.days_cb.bind("<Return>", self.on_days_change)
+        self.days_cb.bind("<FocusOut>", self.on_days_change)
+        self.days_note = ttk.Label(opts, foreground="#188038")
+        self.days_note.grid(row=2, column=0, columnspan=2, sticky="w")
+
         btns = ttk.Frame(opts)
-        btns.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+        btns.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(10, 0))
         for key, text, cmd in (("run", "▶ הרץ", self.run_selected),
                                ("stop", "■ עצור", self.stop_selected),
                                ("restart", "↻ הפעל מחדש", self.restart_selected)):
@@ -546,14 +601,8 @@ class ManagerApp(tk.Tk):
             return {}
 
     def _save_config(self) -> None:
-        self._commit_args()
-        args = self.cfg.setdefault("args", {})
         modes = self.cfg.setdefault("modes", {})
         for n, t in self.tasks.items():
-            if t.args:
-                args[n] = t.args
-            else:
-                args.pop(n, None)
             if t.mode != "auto":
                 modes[n] = t.mode
             else:
@@ -561,6 +610,9 @@ class ManagerApp(tk.Tk):
         self.cfg["colors"] = {k: v for k, v in self.colors.items()
                               if v != DEFAULT_COLORS[k]}
         self.cfg["hide_summary"] = bool(self.hide_summary.get())
+        self.cfg["days_var"] = self.days_var_name
+        self.cfg["days_options"] = self.days_options
+        self.cfg["last_days"] = self.days_value.get().strip()
         try:
             CONFIG_FILE.write_text(json.dumps(self.cfg, ensure_ascii=False, indent=2),
                                    encoding="utf-8")
@@ -573,7 +625,6 @@ class ManagerApp(tk.Tk):
         return self.cfg.get("visible", {}).get(name, name.lower() not in HELPER_FILES)
 
     def refresh_tasks(self) -> None:
-        self._commit_args()
         found = discover()
         names = {n for n, *_ in found}
         for name, path, kind, st in found:
@@ -582,7 +633,6 @@ class ManagerApp(tk.Tk):
                 self.tasks[name] = Task(
                     name, path, kind, st,
                     mode=self.cfg.get("modes", {}).get(name, "auto"),
-                    args=self.cfg.get("args", {}).get(name, ""),
                     alias=self.cfg.get("names", {}).get(name, ""))
             else:
                 t.detected_streamlit = st
@@ -618,20 +668,13 @@ class ManagerApp(tk.Tk):
     def _cur(self) -> Optional[Task]:
         return self.tasks.get(self.selected) if self.selected else None
 
-    def _commit_args(self) -> None:
-        t = self._cur()
-        if t:
-            t.args = self.args_var.get()
-
     # ── אירועי ממשק ──
     def on_select(self, _event=None) -> None:
         sel = self.tree.selection()
         if not sel:
             return
-        self._commit_args()
         self.selected = sel[0]
         t = self.tasks[self.selected]
-        self.args_var.set(t.args)
         self.mode_var.set(t.mode)
         self.mode_cb.config(state="readonly" if t.base_kind == "py" else "disabled")
         self._render_log(t)
@@ -651,24 +694,46 @@ class ManagerApp(tk.Tk):
             t.mode = self.mode_var.get()
             self._update_row(t)
 
+    def on_days_change(self, _event=None) -> None:
+        """נקרא כשבוחרים/מקלידים ערך בתיבת 'ימים' - כותב אותו מיד ל-globals.py."""
+        value = self.days_value.get().strip()
+        if not value:
+            return
+        try:
+            int(value)
+        except ValueError:
+            self.days_note.config(text=f"⚠ '{value}' אינו מספר שלם", foreground="#c5221f")
+            return
+        try:
+            write_days_to_globals(self.days_var_name, value)
+        except OSError as e:
+            self.days_note.config(text=f"✖ שגיאת כתיבה: {e}", foreground="#c5221f")
+            return
+        if value not in self.days_options:
+            self.days_options.append(value)
+            self.days_cb.config(values=self.days_options)
+        self.days_note.config(
+            text=f"✔ נכתב ל-globals.py: {self.days_var_name} = {value}",
+            foreground="#188038")
+        self._save_config()
+
     def _apply_wrap(self) -> None:
         self.text.config(wrap="word" if self.wrap.get() else "none")
 
     # ── הרצה / עצירה ──
     def _build_cmd(self, t: Task) -> list[str]:
-        extra = split_args(t.args)
         if t.kind == "bat":
             if not IS_WIN:
                 raise RuntimeError("קבצי .bat / .cmd ניתנים להרצה רק ב-Windows.")
-            return ["cmd", "/c", t.path.name, *extra]
+            return ["cmd", "/c", t.path.name]
         py = self.interpreter
         if not shutil.which(py):
             raise RuntimeError(f"מפרש Python לא נמצא:\n{py}")
         if t.kind == "streamlit":
-            return [py, "-m", "streamlit", "run", str(t.path), *extra]
+            return [py, "-m", "streamlit", "run", str(t.path)]
         if t.kind == "pip":
-            return [py, "-m", "pip", "install", "-r", str(t.path), *extra]
-        return [py, "-u", str(t.path), *extra]
+            return [py, "-m", "pip", "install", "-r", str(t.path)]
+        return [py, "-u", str(t.path)]
 
     def _reset_summary(self, t: Task) -> None:
         t.summary, t.sum_pending, t.tab_run = [], [], []
@@ -677,7 +742,6 @@ class ManagerApp(tk.Tk):
     def start(self, t: Task) -> None:
         if t.status == "running":
             return
-        self._commit_args()
         try:
             cmd = self._build_cmd(t)
         except RuntimeError as e:

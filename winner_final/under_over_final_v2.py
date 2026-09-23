@@ -12,7 +12,7 @@ algo_utils = AlgoUtils()
 
 TARGET_DESCRIPTION = "2 Teams Under/Over 2-3 Range"
 EXCEL_FILE = "football_all.xlsx"
-DAY = 0
+day = DAYS
 
 
 def process_league_games(day: int, type: int, league_name: str, league_code: str) -> list[dict]:
@@ -61,7 +61,7 @@ def main():
 
     results_not_sorted = []
     for   league_name, league_code in targets:
-        results_not_sorted.extend(process_league_games(DAY, 2, league_name, league_code))
+        results_not_sorted.extend(process_league_games(day, 2, league_name, league_code))
 
     headers = ["Favorite", "Game", "Plan", "Score", "Bet", "Avg Goals"]
     results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
