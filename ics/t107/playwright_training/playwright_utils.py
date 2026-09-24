@@ -1,7 +1,7 @@
 class PlaywrightUtils:
 
 
-    def playwright_start(self):
+    def playwright_start(self,url):
         print ("Playwright start")
         from playwright.sync_api import sync_playwright, expect
 
@@ -11,7 +11,7 @@ class PlaywrightUtils:
                 args=["--start-maximized"]
             )
             page = browser.new_page()
-            page.goto("https://www.starbucks.com/")
+            page.goto(url)
 
 
     def playwright_stop(self):

@@ -3,7 +3,9 @@ import time
 from playwright.sync_api import sync_playwright, expect
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(headless=False)
+    browser = p.chromium.launch(headless=False,args=["--start-maximized"])
+
+    print ("Test Start")
     page = browser.new_page()
     page.goto("https://www.starbucks.com/")
     gift_card = page.get_by_role(role = "link",name="GIFT CARDS")
