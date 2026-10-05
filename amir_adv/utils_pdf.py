@@ -84,7 +84,7 @@ class UtilsPdf:
                 index_1 = line.index("גוש:")
                 index_2 = line.index("חלקה")
                 gush = line[index_1 + 4:index_2].strip()
-                helka = line[index_2 + 4:].strip()
+                helka = line[index_2 + 5:].strip()
                 pdf_data['gush'] = gush
                 pdf_data['helka'] = helka
                 print(f"gush: {gush}, helka: {helka}")
@@ -103,14 +103,21 @@ class UtilsPdf:
         return pdf_data
 
 
-    def get_customers_from_pdf(self,tables):
-        ids= tables[9].iloc[:, 4].dropna().tolist()
-        names = tables[9].iloc[:, 2].dropna().tolist()
-        print (f"found {len(names)} customers from page ")
+    def get_buyers_from_pdf(self, tables, table_id =9):
+        ids= tables[table_id].iloc[:, 4].dropna().tolist()
+        names = tables[table_id].iloc[:, 2].dropna().tolist()
+        print (f"found {len(names)} buyers at page ")
         return ids, names
 
-    def get_area_from_pdf(self,tables):
-        table = tables[2]
+
+    def get_sellers_from_pdf(self, tables, table_id =5):
+        seller_name = tables[table_id].iloc[:, 2].dropna().to_list()[0]
+        seller_id = tables[table_id].iloc[:, 4].dropna().to_list()[0]
+
+        return seller_name, seller_id
+
+    def get_area_from_pdf(self,tables,table_id =2 ):
+        table = tables[table_id]
         area_as_list= table.iloc[0: 4].iloc[:, 2].dropna().tolist()
         area=area_as_list[1]
         area = area[::-1]
