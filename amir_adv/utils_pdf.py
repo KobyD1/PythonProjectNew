@@ -24,9 +24,8 @@ class UtilsPdf:
                     df_rtl = df.map(lambda x: x[::-1] if isinstance(x, str) else x)
 
                     df_rtl = df_rtl.iloc[:, ::-1]
-                    print(f"Page {page_number}, Table {table_num + 1}:")
-                    print(df_rtl)
-                    print("\n" + "=" * 50 + "\n")
+                    print(f"found at PDF -Page {page_number}, Table {table_num + 1}:")
+
                     all_tables.append(df_rtl)
             else:
                 print(f"No tables found on page {page_number}")
@@ -76,9 +75,8 @@ class UtilsPdf:
             if "לשכת רישום מקרקעין" in line:
                 parts = line.split(":", 1)
                 if len(parts) > 1:
-                    district = parts[1].strip()
-                    pdf_data['district'] = district
-                    print(f"district: {district}")
+                    pdf_data['district'] = parts[1].strip()
+                    print(f"district: {pdf_data['district']}")
 
             if "גוש:" in line:
                 index_1 = line.index("גוש:")
