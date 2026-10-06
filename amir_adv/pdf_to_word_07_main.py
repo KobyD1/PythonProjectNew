@@ -68,8 +68,7 @@ def main():
         utils_word.set_cell_data(table_time, 0, 0, today_str)
 
 
-    table_verify = utils_word.find_table_by_cell_content(doc, "אימות",0)
-    utils_word.set_cell_data(table_verify, 0, 1, today_str)
+    utils_word.replace_text(doc, "כי בתאריך _________", f"כי בתאריך __{today_str}__")
 
     utils_word.save_word_file(doc,output_filename)
 

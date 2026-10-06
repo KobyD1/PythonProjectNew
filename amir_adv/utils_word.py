@@ -118,4 +118,9 @@ class utilsWord():
             buyer = names[0] + " ו" + first_name
             return buyer
 
-
+    def replace_text(self, doc, old_text, new_text):
+        for paragraph in doc.paragraphs:
+            if old_text in paragraph.text:
+                for run in paragraph.runs:
+                    if old_text in run.text:
+                        run.text = run.text.replace(old_text, new_text)
