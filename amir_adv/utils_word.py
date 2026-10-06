@@ -1,87 +1,79 @@
-from bidi.algorithm import get_display
-import pdfplumber
-import pandas as pd
 from pathlib import Path
-
+from docx.oxml import parse_xml, OxmlElement
+from docx.oxml.ns import nsdecls, qn
 from docx import Document
 from docx.oxml.ns import qn
+import os
+import subprocess
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_ALIGN_VERTICAL
 
 
-class UtilsWord:
-
-    def __init__(self, path):
-        self.path = Document(path)
-
-    def get_word_data(self):
+class utilsWord():
 
 
+    def __init__(self):
+        pass
 
-        doc = Document(self.path)
 
+
+    def close_open_word_file(self):
+
+        try:
+            subprocess.run(["taskkill", "/F", "/IM", "WINWORD.EXE"],
+                           stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL)
+            print("בוצע ניסיון לסגירת תהליכי Word פתוחים לשחרור הנעילה.")
+        except Exception as e:
+            print(f"לא ניתן היה לסגור את Word אוטומטית: {e}")
+
+    def find_table_by_cell_content(self, doc, cell_text_to_find):
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
-                    print(cell.text)
+                    clean_cell_text = " ".join(cell.text.split())
+                    if cell_text_to_find in clean_cell_text:
+                        return table
 
-    def get_word_tables(self):
-        tables = []
-        for child in self.doc._body._element:
-            if child.tag == qn('w:tbl'):
-                table = child
-                table_data = []
-                for row in table.iter(qn('w:tr')):
-                    row_data = []
-                    for cell in row.iter(qn('w:tc')):
-                        texts = [t.text for t in cell.iter(qn('w:t'))]
-                        row_data.append(" ".join(texts))
-                    table_data.append(row_data)
-                tables.append(table_data)
-        return tables
-    def set_word_table_by_col(self, table_id, col_index, col_data, offset = 0 ):
+        return None
 
 
-        table = self.doc.tables[table_id]
-        index = 1+offset
-        for data  in col_data:
+    def set_cell_content_centered(self, cell, text):
 
-            table.cell(index, col_index).text = data
-            index += 1
+        for p in cell.paragraphs:
+            p.text = ""
 
-        self.doc.save("updated.docx")
-    def set_word_table_by_row(self, table_id, row_index, row_data):
+        p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+        p.text = str(text)
 
-        table = self.doc.tables[table_id]
-        col_index = 0
-        for data  in row_data:
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
-            table.cell(row_index, col_index).text = data
-            col_index += 1
-
-        self.doc.save("updated.docx")
-    def set_word_buyers_data(self, table_id,ids,names):
-        part = f"1/{len(ids)}"
-        self.set_word_table_by_col(table_id, 2, ids)
-        self.set_word_table_by_col(table_id, 0, names)
-        self.set_word_table_by_col(table_id, 1, ["ת.ז", "ת.ז"])
-        self.set_word_table_by_col(table_id, 3, [part, part])
-
-    def set_word_real_estate_data(self, table_id,pdf_data,area):
-        data = []
-        plot = f"{pdf_data.get("helka")}.{pdf_data.get("subplot")}"
-        data.append(pdf_data.get("gush"))
-        data.append(plot)
-        data.append(area)
-        data.append("בשלמות")
-        data.append("בשלמות")
-        data.append("אין")
-
-        self.set_word_table_by_row(table_id, 2, data)
+    def save_word_file(self,doc,output_filename):
+        try:
+            doc.save(output_filename)
+            print(f"המסמך עודכן ונשמר בהצלחה בשם: {output_filename}")
+        except PermissionError:
+            print(f"שגיאה: הקובץ '{output_filename}' עדיין נעול ע\"י תהליך אחר.")
+        except Exception as e:
+            print(f"שגיאה בשמירת הקובץ: {e}")
 
 
-    def set_word_signature_data(self,table_id,seller,buyer_names):
+    def set_table_data(self,table,table_data,offset = 1):
+        for i, data in enumerate(table_data):
+            target_row_idx = offset + i
+
+            if target_row_idx < len(table.rows):
+                row_cells = table.rows[target_row_idx].cells
+
+                self.set_cell_content_centered(row_cells[0], data[0])
+                self.set_cell_content_centered(row_cells[1], data[1])
+                self.set_cell_content_centered(row_cells[2], data[2])
+                # self.set_cell_content_centered(row_cells[3], data[3])
 
 
-        self.set_word_table_by_row(table_id, 2, ["","","",seller])
-        self.set_word_table_by_col(table_id, 0, buyer_names,1)
-
-
+    def set_table_data_by_keyword(self,doc,keyword,table_data):
+        table = self.find_table_by_cell_content(doc, keyword)
+        if table:
+            self.set_table_data(table, table_data)
