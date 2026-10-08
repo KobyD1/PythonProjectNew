@@ -1,19 +1,19 @@
+from playwright.sync_api import sync_playwright, expect
+
+
 class PlaywrightUtils:
 
+    def __init__(self):
+        self.page = None
+        self.browser = None
+        self.p = None
 
-    def playwright_start(self,url):
-        print ("Playwright start")
-        from playwright.sync_api import sync_playwright, expect
-
-        with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=False,
-                args=["--start-maximized"]
-            )
-            page = browser.new_page()
-            page.goto(url)
-
-        return page
+    def playwright_start(self, url):
+        self.p = sync_playwright().start()
+        self.browser = self.p.chromium.launch(headless=False)
+        self.page = self.browser.new_page()
+        self.page.goto(url)
+        return self.page
 
     def multiple_numbers(self, num1, num2):
         sum  = 0
@@ -31,11 +31,25 @@ class PlaywrightUtils:
 
         return res
 
+    def add_numbers (self ,num_1,num2):
+        sum = num_1 + num2
+        if sum>10:
+            print(f"sum = {sum} is greater than 10")
+        else:
+            print(f"sum = {sum} is less than 10")
+        return sum
+
 
 
 
     def playwright_stop(self):
-        print ("Playwright stop")
+        if self.page:
+            self.page.close()
+        if self.browser:
+            self.browser.close()
+        if self.p:
+            self.p.stop()
+        print("Playwright stopped")
 
 
 
