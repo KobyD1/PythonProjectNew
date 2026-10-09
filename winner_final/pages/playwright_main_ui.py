@@ -23,10 +23,10 @@ class telesport_main_page:
         match league:
             case "wnba":
                 loc = self.page.locator("#checkbox_1663")
-            case "spain":
+            case "Spain":
                 loc = self.page.locator("#checkbox_248")
 
-            case "england":
+            case "England-PLeague":
                 loc = self.page.locator("#checkbox_90")
             case _:
                 print("league not found")

@@ -28,6 +28,7 @@ manager_app.py - אפליקציית ניהול להרצת הסקריפטים ב�
 """
 from __future__ import annotations
 
+import ast
 import json
 import locale
 import os
@@ -65,7 +66,9 @@ HELPER_FILES = {"__init__.py", "globals.py", "uiutils.py", Path(__file__).name.l
 # ── תיבת "ימים" (days) שנכתבת ישירות ל-globals.py ──
 GLOBALS_FILE = BASE_DIR / "globals.py"
 DEFAULT_DAYS_VAR = "DAYS"                              # שם המשתנה שנכתב/נקרא ב-globals.py
-DEFAULT_DAYS_OPTIONS = ["1", "2", "3", "5", "7", "10", "14", "21", "30"]
+DEFAULT_DAYS_OPTIONS = ["0","1", "2", "3",]
+DEFAULT_LEAGUE_VAR = "LEAGUE"
+DEFAULT_LEAGUE_OPTIONS = ["Spain", "England-PLeague", "NBA"]
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 ERR_RE = re.compile(r"\b(error|exception|critical|fatal|failed)\b", re.I)
@@ -253,33 +256,41 @@ def discover() -> list[tuple[str, Path, str, bool]]:
     return items
 
 
-def _days_pattern(var_name: str) -> re.Pattern:
+def _var_pattern(var_name: str) -> re.Pattern:
     return re.compile(rf"^([ \t]*{re.escape(var_name)}[ \t]*=[ \t]*).*$", re.M)
 
 
-def read_days_from_globals(var_name: str) -> Optional[str]:
-    """קורא את הערך הנוכחי של DAYS (או שם אחר) מתוך globals.py, אם קיים."""
+def read_global_value(var_name: str) -> Optional[str]:
+    """
+    קורא את הערך הנוכחי של var_name מתוך globals.py, אם קיים, ומחזיר אותו כטקסט
+    להצגה (למשל DAYS = 7 -> "7", LEAGUE = "Spain" -> "Spain", בלי הגרשיים).
+    """
     try:
         text = GLOBALS_FILE.read_text(encoding="utf-8")
     except OSError:
         return None
-    m = _days_pattern(var_name).search(text)
+    m = _var_pattern(var_name).search(text)
     if not m:
         return None
-    return m.group(0).split("=", 1)[1].strip()
+    raw = m.group(0).split("=", 1)[1].strip()
+    try:
+        return str(ast.literal_eval(raw))
+    except (ValueError, SyntaxError):
+        return raw
 
 
-def write_days_to_globals(var_name: str, value: str) -> None:
+def write_global_literal(var_name: str, literal: str) -> None:
     """
-    כותב `VAR = value` לתוך globals.py: מחליף את השורה אם המשתנה כבר קיים,
+    כותב `VAR = literal` לתוך globals.py (literal הוא כבר קוד פייתון תקין, למשל
+    "7" למספר או "'Spain'" למחרוזת מצוטטת): מחליף את השורה אם המשתנה כבר קיים,
     ואחרת מוסיף שורה חדשה בסוף הקובץ (יוצר את הקובץ אם הוא לא קיים).
     """
     try:
         text = GLOBALS_FILE.read_text(encoding="utf-8")
     except OSError:
         text = ""
-    pattern = _days_pattern(var_name)
-    new_line = f"{var_name} = {value}"
+    pattern = _var_pattern(var_name)
+    new_line = f"{var_name} = {literal}"
     if pattern.search(text):
         text = pattern.sub(new_line, text, count=1)
     else:
@@ -361,9 +372,16 @@ class ManagerApp(tk.Tk):
         self.mode_var = tk.StringVar(value="auto")
         self.days_var_name = str(self.cfg.get("days_var") or DEFAULT_DAYS_VAR)
         self.days_options = list(self.cfg.get("days_options") or DEFAULT_DAYS_OPTIONS)
-        initial_days = (read_days_from_globals(self.days_var_name)
+        initial_days = (read_global_value(self.days_var_name)
                         or str(self.cfg.get("last_days", "")) or self.days_options[0])
         self.days_value = tk.StringVar(value=initial_days)
+        self.league_var_name = str(self.cfg.get("league_var") or DEFAULT_LEAGUE_VAR)
+        self.league_options = list(self.cfg.get("league_options") or DEFAULT_LEAGUE_OPTIONS)
+        initial_league = (read_global_value(self.league_var_name)
+                          or str(self.cfg.get("last_league", "")) or self.league_options[0])
+        if initial_league not in self.league_options:
+            self.league_options.append(initial_league)
+        self.league_value = tk.StringVar(value=initial_league)
         self.autoscroll = tk.BooleanVar(value=True)
         self.wrap = tk.BooleanVar(value=False)
         self.clear_on_run = tk.BooleanVar(value=True)
@@ -477,8 +495,18 @@ class ManagerApp(tk.Tk):
         self.days_note = ttk.Label(opts, foreground="#188038")
         self.days_note.grid(row=2, column=0, columnspan=2, sticky="w")
 
+        ttk.Label(opts, text=f"ליגה ({self.league_var_name}):").grid(
+            row=3, column=0, sticky="w", pady=(6, 0))
+        self.league_cb = ttk.Combobox(opts, values=self.league_options,
+                                      textvariable=self.league_value, state="readonly",
+                                      width=16)
+        self.league_cb.grid(row=3, column=1, sticky="w", padx=(6, 0), pady=(6, 0))
+        self.league_cb.bind("<<ComboboxSelected>>", self.on_league_change)
+        self.league_note = ttk.Label(opts, foreground="#188038")
+        self.league_note.grid(row=4, column=0, columnspan=2, sticky="w")
+
         btns = ttk.Frame(opts)
-        btns.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+        btns.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(10, 0))
         for key, text, cmd in (("run", "▶ הרץ", self.run_selected),
                                ("stop", "■ עצור", self.stop_selected),
                                ("restart", "↻ הפעל מחדש", self.restart_selected)):
@@ -650,6 +678,9 @@ class ManagerApp(tk.Tk):
         self.cfg["days_var"] = self.days_var_name
         self.cfg["days_options"] = self.days_options
         self.cfg["last_days"] = self.days_value.get().strip()
+        self.cfg["league_var"] = self.league_var_name
+        self.cfg["league_options"] = self.league_options
+        self.cfg["last_league"] = self.league_value.get().strip()
         try:
             CONFIG_FILE.write_text(json.dumps(self.cfg, ensure_ascii=False, indent=2),
                                    encoding="utf-8")
@@ -732,7 +763,7 @@ class ManagerApp(tk.Tk):
             self._update_row(t)
 
     def on_days_change(self, _event=None) -> None:
-        """נקרא כשבוחרים/מקלידים ערך בתיבת 'ימים' - כותב אותו מיד ל-globals.py."""
+        """נקרא כשבוחרים/מקלידים ערך בתיבת 'ימים' - כותב אותו מיד ל-globals.py כמספר שלם."""
         value = self.days_value.get().strip()
         if not value:
             return
@@ -742,7 +773,7 @@ class ManagerApp(tk.Tk):
             self.days_note.config(text=f"⚠ '{value}' אינו מספר שלם", foreground="#c5221f")
             return
         try:
-            write_days_to_globals(self.days_var_name, value)
+            write_global_literal(self.days_var_name, value)
         except OSError as e:
             self.days_note.config(text=f"✖ שגיאת כתיבה: {e}", foreground="#c5221f")
             return
@@ -751,6 +782,21 @@ class ManagerApp(tk.Tk):
             self.days_cb.config(values=self.days_options)
         self.days_note.config(
             text=f"✔ נכתב ל-globals.py: {self.days_var_name} = {value}",
+            foreground="#188038")
+        self._save_config()
+
+    def on_league_change(self, _event=None) -> None:
+        """נקרא כשבוחרים ליגה בתיבה - כותב אותה מיד ל-globals.py כמחרוזת מצוטטת."""
+        value = self.league_value.get().strip()
+        if not value:
+            return
+        try:
+            write_global_literal(self.league_var_name, repr(value))
+        except OSError as e:
+            self.league_note.config(text=f"✖ שגיאת כתיבה: {e}", foreground="#c5221f")
+            return
+        self.league_note.config(
+            text=f"✔ נכתב ל-globals.py: {self.league_var_name} = {value!r}",
             foreground="#188038")
         self._save_config()
 

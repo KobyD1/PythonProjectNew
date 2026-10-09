@@ -1,4 +1,4 @@
-from winner_final.globals import DAYS, PATH_PROGRAM_TEXT, FILTER
+from winner_final.globals import DAYS, PATH_PROGRAM_TEXT, FILTER, LEAGUE
 from winner_final.utils.algo_utils import AlgoUtils
 from winner_final.utils.files_utils import FilesUtils
 from winner_final.utils.football_data_api import FootballDataApi
@@ -10,13 +10,13 @@ files_utils = FilesUtils()
 algo_utils = AlgoUtils()
 results_not_sorted =[]
 
-table_data =playwright_main.set_telesport_page( 2,2,"spain")
+table_data =playwright_main.set_telesport_page( DAYS,2,LEAGUE)
 for data in table_data:
     print (f"******* Game : {data["game"]} - {data['team_a']} VS {data['team_b']} *******")
     if data["description"] == '2 Teams Under/Over 2-3 Range':
 
         teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b") )
-        teams_data = football_data_api.get_teams_data("PD",[teams_data_excel.get("team_a"),teams_data_excel.get("team_b")])
+        teams_data = football_data_api.get_teams_data(teams_data_excel.get("League"),[teams_data_excel.get("team_a"),teams_data_excel.get("team_b")])
 
         score , favorite ,avg_total = algo_utils.calc_football_under_over_algo(teams_data[0], teams_data[1],data["description"])
         if (favorite != 0 ):

@@ -24,5 +24,12 @@
     "30",
     "0"
   ],
-  "last_days": "0"
+  "last_days": "1",
+  "league_var": "LEAGUE",
+  "league_options": [
+    "Spain",
+    "England-PLeague",
+    "NBA"
+  ],
+  "last_league": "England-PLeague"
 }

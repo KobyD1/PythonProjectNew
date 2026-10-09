@@ -36,6 +36,7 @@ class FilesUtils:
         result_b = team_b_data.iloc[0].to_dict()
         teams_data_excel["team_a"] = result_a["Team"].strip()
         teams_data_excel["team_b"] = result_b["Team"].strip()
+        teams_data_excel["League"] = result_a["League"].strip()
         return teams_data_excel
 
 
