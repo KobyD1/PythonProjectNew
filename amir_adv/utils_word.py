@@ -1,3 +1,4 @@
+from datetime import datetime
 
 from docx.oxml.ns import qn
 import subprocess
@@ -33,9 +34,9 @@ class utilsWord():
             subprocess.run(["taskkill", "/F", "/IM", "WINWORD.EXE"],
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.DEVNULL)
-            print("בוצע ניסיון לסגירת תהליכי Word פתוחים לשחרור הנעילה.")
+            print("Trying to close Word automatically...")
         except Exception as e:
-            print(f"לא ניתן היה לסגור את Word אוטומטית: {e}")
+            print(f"Can not closed Word automatic {e}")
 
     def find_table_by_cell_content(self, doc, cell_text_to_find, ignore_offset = 0 ):
         counter = 0
@@ -66,14 +67,18 @@ class utilsWord():
         p.alignment = align
         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
-    def save_word_file(self,doc,output_filename):
+    def save_word_file(self,doc,prefix,suffix=""):
+        time_stamp = datetime.now().strftime("%M%S")
+        file_name=f"{prefix}_{suffix}_{time_stamp}.docx"
+        if " " in file_name:
+            file_name=file_name.replace(" ","_")
         try:
-            doc.save(output_filename)
-            print(f"המסמך עודכן ונשמר בהצלחה בשם: {output_filename}")
+            doc.save(file_name)
+            print(f"The document has been updated and saved successfully")
         except PermissionError:
-            print(f"שגיאה: הקובץ '{output_filename}' עדיין נעול ע\"י תהליך אחר.")
+            print(f"Error: The file is  locked by another process.")
         except Exception as e:
-            print(f"שגיאה בשמירת הקובץ: {e}")
+            print(f"Error saving the file: {e}")
     def set_cell_data(self,table,target_row_idx,col_idx,value ,align = WD_ALIGN_PARAGRAPH.LEFT):
         row_cells = table.rows[target_row_idx].cells
         self.set_cell_content_centered(row_cells[col_idx], value,align)
@@ -86,7 +91,6 @@ class utilsWord():
             if target_row_idx < len(table.rows):
                 row_cells = table.rows[target_row_idx].cells
 
-                # לולאה דינמית לפי כמות האיברים ב-data (המצומצמת לפי מספר התאים הזמינים בשורה)
                 for col_idx, value in enumerate(data[:len(row_cells)]):
                     self.set_cell_content_centered(row_cells[col_idx], value , align)
 
@@ -95,7 +99,7 @@ class utilsWord():
     def set_table_data_by_keyword(self,doc,keyword,table_data,row_offset = 1, table_offset = 0 ,align = WD_ALIGN_PARAGRAPH.LEFT):
         table = self.find_table_by_cell_content(doc, keyword,table_offset)
         if table:
-            print ("Table found for keyword:", keyword)
+            print ("Table found for keyword ")
             self.set_table_data(table, table_data,row_offset)
 
     def get_signature_data(self,seller,names):
@@ -106,11 +110,11 @@ class utilsWord():
         else:
             names_new =names[1:]
             signature_data = [["", "", "", name] for name in names_new]
-            signature_data.insert(0, [seller, "", "", names[0]])  # הוספת השורה של המוכר בתחילת הרשימה
+            signature_data.insert(0, [seller, "", "", names[0]])
 
         return signature_data
 
-    def get_full_name_data(self, seller, names):
+    def get_full_name_data(self, names):
         if len(names) == 1:
             return names[0]
         else:

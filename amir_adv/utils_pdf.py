@@ -64,7 +64,7 @@ class UtilsPdf:
                 text = page.extract_text()
                 if text:
                     correct_text = get_display(text)
-                    print(f"--- עמוד {page_num} ---")
+                    print(f"--- page number  {page_num} ---")
                     return correct_text
 
     def get_data_from_pdf(self, text):
@@ -76,7 +76,7 @@ class UtilsPdf:
                 parts = line.split(":", 1)
                 if len(parts) > 1:
                     pdf_data['district'] = parts[1].strip()
-                    print(f"district: {pdf_data['district']}")
+                    print(f"district found")
 
             if "גוש:" in line:
                 index_1 = line.index("גוש:")
@@ -85,19 +85,19 @@ class UtilsPdf:
                 helka = line[index_2 + 5:].strip()
                 pdf_data['gush'] = gush
                 pdf_data['helka'] = helka
-                print(f"gush: {gush}, helka: {helka}")
+                print(f"gush helka found")
 
             if "כתובת" in line:
                 parts = line.split(":", 1)
                 if len(parts) > 1:
                     city = line.split(";")[0].split(",")[1].strip()
                     pdf_data['city'] = city
-                    print(f"city: {city}")
+                    print(f"city found")
             if "תת חלקה" in line:
 
                     subplot = line.replace("תת חלקה", "").strip()
                     pdf_data['subplot'] = subplot
-                    print(f"subplot: {subplot}")
+                    print(f"subplot found")
         return pdf_data
 
 
