@@ -4,7 +4,7 @@ import unittest
 from ics.t107.playwright_training.playwright_utils import PlaywrightUtils
 
 
-class xyzBankTest(unittest.TestCase):
+class lastDayTest(unittest.TestCase):
 
 
 
@@ -19,3 +19,13 @@ class xyzBankTest(unittest.TestCase):
         button.click()
 
         utils.playwright_stop()
+
+    def test_flight_checkbox(self):
+        utils = PlaywrightUtils()
+        page = utils.playwright_start("https://demo.guru99.com/test/newtours/reservation.php")
+        trip_types = page.query_selector_all('[name="tripType"]')
+        trip_type = trip_types[1]
+        trip_type.click()
+
+        utils.playwright_stop()
+
