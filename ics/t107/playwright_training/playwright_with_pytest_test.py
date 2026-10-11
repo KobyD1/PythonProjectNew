@@ -41,9 +41,6 @@ class examplePlaywrightTest(unittest.TestCase):
 
         page = utils.playwright_start("https://www.saucedemo.com/")
 
-        url = page.url
-
-        print(url)
 
         user = page.locator("[id='user-name']")
         user.fill("standard_user")
@@ -83,8 +80,25 @@ class examplePlaywrightTest(unittest.TestCase):
             print (text)
             assert "$" in text
 
+        utils.playwright_stop()
+
+
     def test_swag_lab_login(self):
         utils = PlaywrightUtils()
+        page = utils.playwright_start("https://www.saucedemo.com/")
+
+        elemnts = page.query_selector_all('[class="input_error form_input"]')
+        user = elemnts[0]
+        password = elemnts[1]
+        user.fill("standard_user")
+        password.fill("secret_sauce")
+
+
+
+
+        print ("end")
+
+        utils.playwright_stop()
 
 
 
