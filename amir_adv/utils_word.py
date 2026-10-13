@@ -109,7 +109,7 @@ class utilsWord():
     def set_table_data_by_keyword(self,doc,keyword,table_data,row_offset = 1, table_offset = 0 ,align = WD_ALIGN_PARAGRAPH.LEFT):
         table = self.find_table_by_cell_content(doc, keyword,table_offset)
         if table:
-            print ("Table found for keyword ")
+            print ("Table found for keyword "+keyword)
             self.set_table_data(table, table_data,row_offset)
 
     def get_signature_data(self,seller,names):

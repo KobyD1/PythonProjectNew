@@ -45,7 +45,6 @@ def main():
             table_title = utils_word.find_table_by_cell_content(doc, "לשכת")
             utils_word.close_open_word_file()
             buyers_names=[]
-            buyyer_to_analyze=[]
 
             utils_word.set_cell_data(table_title, 0,1,  pdf_data['district'] )
 
@@ -53,31 +52,21 @@ def main():
                 [seller_name, ".ח.פ", str(seller_id[::-1])]
             ]
             buyyer_to_analyze = buyer_data[i]
-            if buyyer_to_analyze["amount"] == "1":
-                buyers_1 = [ [buyyer_to_analyze["name_1"], ".ת.ז", buyyer_to_analyze["id_1"], f"1/{buyyer_to_analyze["amount"]}"]]
-
-                utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_1)
-                signature_data = utils_word.get_signature_data(seller_name, buyers_1)
-                utils_word.set_table_data_by_keyword(doc, "השם", signature_data, 2, 0)
-
+            buyers_1 = [ [buyyer_to_analyze["name_1"], ".ת.ז", buyyer_to_analyze["id_1"], f"1/{buyyer_to_analyze["amount"]}"]]
+            utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_1)
+            signature_data_1 = utils_word.get_signature_data(seller_name, buyers_1)
+            utils_word.set_table_data_by_keyword(doc, "השם", signature_data_1, 2, 0)
 
 
             if buyyer_to_analyze["amount"] == "2":
-                buyers_1 = [ [buyyer_to_analyze["name_1"], ".ת.ז", buyyer_to_analyze["id_1"], f"1/{buyyer_to_analyze["amount"]}"]]
 
-                buyer_2 = [[buyyer_to_analyze["name_2"], ".ת.ז", buyyer_to_analyze["id_2"], "1/2"]]
-                utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_1)
+                buyer_2 = [[buyyer_to_analyze["name_2"], ".ת.ז", buyyer_to_analyze["id_2"], f"1/{buyyer_to_analyze["amount"]}"]]
                 utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyer_2,2)
-
-                signature_data_1 = utils_word.get_signature_data(seller_name, buyers_1)
-                utils_word.set_table_data_by_keyword(doc, "השם", signature_data_1, 2, 0)
 
                 signature_data_2 = utils_word.get_signature_data("", buyer_2)
                 utils_word.set_table_data_by_keyword(doc, "השם", signature_data_2, 3, 0)
 
             utils_word.set_table_data_by_keyword(doc, "סוג זיהוי*", seller_data)
-
-
 
             table_city = utils_word.find_table_by_cell_content(doc, "הישוב")
             utils_word.set_cell_data(table_city, 1, 1, pdf_data['city'])

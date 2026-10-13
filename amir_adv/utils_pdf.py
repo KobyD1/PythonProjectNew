@@ -1,4 +1,3 @@
-from collections import defaultdict
 
 from bidi.algorithm import get_display
 import pdfplumber
@@ -199,7 +198,6 @@ class UtilsPdf:
 
             final_result.append(combined_entry)
 
-        # הצגת התוצאה הסופית
         return final_result
 
 
