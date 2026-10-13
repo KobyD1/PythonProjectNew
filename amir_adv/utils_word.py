@@ -115,12 +115,13 @@ class utilsWord():
     def get_signature_data(self,seller,names):
         if len(names) == 1:
 
-            signature_data = [[seller, "", "", names[0][2]]]
+            signature_data = [[seller, "", "", names[0][0]]]
 
         else:
-            names_new =names[1:]
-            signature_data = [["", "", "", name] for name in names_new]
-            signature_data.insert(0, [seller, "", "", names[0]])
+            signature_data = [[seller, "", "", names[0][0]],
+                              ["", "", "", names[1][0]]
+                              ]
+
 
         return signature_data
 
