@@ -10,7 +10,6 @@ from amir_adv.utils_word import utilsWord
 def main():
 
 
-    doc = Document(WORD_07_PATH)
     utils_word = utilsWord()
     utils_pdf = UtilsPdf()
 
@@ -34,7 +33,7 @@ def main():
         seller_name, seller_id = utils_pdf.get_sellers_from_pdf(first_page_tables,5)
         print("Analyze PDF completed")
         output_file_prefix = OUTPUT_FILE
-        table_title = utils_word.find_table_by_cell_content(doc, "לשכת")
+
         time_stamp = datetime.now().strftime("%M%S")
         folder_word = f'{OUTPUT_FILE}//{pdf_data["gush"]}_{pdf_data["helka"]}'
 
@@ -42,25 +41,42 @@ def main():
 
 
         for i in range (len(plots_data)):
+            doc = Document(WORD_07_PATH)
+            table_title = utils_word.find_table_by_cell_content(doc, "לשכת")
             utils_word.close_open_word_file()
-
+            buyers_names=[]
+            buyyer_to_analyze=[]
 
             utils_word.set_cell_data(table_title, 0,1,  pdf_data['district'] )
 
             seller_data = [
                 [seller_name, ".ח.פ", str(seller_id[::-1])]
             ]
-            buyers_names = [
-                [buyer_data[i]["name_1"], ".ת.ז", buyer_data[i]["id_1"], f"1/{buyer_data[i]["amount"]}"],
-                ["", "", "", ""]
-            ]
+            buyyer_to_analyze = buyer_data[i]
+            if buyyer_to_analyze["amount"] == "1":
+                buyers_1 = [ [buyyer_to_analyze["name_1"], ".ת.ז", buyyer_to_analyze["id_1"], f"1/{buyyer_to_analyze["amount"]}"]]
 
-            if buyer_data[i]["amount"] == "2":
-                buyers_names.append([buyer_data[i]["name_2"], ".ת.ז", buyer_data[i]["id_2"], f"1/{buyer_data[i]["amount"]}"])
+                utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_1)
+                signature_data = utils_word.get_signature_data(seller_name, buyers_1)
+                utils_word.set_table_data_by_keyword(doc, "השם", signature_data, 2, 0)
 
+
+
+            if buyyer_to_analyze["amount"] == "2":
+                buyers_1 = [ [buyyer_to_analyze["name_1"], ".ת.ז", buyyer_to_analyze["id_1"], f"1/{buyyer_to_analyze["amount"]}"]]
+
+                buyer_2 = [[buyyer_to_analyze["name_2"], ".ת.ז", buyyer_to_analyze["id_2"], "1/2"]]
+                utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_1)
+                utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyer_2,2)
+
+                signature_data_1 = utils_word.get_signature_data(seller_name, buyers_1)
+                utils_word.set_table_data_by_keyword(doc, "השם", signature_data_1, 2, 0)
+
+                signature_data_2 = utils_word.get_signature_data("", buyer_2)
+                utils_word.set_table_data_by_keyword(doc, "השם", signature_data_2, 3, 0)
 
             utils_word.set_table_data_by_keyword(doc, "סוג זיהוי*", seller_data)
-            utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_names)
+
 
 
             table_city = utils_word.find_table_by_cell_content(doc, "הישוב")
@@ -75,7 +91,7 @@ def main():
             table_estate = utils_word.find_table_by_cell_content(doc, "החלקים")
             utils_word.set_cell_data(table_estate, 5, 2, pdf_data['gush'],WD_ALIGN_PARAGRAPH.CENTER)
 
-            signature_data = utils_word.get_signature_data(seller_name,buyers_names)
+            signature_data = utils_word.get_signature_data(seller_name,buyers_1)
             utils_word.set_table_data_by_keyword(doc, "השם",signature_data,2,0)
 
             today_str = datetime.today().strftime("%d/%m/%Y")
@@ -87,10 +103,9 @@ def main():
 
             utils_word.replace_text(doc, "כי בתאריך _________", f"כי בתאריך __{today_str}__")
             folder_name = f"{pdf_data['gush']}_{pdf_data['helka']}"
-            utils_word.save_word_file(doc,output_file_prefix,buyers_names,folder_name,time_stamp)
+            utils_word.save_word_file(doc,output_file_prefix,buyers_1,folder_name,time_stamp)
             buyers_names.clear()
             estate_data.clear()
-            print ("fdfdf")
 
 
     print ("#"*56)
