@@ -20,59 +20,82 @@ def main():
         data = utils_pdf.get_pdf_text(file)
         pdf_data = utils_pdf.get_data_from_pdf(data)
 
-        tables = utils_pdf.get_pdf_table_data_by_page(file)
-        buyers_ids, buyers_names = utils_pdf.get_buyers_from_pdf(tables)
-        area = utils_pdf.get_area_from_pdf(tables)
-        seller_name, seller_id = utils_pdf.get_sellers_from_pdf(tables)
+        plot_tables = utils_pdf.filter_tables_by_row_and_content(file,0,"תת חלקה")
+        buyers_tables = utils_pdf.filter_tables_by_row_and_content(file,0,"ת.ז")
+        buyers_tables_1 = utils_pdf.filter_tables_by_row_and_content(file,1,"ת.ז")
+
+        area_tables = utils_pdf.filter_tables_by_row_and_content(file,3,"קומה",0)
+        first_page_tables = utils_pdf.get_pdf_table_data_by_page(file,1)
+
+        plots_data = utils_pdf.get_plots_from_tables(plot_tables)
+        buyer_data = utils_pdf.get_buyer_from_tables(buyers_tables, buyers_tables_1)
+        area_data = utils_pdf.get_area_from_tables(area_tables)
+
+        seller_name, seller_id = utils_pdf.get_sellers_from_pdf(first_page_tables,5)
         print("Analyze PDF completed")
-        utils_word.close_open_word_file()
-
         output_file_prefix = OUTPUT_FILE
-
         table_title = utils_word.find_table_by_cell_content(doc, "לשכת")
-        utils_word.set_cell_data(table_title, 0,1,  pdf_data['district'] )
+        time_stamp = datetime.now().strftime("%M%S")
+        folder_word = f'{OUTPUT_FILE}//{pdf_data["gush"]}_{pdf_data["helka"]}'
+
+        utils_word.recreate_folder(folder_word)
 
 
-        seller_data = [
-            [seller_name, ".ח.פ", str(seller_id[::-1])]
-        ]
-        buyers_data = [
-            [buyers_names[0], ".ת.ז", str(buyers_ids[0])[::-1], f"1/{len(buyers_names)}"],
-            [buyers_names[1], ".ת.ז", str(buyers_ids[1])[::-1], f"1/{len(buyers_names)}"]
-        ]
-        utils_word.set_table_data_by_keyword(doc, "סוג זיהוי*", seller_data)
-        utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_data)
+        for i in range (len(plots_data)):
+            utils_word.close_open_word_file()
 
 
-        table_city = utils_word.find_table_by_cell_content(doc, "הישוב")
-        utils_word.set_cell_data(table_city, 1, 1, pdf_data['city'])
+            utils_word.set_cell_data(table_title, 0,1,  pdf_data['district'] )
 
-        plot = f"{pdf_data.get("helka")}/{pdf_data.get("subplot")}"
-        estate_data = [
-            ["", "", "", pdf_data['gush'], plot, "", area, "בשלמות", "בשלמות ", "אין     "]
-        ]
-        utils_word.set_table_data_by_keyword(doc, "החלקים", estate_data,5,WD_ALIGN_PARAGRAPH.CENTER)
+            seller_data = [
+                [seller_name, ".ח.פ", str(seller_id[::-1])]
+            ]
+            buyers_names = [
+                [buyer_data[i]["name_1"], ".ת.ז", buyer_data[i]["id_1"], f"1/{buyer_data[i]["amount"]}"],
+                ["", "", "", ""]
+            ]
 
-        table_estate = utils_word.find_table_by_cell_content(doc, "החלקים")
-        utils_word.set_cell_data(table_estate, 5, 2, pdf_data['gush'],WD_ALIGN_PARAGRAPH.CENTER)
-
-        signature_data = utils_word.get_signature_data(seller_name,buyers_names)
-        utils_word.set_table_data_by_keyword(doc, "השם",signature_data,2,0)
-
-        today_str = datetime.today().strftime("%d/%m/%Y")
-        for i in range(5):
-
-            table_time = utils_word.find_table_by_cell_content(doc, "תאריך",i)
-            utils_word.set_cell_data(table_time, 0, 0, today_str)
+            if buyer_data[i]["amount"] == "2":
+                buyers_names.append([buyer_data[i]["name_2"], ".ת.ז", buyer_data[i]["id_2"], f"1/{buyer_data[i]["amount"]}"])
 
 
-        utils_word.replace_text(doc, "כי בתאריך _________", f"כי בתאריך __{today_str}__")
+            utils_word.set_table_data_by_keyword(doc, "סוג זיהוי*", seller_data)
+            utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_names)
 
-        utils_word.save_word_file(doc,output_file_prefix,utils_word.get_full_name_data(buyers_names))
-    l= len(files_list)
-    print ("#"*52)
-    print (f"#"*8,f"   Process Complted for {l} files   ","#"*8)
-    print ("#"*52)
+
+            table_city = utils_word.find_table_by_cell_content(doc, "הישוב")
+            utils_word.set_cell_data(table_city, 1, 1, pdf_data['city'])
+
+            plot = f"{pdf_data.get("helka")}/{plots_data[i]}"
+            estate_data = [
+                ["", "", "", pdf_data['gush'],plot , "", area_data[i], "בשלמות", "בשלמות ", "אין     "]
+            ]
+            utils_word.set_table_data_by_keyword(doc, "החלקים", estate_data,5,WD_ALIGN_PARAGRAPH.CENTER)
+
+            table_estate = utils_word.find_table_by_cell_content(doc, "החלקים")
+            utils_word.set_cell_data(table_estate, 5, 2, pdf_data['gush'],WD_ALIGN_PARAGRAPH.CENTER)
+
+            signature_data = utils_word.get_signature_data(seller_name,buyers_names)
+            utils_word.set_table_data_by_keyword(doc, "השם",signature_data,2,0)
+
+            today_str = datetime.today().strftime("%d/%m/%Y")
+            for i in range(5):
+
+                table_time = utils_word.find_table_by_cell_content(doc, "תאריך",i)
+                utils_word.set_cell_data(table_time, 0, 0, today_str)
+
+
+            utils_word.replace_text(doc, "כי בתאריך _________", f"כי בתאריך __{today_str}__")
+            folder_name = f"{pdf_data['gush']}_{pdf_data['helka']}"
+            utils_word.save_word_file(doc,output_file_prefix,buyers_names,folder_name,time_stamp)
+            buyers_names.clear()
+            estate_data.clear()
+            print ("fdfdf")
+
+
+    print ("#"*56)
+    print (f"#"*8,f"   Process Complted for {len(files_list)} PDF files   ","#"*8)
+    print ("#"*56)
 
 
 

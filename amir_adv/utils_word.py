@@ -1,4 +1,8 @@
+import shutil
 from datetime import datetime
+import os
+
+
 
 from docx.oxml.ns import qn
 import subprocess
@@ -67,9 +71,13 @@ class utilsWord():
         p.alignment = align
         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
-    def save_word_file(self,doc,prefix,suffix=""):
-        time_stamp = datetime.now().strftime("%M%S")
-        file_name=f"{prefix}_{suffix}_{time_stamp}.docx"
+    def save_word_file(self,doc,prefix,suffix,folder,time_stamp):
+        prefix = f"{prefix}\\{folder}"
+        print (f" saving the word at {prefix}")
+
+
+
+        file_name=f"{prefix}\\{folder}_{suffix[0][0]}.docx"
         if " " in file_name:
             file_name=file_name.replace(" ","_")
         try:
@@ -79,6 +87,8 @@ class utilsWord():
             print(f"Error: The file is  locked by another process.")
         except Exception as e:
             print(f"Error saving the file: {e}")
+
+
     def set_cell_data(self,table,target_row_idx,col_idx,value ,align = WD_ALIGN_PARAGRAPH.LEFT):
         row_cells = table.rows[target_row_idx].cells
         self.set_cell_content_centered(row_cells[col_idx], value,align)
@@ -105,7 +115,7 @@ class utilsWord():
     def get_signature_data(self,seller,names):
         if len(names) == 1:
 
-            signature_data = [[seller, "", "", names[0]]]
+            signature_data = [[seller, "", "", names[0][2]]]
 
         else:
             names_new =names[1:]
@@ -128,3 +138,30 @@ class utilsWord():
                 for run in paragraph.runs:
                     if old_text in run.text:
                         run.text = run.text.replace(old_text, new_text)
+
+
+
+    def recreate_folder(self, base_folder, suffix: str = ""):
+        """
+        מוחקת ספרייה עם כל התוכן שלה ויוצרת ספרייה חדשה עם שם דומה.
+
+        base_folder: שם הספרייה המקורית
+        suffix: סיומת שתתווסף לשם החדש (ברירת מחדל: _new)
+        """
+
+        # אם הספרייה קיימת – מחיקה מלאה
+        if os.path.exists(base_folder):
+            shutil.rmtree(base_folder)
+            print(f"Deleted folder: {base_folder}")
+
+        # יצירת שם חדש
+        new_folder = base_folder + suffix
+
+        # יצירת הספרייה החדשה
+        os.makedirs(new_folder, exist_ok=True)
+        print(f"Created new folder: {new_folder}")
+
+        return new_folder
+
+    # דוגמה לשימוש
+

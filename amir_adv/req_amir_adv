@@ -1,2 +1,5 @@
 pdfplumber
 pandas
+docx
+python-bidi
+pymupdf
