@@ -14,15 +14,15 @@ class AlgoUtils:
          if position_diff_abs>9:
              print ("Teams  found for Bancker Algo by position")
              scores = position_diff_abs*10
-             if (points_diff > 9):
-                 print("Teams  found for Bancker Algo by points")
-                 scores = scores + (points_diff * 10)
-                 # add points in case of home and calculate favorite
-             if position_diff > 0 :
-                 scores+=20
-                 favorite = 1
-             else:
-                 favorite = 2
+         if (position_diff_abs > 9) and (position_diff_abs>9):
+             print("Teams  found for Bancker Algo by points")
+             scores = scores + (points_diff * 10)
+             # add points in case of home and calculate favorite
+         if position_diff < 0 and (position_diff_abs>9):
+             scores+=20
+             favorite = 1
+         if position_diff > 0 and (position_diff_abs>9):
+             favorite = 2
 
          print(f"{scores}  scores found favorite = {favorite} ")
          return scores,favorite

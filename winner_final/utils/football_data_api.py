@@ -20,50 +20,35 @@ class FootballDataApi:
 
         data = response.json()
 
-        if isinstance(teams, str):
-            teams = [teams]
-        elif teams is None:
-            teams = []
-
-        target_teams = [t.lower() for t in teams if t]
-
         teams_data = []
+        for team in teams:
 
-        for entry in data["standings"][0]["table"]:
-            team_name = entry["team"]["name"]
+            for entry in data["standings"][0]["table"]:
+                team_name = entry["team"]["name"]
 
-            if target_teams and not any(
-                    t in team_name.lower() for t in target_teams
-            ):
-                continue
+                if team_name==team:
 
-            played = entry["playedGames"]
-            goals_for = entry["goalsFor"]
-            goals_against = entry["goalsAgainst"]
-            total_goals = goals_for + goals_against
+                    played = entry["playedGames"]
+                    goals_for = entry["goalsFor"]
+                    goals_against = entry["goalsAgainst"]
+                    total_goals = goals_for + goals_against
 
-            if played > 0:
-                teams_data.append(
-                    {
-                        "Position": int(entry["position"]),
-                        "Team": team_name,
-                        "Points": int(entry["points"]),
-                        "avgGoalsFor": round(goals_for / played, 2),
-                        "avgGoalsAgainst": round(goals_against / played, 2),
-                        "avgTotalGoals": round(total_goals / played, 2),
-                    }
-                )
+                    teams_data.append(
+                        {
+                            "Position": int(entry["position"]),
+                            "Team": team_name,
+                            "Points": int(entry["points"]),
+                            "avgGoalsFor": round(goals_for / played, 2),
+                            "avgGoalsAgainst": round(goals_against / played, 2),
+                            "avgTotalGoals": round(total_goals / played, 2),
+                        }
 
-        if teams_data:
-            for team in teams_data:
-                print(
-                    f" {team['Team']} Position: {team['Position']}, Points: {team['Points']}"
-                )
-                print(
-                    f"Avg Goals : For - {team['avgGoalsFor']}, Against - {team['avgGoalsAgainst']}, Total - {team['avgTotalGoals']}\n"
-                )
-        else:
-            print("No teams matching the search criteria were found.")
+                    )
+
+
+        for teams in teams_data:
+            print (f"Team {teams['Team']} found at position {teams['Position']},points:{teams['Points']}. For goals:{teams['avgGoalsFor']},Agienst goals:{teams['avgGoalsAgainst']}")
+
 
         return teams_data
     # PL (England), PD (Spain), SA (Italy)
