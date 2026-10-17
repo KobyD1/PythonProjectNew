@@ -19,6 +19,7 @@ class telesport_main_page:
         print (f"success to click on {title}")
 
     def set_table_league(self,league="wnba"):
+        is_found = True
         self.page.get_by_text("ליגות").nth(0).click()
         match league:
             case "wnba":
@@ -39,9 +40,13 @@ class telesport_main_page:
             print (45 * "*")
             print ("*****   ERROR : לא נמצאו ליגה פעילה בתכניה   *****")
             print (45 * "*")
+            is_found = False
+
+
 
         self.page.locator("div.sportlive_LeagueSelect_btnFilter").click()
         print (f"success to click on {league}")
+        return is_found
 
     def set_date(self):
         self.page.locator("div.sportLive_calendar_left").click()
@@ -113,12 +118,12 @@ class telesport_main_page:
 
                     f" יחסי הימורים ל: תיקו- {row_data['bet3']}, "
                         f" 2 - {row_data['bet2']}, "
-                        f" 1 - {row_data['bet1']}"
+                        f" gov_1 - {row_data['bet1']}"
                     )
 
 
                 else:
-                    print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
+                    print(f"יחסי הימורים: 2- {row_data['bet2']} , gov_1- {row_data['bet1']}")
 
 
                 print(f" שעת משחק: {row_data["status_time"]}")
@@ -166,12 +171,12 @@ class telesport_main_page:
                     print(
                         f" יחסי הימורים ל: תיקו- {row_data['bet2']}, "
                         f"2 - {row_data['bet3']}, "
-                        f"1 - {row_data['bet1']}"
+                        f"gov_1 - {row_data['bet1']}"
                     )
 
 
                 else:
-                    print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
+                    print(f"יחסי הימורים: 2- {row_data['bet2']} , gov_1- {row_data['bet1']}")
 
 
                 print(f" שעת משחק: {row_data["status_time"]}")
@@ -192,7 +197,7 @@ class telesport_main_page:
                 team = team_part.strip()
                 rate = float(number_part)
                 team_b = "not found"
-                description = '1 Team Under/Over'
+                description = 'gov_1 Team Under/Over'
                 team_with_added_points = ""
 
                 return team, team_b, rate, description, team_with_added_points
@@ -215,7 +220,7 @@ class telesport_main_page:
                 parts = teams.split(")")
                 player = parts[1].strip()
                 rate = re.findall(r"\d+", parts[0])
-                description = '1 Player Under/Over'
+                description = 'gov_1 Player Under/Over'
                 return player, NULL, rate, description, NULL
 
 

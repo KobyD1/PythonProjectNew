@@ -4,3 +4,4 @@ pandas
 openpyxl
 fpdf == 1.7.2
 python-bidi
+reporrtlab

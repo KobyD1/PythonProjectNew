@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 import unicodedata
 import sys
-from fpdf import FPDF
+# from fpdf import FPDF
 import pandas as pd
 import os
 
