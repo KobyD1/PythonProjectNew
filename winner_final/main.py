@@ -60,8 +60,9 @@ MAX_SUMMARY_LINES = 2_000
 POLL_MS = 100                   # תדירות ריענון הלוג
 MAX_ITEMS_PER_TICK = 2000       # מגבלת שורות לעיבוד בכל ריענון (שומר על UI זריז)
 
-# קבצי עזר שאינם נועדו להרצה ישירה - מוסתרים כברירת מחדל
-HELPER_FILES = {"__init__.py", "globals.py", "uiutils.py", Path(__file__).name.lower()}
+# קבצי עזר שאינם נועדו להרצה ישירה - מוסתרים כברירת מחדל (לפי שם בסיס, בלי סיומת,
+# כך שזה עובד גם על globals.py וגם על globals.pyc אם מפיצים גרסה מקומפלת בלי מקור)
+HELPER_FILES = {"__init__", "globals", "uiutils", Path(__file__).stem.lower()}
 
 # ── תיבת "ימים" (days) שנכתבת ישירות ל-globals.py ──
 GLOBALS_FILE = BASE_DIR / "globals.py"
@@ -241,14 +242,24 @@ def is_streamlit_file(path: Path) -> bool:
 
 
 def discover() -> list[tuple[str, Path, str, bool]]:
-    """כל הקבצים שאפשר להריץ: [(name, path, base_kind, is_streamlit)]."""
+    """
+    כל הקבצים שאפשר להריץ: [(name, path, base_kind, is_streamlit)].
+    קבצי .pyc (בייטקוד מקומפל, בלי קוד מקור גלוי) נחשבים כמו .py לצורך הרצה -
+    python מריץ אותם ישירות. אם לאותו שם קובץ יש גם .py וגם .pyc, מוצג רק ה-.py.
+    """
     items = []
+    py_stems = {p.stem.lower() for p in BASE_DIR.iterdir()
+               if p.is_file() and p.suffix.lower() == ".py"}
     for p in BASE_DIR.iterdir():
         if not p.is_file():
             continue
         low, ext = p.name.lower(), p.suffix.lower()
         if ext == ".py":
             items.append((p.name, p, "py", is_streamlit_file(p)))
+        elif ext == ".pyc":
+            if p.stem.lower() in py_stems:
+                continue                           # יש גם מקור .py - לא כופלים ברשימה
+            items.append((p.name, p, "py", False))  # בייטקוד בינארי - לא בודקים streamlit
         elif ext in (".bat", ".cmd"):
             items.append((p.name, p, "bat", False))
         elif ext == ".txt" and low.startswith("req"):
@@ -690,7 +701,8 @@ class ManagerApp(tk.Tk):
     # ── רשימת משימות ──
     def _is_visible(self, name: str) -> bool:
         """ברירת מחדל: הכול מוצג חוץ מקבצי עזר (אפשר לשנות דרך "visible" בקונפיג)."""
-        return self.cfg.get("visible", {}).get(name, name.lower() not in HELPER_FILES)
+        stem = Path(name).stem.lower()
+        return self.cfg.get("visible", {}).get(name, stem not in HELPER_FILES)
 
     def refresh_tasks(self) -> None:
         found = discover()
