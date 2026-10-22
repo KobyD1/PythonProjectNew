@@ -283,21 +283,32 @@ class UtilsPdf:
 
 
 
-            # if last_name == name1.split(" ")[0]:
-            #     print ("*** same name diffrent table found *****")
-            #
-            #     combined_entry = {
-            #         'page': item1['page'],
-            #         'table_index': item1['table_index'],
-            #         'name_1': final_result[counter-1]["name_1"],
-            #         'id_1': final_result[counter - 1]["id_1"],
-            #         'name_2': name1,
-            #         'id_2': id1[::-1],
-            #         'amount': "2"
-            #     }
-            #     final_result.index(counter - 1,combined_entry)
-            #
-            #     continue
+    def arrange_buyer_data (self,buyer_data):
+        index_to_remove = []
+        i = 0
+
+        while i < len(buyer_data)-1:
+            current = buyer_data[i]
+            name1_current = current.get('name_1', '').split(" ")[0]
+            next = buyer_data[i+1]
+            name1_next = next.get('name_1', '').split(" ")[0]
+            if name1_current == name1_next and name1_current != "מדינת":
+                print(f"**** Dupliceted names found name = {name1_current} ****")
+                current ['amount']= '2'
+                current['id_2']= next.get('id_1', '')
+                current['name_2']= next.get('name_1', '')
+                print(f"**** Dupliceted names complited ****")
+                index_to_remove.append(i+1)
+            i+=1
+        for index in index_to_remove:
+            del buyer_data[index]
+        return buyer_data
+
+
+
+
+
+
 
 
 
@@ -308,12 +319,16 @@ class UtilsPdf:
             lookup_dict[key] = item2
 
         final_result = []
+        index = 0
+        last_name = ""
 
         for item1 in array1:
             key = (item1['page'], item1['table_index'])
 
             name1 = item1['row_data'][2] if len(item1['row_data']) > 2 else ''
             id1 = item1['row_data'][4] if len(item1['row_data']) > 4 else ''
+            last_name = name1.split(" ")[0]
+
 
             combined_entry = {
                 'page': item1['page'],
@@ -333,6 +348,7 @@ class UtilsPdf:
                 combined_entry['amount'] = "2"
 
             final_result.append(combined_entry)
+        index += 1
 
         return final_result
 

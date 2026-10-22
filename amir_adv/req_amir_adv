@@ -1,5 +1,4 @@
-pdfplumber
-pandas
-docx
-python-bidi
-pymupdf
+pdfplumber == 0.11.10
+pandas == 3.0.3
+python-bidi == 0.6.11
+pymupdf == 1.28.2
