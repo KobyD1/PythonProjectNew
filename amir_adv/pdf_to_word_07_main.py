@@ -19,16 +19,16 @@ def main():
         data = utils_pdf.get_pdf_text(file)
         pdf_data = utils_pdf.get_data_from_pdf(data)
 
-        plot_tables = utils_pdf.filter_tables_by_row_and_content(file,0,"תת חלקה")
-        buyers_tables = utils_pdf.filter_tables_by_row_and_content(file,0,"ת.ז")
-        buyers_tables_1 = utils_pdf.filter_tables_by_row_and_content(file,1,"ת.ז")
+        buyers_tables = utils_pdf.filter_tables_by_row_and_content(file,0,["רישום בית משותף מדינת ישראל","ת.ז"])
+        buyers_tables_1 = utils_pdf.filter_tables_by_row_and_content(file,1,["ת.ז"])
 
-        area_tables = utils_pdf.filter_tables_by_row_and_content(file,3,"קומה",0)
+        plot_tables = utils_pdf.filter_tables_by_row_and_content(file,0,["תת חלקה"])
+        area_data = utils_pdf.get_areas_from_pdf(data)
+
         first_page_tables = utils_pdf.get_pdf_table_data_by_page(file,1)
-
+        first_page_tables = utils_pdf.remove_table_by_content(first_page_tables,'הגוש הגיע בתאריך')
         plots_data = utils_pdf.get_plots_from_tables(plot_tables)
         buyer_data = utils_pdf.get_buyer_from_tables(buyers_tables, buyers_tables_1)
-        area_data = utils_pdf.get_area_from_tables(area_tables)
 
         seller_name, seller_id = utils_pdf.get_sellers_from_pdf(first_page_tables,5)
         print("Analyze PDF completed")

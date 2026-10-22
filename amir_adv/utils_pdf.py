@@ -33,9 +33,36 @@ class UtilsPdf:
 
             return all_tables
 
-    def filter_tables_by_row_and_content(self,pdf_path, target_row_index, target_text, offset=0):
-        print (f"analyze all tables for  {target_text}")
+    def remove_table_by_content(self,tables, target_text):
+        i = 0
+        while i < len(tables):
+            table = tables[i]
+            # בדיקה האם הטקסט קיים בטבלה הנוכחית
+            found = False
+            for index, row in table.iterrows():
+                row_text = ' '.join(row.dropna().astype(str).tolist())
+                if target_text in row_text:
+                    print(f'נמצאה התאמה בטבלה אינדקס {i}, שורה {index}. הטבלה הוסרה.')
+                    tables.pop(i)  # הסרת הטבלה הנוכחית
+                    found = True
+                    break  # עצירת הסריקה בתוך השורות של הטבלה הנוכחית
+
+            if found:
+                break  # עצירת הסריקה של שאר הטבלאות ברגע שהטבלה הוסרה
+
+            i += 1
+
+        return tables
+
+
+
+
+
+
+    def filter_tables_by_row_and_content(self, pdf_path, target_row_index, target_text, offset=0):
+        print(f"analyze all tables for {target_text}")
         tables_filtered = []
+        all_tables_with_metadata = []
 
         with pdfplumber.open(pdf_path) as pdf:
             for page_num, page in enumerate(pdf.pages, start=1):
@@ -44,31 +71,80 @@ class UtilsPdf:
                     continue
 
                 for t_idx, table in enumerate(tables):
-                    if len(table) > target_row_index:
-                        row = table[target_row_index+offset]
-                        if row:
-                            row = [item[::-1] if item is not None else "" for item in row[::-1]]
-                        non_empty_cells = [str(c).replace('\n', ' ') for c in row if c and c.strip()]
-                        if not non_empty_cells:
-                            continue
+                    all_tables_with_metadata.append({
+                        "page": page_num,
+                        "table_index": t_idx + 1,
+                        "table_data": table
+                    })
 
-                        row_text = " ".join(non_empty_cells)
-                        reversed_row_text = row_text[::-1]
+        for entry in all_tables_with_metadata:
+            page_num = entry["page"]
+            t_idx = entry["table_index"]
+            table = entry["table_data"]
 
-                        text_matches = (target_text in row_text) or (target_text in reversed_row_text)
+            if len(table) > target_row_index + offset:
+                row = table[target_row_index + offset]
+                if row:
+                    row = [item[::-1] if item is not None else "" for item in row[::-1]]
+
+                non_empty_cells = [str(c).replace('\n', ' ') for c in row if c and c.strip()]
+                if not non_empty_cells:
+                    continue
+
+                row_text = " ".join(non_empty_cells)
+                reversed_row_text = row_text[::-1]
 
 
-                        if text_matches:
-
-
-                            tables_filtered.append({
-                                "page": page_num,
-                                "table_index": t_idx + 1,
-                                "row_index": target_row_index + 1,
-                                "row_data": row
-                            })
+                text_matches = any(
+                    (t in row_text) or (t in reversed_row_text) for t in target_text
+                )
+                if text_matches:
+                    tables_filtered.append({
+                        "page": page_num,
+                        "table_index": t_idx,
+                        "row_index": target_row_index + 1,
+                        "row_data": row
+                    })
 
         return tables_filtered
+
+
+    # def filter_tables_by_row_and_content(self,pdf_path, target_row_index, target_text, offset=0):
+    #     print (f"analyze all tables for  {target_text}")
+    #     tables_filtered = []
+    #
+    #     with pdfplumber.open(pdf_path) as pdf:
+    #         for page_num, page in enumerate(pdf.pages, start=1):
+    #             tables = page.extract_tables()
+    #             if not tables:
+    #                 continue
+    #
+    #             for t_idx, table in enumerate(tables):
+    #                 if len(table) > target_row_index:
+    #                     row = table[target_row_index+offset]
+    #                     if row:
+    #                         row = [item[::-1] if item is not None else "" for item in row[::-1]]
+    #                     non_empty_cells = [str(c).replace('\n', ' ') for c in row if c and c.strip()]
+    #                     if not non_empty_cells:
+    #                         continue
+    #
+    #                     row_text = " ".join(non_empty_cells)
+    #                     reversed_row_text = row_text[::-1]
+    #
+    #                     text_matches = (target_text in row_text) or (target_text in reversed_row_text)
+    #
+    #
+    #                     if text_matches:
+    #
+    #
+    #                         tables_filtered.append({
+    #                             "page": page_num,
+    #                             "table_index": t_idx + 1,
+    #                             "row_index": target_row_index + 1,
+    #                             "row_data": row
+    #                         })
+    #
+    #     return tables_filtered
     def get_pdf_all_table_data(self, path):
 
         with pdfplumber.open(path) as pdf:
@@ -113,6 +189,7 @@ class UtilsPdf:
         pdf_data = {}
         page_data = text[page]
         lines = page_data.split('\n')
+        counter = 0
 
         for line in lines:
             if "לשכת רישום מקרקעין" in line:
@@ -121,7 +198,9 @@ class UtilsPdf:
                     pdf_data['district'] = parts[1].strip()
                     print(f"district found")
 
-            if "גוש" in line and  "חלקות" not in line:
+            if "גוש" in line and "חלקה" in line :
+            # if "גוש" in line and "חלקות" not in line:
+
                 print (line)
                 index_1 = line.index("גוש")
                 index_2 = line.index("חלקה")
@@ -130,6 +209,7 @@ class UtilsPdf:
                 pdf_data['gush'] = gush
                 pdf_data['helka'] = helka
                 print(f"gush helka found")
+                counter+=1
 
             if "כתובת" in line:
                 parts = line.split(":", 1)
@@ -154,15 +234,72 @@ class UtilsPdf:
     def get_plots_from_tables(self, tables):
         plots = []
         for table in tables:
-            plot = table["row_data"][1].split(" ")[2]
-            plots.append(plot)
+            data = table["row_data"]
+            for text in data :
+                if 'תת חלקה' in text:
+                    plot = text.split(" ")[2][::-1]
+                    plots.append(plot)
         return plots
 
     def get_area_from_tables(self, tables):
         area_data= []
         for table in tables:
-            area_data.append(str(table["row_data"][2])[::-1])
+            area_data.append(str(table["table_data"][3][5]))
         return area_data
+
+    def get_areas_from_pdf(self, text):
+        area_data = []
+        pages = []
+
+        for page in text:
+            pages.append(page)
+
+        for page in pages:
+            rows = page.split("\n")
+            for i, row in enumerate(rows):
+                if "תיאור קומה" in row:
+                    row_text = rows[i+1]
+                    data = row_text.split(" ")
+                    area = data[0]
+                    area_data.append(area)
+        return area_data
+
+    def get_first_buyers_from_pdf(self, text):
+        buyer_data = []
+        pages = []
+
+        for page in text:
+            pages.append(page)
+
+        for page in pages:
+            rows = page.split("\n")
+            for i, row in enumerate(rows):
+                if "בעלויות" in row:
+                    row_text = rows[i+1]
+                    data = row_text.split(" ")
+                    buyer = data[1]
+                    buyer_data.append(buyer)
+        return buyer_data
+
+
+
+            # if last_name == name1.split(" ")[0]:
+            #     print ("*** same name diffrent table found *****")
+            #
+            #     combined_entry = {
+            #         'page': item1['page'],
+            #         'table_index': item1['table_index'],
+            #         'name_1': final_result[counter-1]["name_1"],
+            #         'id_1': final_result[counter - 1]["id_1"],
+            #         'name_2': name1,
+            #         'id_2': id1[::-1],
+            #         'amount': "2"
+            #     }
+            #     final_result.index(counter - 1,combined_entry)
+            #
+            #     continue
+
+
 
     def get_buyer_from_tables(self, array1, array2):
         lookup_dict = {}
@@ -183,7 +320,7 @@ class UtilsPdf:
                 'table_index': item1['table_index'],
                 'name_1': name1,
                 'id_1': id1[::-1],
-                'amount':"1"
+                'amount': "1"
             }
 
             if key in lookup_dict:
@@ -195,12 +332,9 @@ class UtilsPdf:
                 combined_entry['id_2'] = id2[::-1]
                 combined_entry['amount'] = "2"
 
-
             final_result.append(combined_entry)
 
         return final_result
-
-
 
     def get_sellers_from_pdf(self, tables, table_id =5):
         seller_name = tables[table_id].iloc[:, 2].dropna().to_list()[0]
