@@ -15,7 +15,7 @@ def fixture_1(x=0):
 
 # @pytest.fixture(scope="function")
 # def fixture_1(moduleCntr=0):
-#     moduleCntr+1
+#     moduleCntr+gov_1
 #     print("\n I'm the fixture - fixture1 per function ")
 #     print('module Counter',moduleCntr  )
 

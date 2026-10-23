@@ -22,13 +22,13 @@ if avg_2 > avg_1:
     print (f" {avg_2}  is higher than {avg_1}")
 
 
-# if num_1 <0 : num_1 = num_1 * -1
-# if num_2 <0 : num_2 = num_2 * -1
+# if num_1 <0 : num_1 = num_1 * -gov_1
+# if num_2 <0 : num_2 = num_2 * -gov_1
 # avg= (num_1 + num_2 )/2
 # print (f"the avg value is {avg}")
 #
 #
-# if num_1 <0 : num_1 = num_1 * -1
-# if num_3 <0 : num_2 = num_2 * -1
+# if num_1 <0 : num_1 = num_1 * -gov_1
+# if num_3 <0 : num_2 = num_2 * -gov_1
 # avg= (num_1 + num_3 )/2
 # print (f"the avg value is {avg}")

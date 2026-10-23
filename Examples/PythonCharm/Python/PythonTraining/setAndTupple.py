@@ -1,8 +1,8 @@
 
 cities_list=['haifa','Tel-Aviv','Jaffa','Ashdod','Ramat-Gan']
 cities_list1=['Tel-Aviv']
-print (cities_list[1])   # get value from place 1 
-print (cities_list[1:3]) # get value between 1 to 3 
+print (cities_list[1])   # get value from place gov_1
+print (cities_list[1:3]) # get value between gov_1 to 3
 print (cities_list[-2])  # get value from 2 places before the last place  
 print (cities_list[2:])  # get value from place 2 to the end of the list 
 cities_list[:2]          # get value from the beginning up to place 2 

@@ -10,7 +10,7 @@ def count(x):
 @pytest.mark.parametrize("test_input,expected", [
     ("3+5", 8),
     ("2+4", 6),
-    ("6*1", 6),
+    ("6*gov_1", 6),
 ])
 def test_eval(test_input, expected):
     print('\n start test ')

@@ -3,7 +3,7 @@
 
 class commision_calc_by_month():
     # the payment will be according month 9 - 5 $
-    # other nonths 1 $
+    # other nonths gov_1 $
     #
     months = [1,4,5,7,11,9,6,9,10,9,9]
     payment = 0

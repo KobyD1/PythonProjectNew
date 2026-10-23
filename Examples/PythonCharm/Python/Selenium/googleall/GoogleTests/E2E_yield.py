@@ -18,7 +18,7 @@ def setup(request):
 
 class TestExampleOne:
     def test_title(self):
-        print('into test 1')
+        print('into test gov_1')
 
     @pytest.mark.usefixtures("setup")  # define here at class level,can be define at test level as well
     def test_google(self):

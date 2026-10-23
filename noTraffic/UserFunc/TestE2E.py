@@ -9,7 +9,7 @@ from noTraffic.UserFuncUI import BaseNoTrafic
 def setup_e2e(request):
     print("initiating chrome driver")
     driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.get(BaseNoTrafic.url)
+    driver.get(BaseNoTrafic.act_url)
     driver.maximize_window()
     driver.implicitly_wait(10)
     request.cls.driver = driver

@@ -1,4 +1,4 @@
-#1.  given price as "38$" find the total price with tax of 2 $
+#gov_1.  given price as "38$" find the total price with tax of 2 $
 # 2. given the following "the price of the shirt is 34$"
 # find the product
 

@@ -7,4 +7,4 @@ for city in cities:
     if l > temp:
         temp = len(city)
 
-print (temp,"#### is longest city length ",city)
+print (temp,"is longest city length ",city)

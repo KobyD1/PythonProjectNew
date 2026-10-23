@@ -5,7 +5,7 @@ mails = ["john@gmail.com", "sara.outlook.com", "david@domain.org","nike#sdsds.co
 for mail in mails:
     print (mail)
 
-    # example 1
+    # example gov_1
     if mail.count("@") == 1:
         print ("valid mail found")
 

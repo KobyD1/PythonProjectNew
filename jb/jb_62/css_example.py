@@ -11,7 +11,7 @@ class TestCssExample():
         grade_1.clear()
         grade_1.fill("77")
         calculate= page.query_selector_all("input[name='x'][type='submit']")
- # td:nth-child(1) > input[type=submit]
+ # td:nth-child(gov_1) > input[type=submit]
         calculate[0].click()
         results = page.locator("p[class='verybigtext']")
         results_text = results.inner_text()

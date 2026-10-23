@@ -10,7 +10,7 @@ with sync_playwright() as p:
     drop_down = page.locator("[id='unitType']")
 
     drop_down.select_option("Speed conversion")
-    time.sleep(3)
+    time.sleep(8)
 
     act_url = page.url
 

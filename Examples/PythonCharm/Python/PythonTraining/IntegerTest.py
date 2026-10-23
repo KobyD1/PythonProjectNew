@@ -11,7 +11,7 @@ for base in range (maxNum):       # scan all numbers up to maxNum
 
 print(result)
 
-for base1 in range (1,10,2):     # scan all numbers from 1 to 10 with step 2
+for base1 in range (1,10,2):     # scan all numbers from gov_1 to 10 with step 2
     print ('the value of base1 is',base1)
 
 maxNum = 15

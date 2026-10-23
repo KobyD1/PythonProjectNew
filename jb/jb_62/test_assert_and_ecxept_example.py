@@ -10,7 +10,7 @@ class Test_assert_exept:
 
         page = setup_playwright
         page.goto("https://www.ebay.com")
-        assert page.url == "https://www.ebay.com/","Page URL is not as expected"
+        assert page.act_url == "https://www.ebay.com/", "Page URL is not as expected"
         expect (page).to_have_url("https://www.ebay.com/")
 
     def test_excpet(self, setup_playwright):

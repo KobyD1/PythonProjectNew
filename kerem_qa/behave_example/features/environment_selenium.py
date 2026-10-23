@@ -14,7 +14,7 @@
 #
 #     try:
 #         if BROWSER ==0:context.driver = webdriver.Chrome(options=options)
-#         if BROWSER ==1:context.driver = webdriver.Firefox(options=options)
+#         if BROWSER ==gov_1:context.driver = webdriver.Firefox(options=options)
 #
 #         # __next > div.jss30.js-focus-visible > div > div > div > div > div > div:nth-child(6) > div > div.css-ug2o6l > a
 #

@@ -12,7 +12,7 @@ class TestSwaglabsLogin():
         welcome_page = WelcomePage(page)
 
         welcome_page.login_by_user_password("standard_user","secret_sauce")
-        assert page.url == "https://www.saucedemo.com/inventory.html" , "Login did not success as expecrted"
+        assert page.act_url == "https://www.saucedemo.com/inventory.html" , "Login did not success as expecrted"
 
         print ("test end")
 
@@ -23,7 +23,7 @@ class TestSwaglabsLogin():
         welcome_page = WelcomePage(page)
 
         welcome_page.login_by_user_password("failure","secret_sauce")
-        assert page.url == "https://www.saucedemo.com/" , "Login did not success as expecrted"
+        assert page.act_url == "https://www.saucedemo.com/" , "Login did not success as expecrted"
 
         print ("test end")
 

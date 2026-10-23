@@ -13,7 +13,7 @@ class TestSwaglabs:
         password.fill("secret_sauce")
         login_btn = page.get_by_text("login")
         login_btn.click()
-        current_url = page.url
+        current_url = page.act_url
         assert current_url == "https://www.saucedemo.com/inventory.html", "current URL is not as expected"
 
     def test_swaglabs_by_class(self,setup_playwright):
@@ -28,7 +28,7 @@ class TestSwaglabs:
         password.fill("secret_sauce")
         login_btn = page.get_by_text("login")
         login_btn.click()
-        assert page.url == "https://www.saucedemo.com/inventory.html", "current URL is not as expected"
+        assert page.act_url == "https://www.saucedemo.com/inventory.html", "current URL is not as expected"
 
 
     def test_swaglabs_incorrect_password_login(self, setup_playwright):
@@ -42,7 +42,7 @@ class TestSwaglabs:
         password.fill("fake")
         login_btn = page.get_by_text("login")
         login_btn.click()
-        current_url = page.url
+        current_url = page.act_url
         assert current_url == "https://www.saucedemo.com/", "current URL is not as expected"
 
 
@@ -56,7 +56,7 @@ class TestSwaglabs:
         password.fill("fake")
         login_btn = page.get_by_text("login")
         login_btn.click()
-        current_url = page.url
+        current_url = page.act_url
         assert current_url == "https://www.saucedemo.com/", "current URL is not as expected"
 
 

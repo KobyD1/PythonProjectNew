@@ -11,9 +11,9 @@ student_1.get_avarage_score([56,88,66,45,99,80])  # example of using function wi
 is_young1 = student_1.age_calculator(66)
 is_young2 = student_1.age_calculator(77)
 if avg1 > avg2:
-    print("AVG 1 is higher than AVG2")
+    print("AVG gov_1 is higher than AVG2")
 
 else:
-    print("AVG 1 is lower than AVG2")
+    print("AVG gov_1 is lower than AVG2")
 
 

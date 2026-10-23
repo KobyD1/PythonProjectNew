@@ -10,7 +10,7 @@ class TestEbay:
         adv= page.get_by_role("link", name= "Advanced")
         adv.click()
         assert page.title() == "Advanced Search | eBay"
-        assert page.url == "https://www.ebay.com/sch/ebayadvsearch","Page URL is not correct after click on Adv. button"
+        assert page.act_url == "https://www.ebay.com/sch/ebayadvsearch", "Page URL is not correct after click on Adv. button"
 
 
     def test_ebay_drop_down_example(self,setup_playwright):
@@ -18,7 +18,7 @@ class TestEbay:
         page.goto("https://www.ebay.com/")
         adv = page.get_by_role("link", name="Advanced")
         adv.click()
-        drop_down = page.locator("[id='s0-1-20-4[0]-7[3]-_sacat']")
+        drop_down = page.locator("[id='s0-gov_1-20-4[0]-7[3]-_sacat']")
         time.sleep(3)
         drop_down.select_option("Art")
         drop_down.select_option(index=2)

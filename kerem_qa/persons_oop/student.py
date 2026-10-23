@@ -18,7 +18,7 @@ class Student(Person):
 
     def compare_score(self,avg1,avg2):
         if avg1>avg2:
-            print ("AVG 1 is higher than AVG2")
+            print ("AVG gov_1 is higher than AVG2")
 
         else:
-            print ("AVG 1 is lower than AVG2")
+            print ("AVG gov_1 is lower than AVG2")

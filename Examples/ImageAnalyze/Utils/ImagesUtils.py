@@ -9,7 +9,7 @@ from PIL import Image
 
 # to install packages matplotlib 3.7.3 ,opencv-python 4.8.78  before
 # install open cv by pip install opencv-python
-# version of opencv-python is 4.8.1.78
+# version of opencv-python is 4.8.gov_1.78
 class ImagesUtils():
 
     def __init__(self, driver, is_learning):

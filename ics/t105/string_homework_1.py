@@ -2,7 +2,7 @@
 
 text = "the price of the chair is 28 ILS "
 
-# 1. replace ILS to $
+# gov_1. replace ILS to $
 
 nums = [2,5,6]
  # print for each number the value of number *2

@@ -26,10 +26,10 @@ class TestUsers():
     def zone_can_watch_by_all_users(self):
         pass
 
-# user 1 delete zone and user 2 create the same zone
+# user gov_1 delete zone and user 2 create the same zone
     def create_after_delete_same_zone(self):
         pass
 
-# user 1 create zone and user 2 create the same zone
+# user gov_1 create zone and user 2 create the same zone
     def create_same_zone(self):
         pass

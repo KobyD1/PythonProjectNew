@@ -33,7 +33,7 @@ class TestViewZone():
     def test_view_single_zone(self):
         getPage = GetAllZonesPage(self.driver)
         pattern = getPage.get_zone_all_details('name0')
-        assert pattern == '1 name0','Zone appears not as expected into zone list line 0 '
+        assert pattern == 'gov_1 name0','Zone appears not as expected into zone list line 0 '
 
     def test_view_multiple_zone(self):
         getPage = GetAllZonesPage(self.driver)

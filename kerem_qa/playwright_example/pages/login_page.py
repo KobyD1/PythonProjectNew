@@ -14,10 +14,10 @@ class loginPage():
         login_button.click()
 
     def verify_login_success(self):
-        url = self.page.url
+        url = self.page.act_url
         assert url =="https://www.saucedemo.com/inventory.html","URL is not as expected after login success"
 
     def verify_login_fail(self):
-        url = self.page.url
+        url = self.page.act_url
         assert url =="https://www.saucedemo.com/","URL is not as expected after login failed"
 

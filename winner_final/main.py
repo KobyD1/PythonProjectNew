@@ -50,7 +50,7 @@ from tkinter import colorchooser, filedialog, messagebox, ttk
 from typing import Optional
 
 # ───────────────────────────── הגדרות ─────────────────────────────
-IS_WIN = os.name == "nt"
+# IS_WIN = os.name == "nt"
 BASE_DIR = (Path(sys.argv[1]).resolve() if len(sys.argv) > 1
             else Path(__file__).resolve().parent)
 CONFIG_FILE = BASE_DIR / ".manager_config.json"
@@ -185,7 +185,7 @@ def split_args(text: str) -> list[str]:
     """פירוק שורת ארגומנטים (שומר על נתיבי Windows עם backslash)."""
     if not text.strip():
         return []
-    parts = shlex.split(text, posix=not IS_WIN)
+    parts = shlex.split(text, posix=False)
     return [p[1:-1] if len(p) >= 2 and p[0] == p[-1] and p[0] in "\"'" else p
             for p in parts]
 
@@ -218,17 +218,17 @@ def looks_tabular(line: str) -> bool:
 def kill_tree(proc: subprocess.Popen) -> None:
     """עצירת התהליך וכל תהליכי-הבן שלו."""
     try:
-        if IS_WIN:
-            subprocess.run(["taskkill", "/PID", str(proc.pid), "/T", "/F"],
-                           capture_output=True,
-                           creationflags=subprocess.CREATE_NO_WINDOW)
-        else:
-            pgid = os.getpgid(proc.pid)
-            os.killpg(pgid, signal.SIGTERM)
-            try:
-                proc.wait(5)
-            except subprocess.TimeoutExpired:
-                os.killpg(pgid, signal.SIGKILL)
+        # if IS_WIN:
+        subprocess.run(["taskkill", "/PID", str(proc.pid), "/T", "/F"],
+                       capture_output=True,
+                       creationflags=subprocess.CREATE_NO_WINDOW)
+        # else:
+        #     pgid = os.getpgid(proc.pid)
+        #     os.killpg(pgid, signal.SIGTERM)
+        #     try:
+        #         proc.wait(5)
+        #     except subprocess.TimeoutExpired:
+        #         os.killpg(pgid, signal.SIGKILL)
     except (ProcessLookupError, OSError):
         pass
 
@@ -817,10 +817,10 @@ class ManagerApp(tk.Tk):
 
     # ── הרצה / עצירה ──
     def _build_cmd(self, t: Task) -> list[str]:
-        if t.kind == "bat":
-            if not IS_WIN:
-                raise RuntimeError("קבצי .bat / .cmd ניתנים להרצה רק ב-Windows.")
-            return ["cmd", "/c", t.path.name]
+        # if t.kind == "bat":
+            # if not IS_WIN:
+            #     raise RuntimeError("קבצי .bat / .cmd ניתנים להרצה רק ב-Windows.")
+            # return ["cmd", "/c", t.path.name]
         py = self.interpreter
         if not shutil.which(py):
             raise RuntimeError(f"מפרש Python לא נמצא:\n{py}")
@@ -848,11 +848,11 @@ class ManagerApp(tk.Tk):
                    STREAMLIT_BROWSER_GATHER_USAGE_STATS="false")
         kwargs = dict(cwd=str(BASE_DIR), env=env, stdin=subprocess.DEVNULL,
                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        if IS_WIN:
-            kwargs["creationflags"] = (subprocess.CREATE_NEW_PROCESS_GROUP |
-                                       subprocess.CREATE_NO_WINDOW)
-        else:
-            kwargs["start_new_session"] = True
+        # if IS_WIN:
+        kwargs["creationflags"] = (subprocess.CREATE_NEW_PROCESS_GROUP |
+                                   subprocess.CREATE_NO_WINDOW)
+        # else:
+        #     kwargs["start_new_session"] = True
 
         if self.clear_on_run.get():
             t.log.clear()
@@ -1191,12 +1191,12 @@ class ManagerApp(tk.Tk):
 
 
 def main() -> None:
-    if IS_WIN:
-        try:
-            import ctypes
-            ctypes.windll.shcore.SetProcessDpiAwareness(1)   # טקסט חד במסכי HiDPI
-        except Exception:
-            pass
+    # if IS_WIN:
+    try:
+        import ctypes
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)   # טקסט חד במסכי HiDPI
+    except Exception:
+        pass
     ManagerApp().mainloop()
 
 

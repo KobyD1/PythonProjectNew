@@ -87,11 +87,15 @@ class examplePlaywrightTest(unittest.TestCase):
         utils = PlaywrightUtils()
         page = utils.playwright_start("https://www.saucedemo.com/")
 
-        elemnts = page.query_selector_all('[class="input_error form_input"]')
+        elemnts = page.query_selector_all('[class*="rror form_in"]')
         user = elemnts[0]
         password = elemnts[1]
         user.fill("standard_user")
         password.fill("secret_sauce")
+        login = page.get_by_text("Login")
+        login.click()
+
+        assert page.url == "https://www.saucedemo.com/inventory.html"
 
 
 

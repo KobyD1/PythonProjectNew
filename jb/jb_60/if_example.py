@@ -10,7 +10,7 @@ elif (num1==num2):
     print ("num1 is equals to num2")
 
 else:
-    print ("num1 1 is not more than num2 and not equals to num2 ")
+    print ("num1 gov_1 is not more than num2 and not equals to num2 ")
 
 
 

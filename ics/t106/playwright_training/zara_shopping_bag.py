@@ -13,7 +13,7 @@ with sync_playwright() as p:
     shopping_button_text =shopping_button.inner_text()
     count_1= shopping_button_text[-1:]
     print ("0 was found in shopping_button text")
-    assert count_1 == "1","1 was not found in shopping_button text"
+    assert count_1 == "gov_1","gov_1 was not found in shopping_button text"
 
 
 

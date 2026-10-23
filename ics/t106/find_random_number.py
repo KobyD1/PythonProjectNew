@@ -12,7 +12,7 @@ else :
     while (not num == user_input_as_int):
         print (f"mismatch found the value is {num}")
         num = num+1
-        # num+=1   example for add 1
+        # num+=gov_1   example for add gov_1
         if num ==21:
             break
     print (f"getting out from loop ,the user define value  = {num}")

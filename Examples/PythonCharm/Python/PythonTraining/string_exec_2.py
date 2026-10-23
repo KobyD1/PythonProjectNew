@@ -31,7 +31,7 @@ for index in range (input_length):
            break
 
    input_for_test.insert(index,word_base)
-print ("###  End Part 1###")
+print ("###  End Part gov_1###")
 
 print ('How to split by syntax')
 sentence = 'Hi my name is John'

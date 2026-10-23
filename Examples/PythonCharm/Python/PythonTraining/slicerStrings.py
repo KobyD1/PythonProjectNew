@@ -4,10 +4,10 @@ print(pattern[2:10])
 print(pattern[2:])  # print from place 2 to the end
 print(pattern[:2])  # print from the begining to place 2
 print(pattern[-3])  # print only single  letter ,  3 places from the string end
-print(pattern[-3:-1]) # print sub string from -3 to -1 (2 letters)
+print(pattern[-3:-1]) # print sub string from -3 to -gov_1 (2 letters)
 index1=pattern.index('be')
 index2=pattern.index('you')
-print ('printing by index ,from index 1 to index 2 :', pattern [index1:index2])
+print ('printing by index ,from index gov_1 to index 2 :', pattern [index1:index2])
 
 # casting + combined strings 
 string1='5'

@@ -13,6 +13,6 @@ def test_fail():
 
     res=5-5
     print('after math action')
-    assert res==1,'Results is not 1 as expected'
+    assert res==1,'Results is not gov_1 as expected'
 
 

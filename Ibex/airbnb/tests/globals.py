@@ -3,7 +3,7 @@ LOCATION = "Amsterdam, Netherlands"
 EXP_ADULTS = 2
 EXP_CHILDREN = 1
 FROM_DELTA = 1  # checkin day range from today (in days)
-BROWSER = 1  # 1- for Chrome , 2- for Firefox
+BROWSER = 1  # gov_1- for Chrome , 2- for Firefox
 main_search = {
     "location": LOCATION,
     "from_delta": FROM_DELTA,

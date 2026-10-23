@@ -2,7 +2,7 @@ from jb.python_training.oop_university.driver_object import Driver
 from jb.python_training.oop_university.student_object import Student
 
 # define 2 students , find the higher avg
-# define 1 driver calculate for his age and license level
+# define gov_1 driver calculate for his age and license level
 
 student_1 = Student("Leo", "Messi")
 student_2 = Student("John", "Doe")

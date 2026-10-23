@@ -7,7 +7,7 @@ class TestEbayPytest():
     def test_ebay_navigation(self,setup_playwright):
         page = setup_playwright
         page.goto("https://www.ebay.com/")
-        url = page.url
+        url = page.act_url
         assert url == "https://www.ebay.com/","URL is not as expected after navigation"
 
     def test_search_shoes(self,setup_playwright):
@@ -43,7 +43,7 @@ class TestEbayPytest():
         page.goto("https://www.ebay.com/")
         adv = page.get_by_text('Advanced')
         adv.click()
-        title = page.locator("[id='s0-1-17-5[1]-[0]-LH_TitleDesc']")
+        title = page.locator("[id='s0-gov_1-17-5[gov_1]-[0]-LH_TitleDesc']")
         is_title_selected = title.is_checked()
         if (not is_title_selected):
             title.click()

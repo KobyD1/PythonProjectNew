@@ -15,7 +15,7 @@ class TestSwagLabsTest():
         login_button = page.locator("[name='login-button']")
         login_button.click()
         time.sleep(3)
-        url = page.url
+        url = page.act_url
         assert url == "https://www.saucedemo.com/inventory.html","Page URL is not as expected after login"
 
     def test_incorrect_login(self,setup_playwright):
@@ -29,7 +29,7 @@ class TestSwagLabsTest():
         password.fill("fake_secret_sauce")
         login_button = page.locator("[name='login-button']")
         login_button.click()
-        url = page.url
+        url = page.act_url
         assert url == "https://www.saucedemo.com/","Page URL is not as expected after incorrect login"
 
 

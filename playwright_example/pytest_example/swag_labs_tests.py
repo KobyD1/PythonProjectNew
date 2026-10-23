@@ -16,7 +16,7 @@ class TestSwaglabs():
         user.fill("standard_user")
         password.fill("secret_sauce")
         login_button.click()
-        assert page.url =="https://www.saucedemo.com/inventory.html","URL is not as expectrd after login with correct user"
+        assert page.act_url == "https://www.saucedemo.com/inventory.html", "URL is not as expectrd after login with correct user"
 
 
     def test_login_incorrect_user(self,setup_playwright):
@@ -29,9 +29,9 @@ class TestSwaglabs():
         user.fill("fake_user")
         password.fill("fake_password")
         login_button.click()
-        print(f"URL found the value is{page.url} ")
+        print(f"URL found the value is{page.act_url} ")
 
-        assert page.url == "https://www.saucedemo.com/","Page URL is not as expected after incorrect login"
+        assert page.act_url == "https://www.saucedemo.com/", "Page URL is not as expected after incorrect login"
 
     def test_get_first_price(self,setup_playwright):
 

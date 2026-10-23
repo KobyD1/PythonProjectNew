@@ -10,4 +10,4 @@ nums2 = [454,45,33,56]
 avg2,size2 = utils_instance.avg_calc(nums2)
 utils_instance.avg_calc([33,33,22,11])
 if (avg2>avg1):
-    print ("avg 1 was bigger")
+    print ("avg gov_1 was bigger")

@@ -9,7 +9,7 @@ def test_search_adv(setup_playwright):
     page.goto("https://www.ebay.com/")
     adv_button = page.get_by_text("Advanced")
     adv_button.click()
-    url_adv = page.url
+    url_adv = page.act_url
     print(url_adv)
     search_from_adv = page.locator("[id='_nkw']")
     search_from_adv.click()

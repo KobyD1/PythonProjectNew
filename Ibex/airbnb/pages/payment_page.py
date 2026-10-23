@@ -8,7 +8,7 @@ class paymentPage:
 
     def get_and_assert_url(self, search_details: dict):
         self.__page.reload()
-        url = self.__page.url
+        url = self.__page.act_url
         adults_pattern = "adults=" + str(search_details["adults"])
         children_pattern = "children=" + str(search_details["children"])
         is_adults = adults_pattern in url

@@ -48,7 +48,7 @@ print ('#######')
 cities=["London",'Paris','Rome','Milano']
 
 size1= len(cities)
-print('print 1 -size1 found ,the value is ',size1)
+print('print gov_1 -size1 found ,the value is ',size1)
 
 city = cities[1]
 print('print 2 -city found ,the value is  ',city)

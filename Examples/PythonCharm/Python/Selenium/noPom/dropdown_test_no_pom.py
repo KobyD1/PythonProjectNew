@@ -21,6 +21,6 @@ select = Select(driver.find_element_by_id('userSelect'))
 select.select_by_visible_text('Harry Potter')
 
 # select by value
-select.select_by_value('1')
+select.select_by_value('gov_1')
 driver.quit()
 print ('test success')

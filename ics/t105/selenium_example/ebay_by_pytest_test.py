@@ -31,6 +31,6 @@ class eBayPytest(unittest.TestCase):
     def test_keyword_at_advanced(self):
         print ("Into Keyword in Advanced ")
         self.driver.find_element(By.LINK_TEXT, "Advanced").click()
-        keyword_button = self.driver.find_element(By.ID, "s0-1-19-4[0]-7[1]-_in_kw")
+        keyword_button = self.driver.find_element(By.ID, "s0-gov_1-19-4[0]-7[gov_1]-_in_kw")
 
         assert keyword_button.is_displayed() == True,"Button did not displayed as expected"

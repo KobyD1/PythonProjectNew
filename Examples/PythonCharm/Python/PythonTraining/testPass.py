@@ -16,7 +16,7 @@ def resource_1_teardown():
 #     resource_1_teardown()
 
 def test_1_using_resource_1():
-    print('noPom 1')
+    print('noPom gov_1')
 
 def test_2_using_resource_1():
     print('noPom 2')

@@ -18,7 +18,7 @@ def test_pass1():
     res=5-5
     assert res == 2, 'result is not 0 as expected'
 
-    assert 1 == 1, 'result is not 1 as expected'
+    assert 1 == 1, 'result is not gov_1 as expected'
 
 
 def test_pass2():
