@@ -1,8 +1,6 @@
 import os
-
 import openpyxl
 from openpyxl.styles import Alignment
-
 
 class UtilsExcel:
     def __init__(self, template_path, ):
