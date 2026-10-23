@@ -2,8 +2,6 @@ import shutil
 from datetime import datetime
 import os
 
-
-
 from docx.oxml.ns import qn
 import subprocess
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -12,11 +10,10 @@ from docx.enum.table import WD_ALIGN_VERTICAL
 
 class utilsWord():
 
-
     def __init__(self):
         pass
 
-    def get_word_tables(self,doc):
+    def get_word_tables(self, doc):
         tables = []
         for child in doc._body._element:
             if child.tag == qn('w:tbl'):
@@ -29,7 +26,7 @@ class utilsWord():
                         row_data.append(" ".join(texts))
                     table_data.append(row_data)
                 tables.append(table_data)
-        print (f"found {len(tables)} tables")
+        print(f"found {len(tables)} tables")
         return tables
 
     def close_open_word_file(self):
@@ -42,25 +39,24 @@ class utilsWord():
         except Exception as e:
             print(f"Can not closed Word automatic {e}")
 
-    def find_table_by_cell_content(self, doc, cell_text_to_find, ignore_offset = 0 ):
+    def find_table_by_cell_content(self, doc, cell_text_to_find, ignore_offset=0):
         counter = 0
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
                     clean_cell_text = " ".join(cell.text.split())
                     if cell_text_to_find in clean_cell_text:
-                        counter+=1
+                        counter += 1
                         if counter > ignore_offset:
                             return table
         if table:
-            print ("Table  found for keyword:", cell_text_to_find)
+            print("Table  found for keyword:", cell_text_to_find)
         else:
-            print ("Table not found for keyword:", cell_text_to_find)
+            print("Table not found for keyword:", cell_text_to_find)
 
         return None
 
-
-    def set_cell_content_centered(self, cell, text ,align = WD_ALIGN_PARAGRAPH.LEFT):
+    def set_cell_content_centered(self, cell, text, align=WD_ALIGN_PARAGRAPH.LEFT):
 
         for p in cell.paragraphs:
             p.text = ""
@@ -71,15 +67,14 @@ class utilsWord():
         p.alignment = align
         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
-    def save_word_file(self,doc,prefix,suffix,folder,time_stamp):
+    def save_word_file(self, doc, prefix, suffix, folder, time_stamp):
         prefix = f"{prefix}\\{folder}"
-        print (f" saving the word at {prefix}")
+        os.makedirs(os.path.dirname(prefix), exist_ok=True)
+        print(f" saving the word at {prefix}")
 
-
-
-        file_name=f"{prefix}\\{folder}_{suffix[0][0]}.docx"
+        file_name = f"{prefix}\\{folder}_{suffix[0][0]}.docx"
         if " " in file_name:
-            file_name=file_name.replace(" ","_")
+            file_name = file_name.replace(" ", "_")
         try:
             doc.save(file_name)
             print(f"The document has been updated and saved successfully")
@@ -88,13 +83,11 @@ class utilsWord():
         except Exception as e:
             print(f"Error saving the file: {e}")
 
-
-    def set_cell_data(self,table,target_row_idx,col_idx,value ,align = WD_ALIGN_PARAGRAPH.LEFT):
+    def set_cell_data(self, table, target_row_idx, col_idx, value, align=WD_ALIGN_PARAGRAPH.LEFT):
         row_cells = table.rows[target_row_idx].cells
-        self.set_cell_content_centered(row_cells[col_idx], value,align)
+        self.set_cell_content_centered(row_cells[col_idx], value, align)
 
-
-    def set_table_data(self,table,table_data,offset = 1,align=WD_ALIGN_PARAGRAPH.LEFT):
+    def set_table_data(self, table, table_data, offset=1, align=WD_ALIGN_PARAGRAPH.LEFT):
         for i, data in enumerate(table_data):
             target_row_idx = offset + i
 
@@ -102,17 +95,16 @@ class utilsWord():
                 row_cells = table.rows[target_row_idx].cells
 
                 for col_idx, value in enumerate(data[:len(row_cells)]):
-                    self.set_cell_content_centered(row_cells[col_idx], value , align)
+                    self.set_cell_content_centered(row_cells[col_idx], value, align)
 
-
-
-    def set_table_data_by_keyword(self,doc,keyword,table_data,row_offset = 1, table_offset = 0 ,align = WD_ALIGN_PARAGRAPH.LEFT):
-        table = self.find_table_by_cell_content(doc, keyword,table_offset)
+    def set_table_data_by_keyword(self, doc, keyword, table_data, row_offset=1, table_offset=0,
+                                  align=WD_ALIGN_PARAGRAPH.LEFT):
+        table = self.find_table_by_cell_content(doc, keyword, table_offset)
         if table:
-            print ("Table found for keyword "+keyword)
-            self.set_table_data(table, table_data,row_offset)
+            print("Table found for keyword " + keyword)
+            self.set_table_data(table, table_data, row_offset)
 
-    def get_signature_data(self,seller,names):
+    def get_signature_data(self, seller, names):
         if len(names) == 1:
 
             signature_data = [[seller, "", "", names[0][0]]]
@@ -122,14 +114,13 @@ class utilsWord():
                               ["", "", "", names[1][0]]
                               ]
 
-
         return signature_data
 
     def get_full_name_data(self, names):
         if len(names) == 1:
             return names[0]
         else:
-            first_name= names[1].split(" ")[1]
+            first_name = names[1].split(" ")[1]
             buyer = names[0] + " ו" + first_name
             return buyer
 
@@ -139,8 +130,6 @@ class utilsWord():
                 for run in paragraph.runs:
                     if old_text in run.text:
                         run.text = run.text.replace(old_text, new_text)
-
-
 
     def recreate_folder(self, base_folder, suffix: str = ""):
         """
@@ -165,4 +154,3 @@ class utilsWord():
         return new_folder
 
     # דוגמה לשימוש
-

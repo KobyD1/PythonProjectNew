@@ -1,8 +1,6 @@
-
 from bidi.algorithm import get_display
 import pdfplumber
 import pandas as pd
-
 
 
 class UtilsPdf:
@@ -33,7 +31,7 @@ class UtilsPdf:
 
             return all_tables
 
-    def remove_table_by_content(self,tables, target_text):
+    def remove_table_by_content(self, tables, target_text):
         i = 0
         while i < len(tables):
             table = tables[i]
@@ -53,11 +51,6 @@ class UtilsPdf:
             i += 1
 
         return tables
-
-
-
-
-
 
     def filter_tables_by_row_and_content(self, pdf_path, target_row_index, target_text, offset=0):
         print(f"analyze all tables for {target_text}")
@@ -94,7 +87,6 @@ class UtilsPdf:
                 row_text = " ".join(non_empty_cells)
                 reversed_row_text = row_text[::-1]
 
-
                 text_matches = any(
                     (t in row_text) or (t in reversed_row_text) for t in target_text
                 )
@@ -107,7 +99,6 @@ class UtilsPdf:
                     })
 
         return tables_filtered
-
 
     # def filter_tables_by_row_and_content(self,pdf_path, target_row_index, target_text, offset=0):
     #     print (f"analyze all tables for  {target_text}")
@@ -185,7 +176,7 @@ class UtilsPdf:
                     hebrew_text.append(visual)
         return hebrew_text
 
-    def get_data_from_pdf(self, text,page=0):
+    def get_data_from_pdf(self, text, page=0):
         pdf_data = {}
         page_data = text[page]
         lines = page_data.split('\n')
@@ -198,10 +189,10 @@ class UtilsPdf:
                     pdf_data['district'] = parts[1].strip()
                     print(f"district found")
 
-            if "גוש" in line and "חלקה" in line :
-            # if "גוש" in line and "חלקות" not in line:
+            if "גוש" in line and "חלקה" in line:
+                # if "גוש" in line and "חלקות" not in line:
 
-                print (line)
+                print(line)
                 index_1 = line.index("גוש")
                 index_2 = line.index("חלקה")
                 gush = line[index_1 + 4:index_2].strip()
@@ -209,7 +200,7 @@ class UtilsPdf:
                 pdf_data['gush'] = gush
                 pdf_data['helka'] = helka
                 print(f"gush helka found")
-                counter+=1
+                counter += 1
 
             if "כתובת" in line:
                 parts = line.split(":", 1)
@@ -218,31 +209,29 @@ class UtilsPdf:
                     pdf_data['city'] = city
                     print(f"city found")
             if "תת חלקה" in line:
-
-                    subplot = line.replace("תת חלקה", "").strip()
-                    pdf_data['subplot'] = subplot
-                    print(f"subplot found")
+                subplot = line.replace("תת חלקה", "").strip()
+                pdf_data['subplot'] = subplot
+                print(f"subplot found")
         return pdf_data
 
-
-    def get_buyers_from_pdf(self, tables, table_id =9):
-        ids= tables[table_id].iloc[:, 4].dropna().tolist()
+    def get_buyers_from_pdf(self, tables, table_id=9):
+        ids = tables[table_id].iloc[:, 4].dropna().tolist()
         names = tables[table_id].iloc[:, 2].dropna().tolist()
-        print (f"found {len(names)} buyers at page ")
+        print(f"found {len(names)} buyers at page ")
         return ids, names
 
     def get_plots_from_tables(self, tables):
         plots = []
         for table in tables:
             data = table["row_data"]
-            for text in data :
+            for text in data:
                 if 'תת חלקה' in text:
                     plot = text.split(" ")[2][::-1]
                     plots.append(plot)
         return plots
 
     def get_area_from_tables(self, tables):
-        area_data= []
+        area_data = []
         for table in tables:
             area_data.append(str(table["table_data"][3][5]))
         return area_data
@@ -258,7 +247,7 @@ class UtilsPdf:
             rows = page.split("\n")
             for i, row in enumerate(rows):
                 if "תיאור קומה" in row:
-                    row_text = rows[i+1]
+                    row_text = rows[i + 1]
                     data = row_text.split(" ")
                     area = data[0]
                     area_data.append(area)
@@ -275,42 +264,32 @@ class UtilsPdf:
             rows = page.split("\n")
             for i, row in enumerate(rows):
                 if "בעלויות" in row:
-                    row_text = rows[i+1]
+                    row_text = rows[i + 1]
                     data = row_text.split(" ")
                     buyer = data[1]
                     buyer_data.append(buyer)
         return buyer_data
 
-
-
-    def arrange_buyer_data (self,buyer_data):
+    def arrange_buyer_data(self, buyer_data):
         index_to_remove = []
         i = 0
 
-        while i < len(buyer_data)-1:
+        while i < len(buyer_data) - 1:
             current = buyer_data[i]
             name1_current = current.get('name_1', '').split(" ")[0]
-            next = buyer_data[i+1]
+            next = buyer_data[i + 1]
             name1_next = next.get('name_1', '').split(" ")[0]
             if name1_current == name1_next and name1_current != "מדינת":
                 print(f"**** Dupliceted names found name = {name1_current} ****")
-                current ['amount']= '2'
-                current['id_2']= next.get('id_1', '')
-                current['name_2']= next.get('name_1', '')
+                current['amount'] = '2'
+                current['id_2'] = next.get('id_1', '')
+                current['name_2'] = next.get('name_1', '')
                 print(f"**** Dupliceted names complited ****")
-                index_to_remove.append(i+1)
-            i+=1
+                index_to_remove.append(i + 1)
+            i += 1
         for index in index_to_remove:
             del buyer_data[index]
         return buyer_data
-
-
-
-
-
-
-
-
 
     def get_buyer_from_tables(self, array1, array2):
         lookup_dict = {}
@@ -328,7 +307,6 @@ class UtilsPdf:
             name1 = item1['row_data'][2] if len(item1['row_data']) > 2 else ''
             id1 = item1['row_data'][4] if len(item1['row_data']) > 4 else ''
             last_name = name1.split(" ")[0]
-
 
             combined_entry = {
                 'page': item1['page'],
@@ -352,18 +330,16 @@ class UtilsPdf:
 
         return final_result
 
-    def get_sellers_from_pdf(self, tables, table_id =5):
+    def get_sellers_from_pdf(self, tables, table_id=5):
         seller_name = tables[table_id].iloc[:, 2].dropna().to_list()[0]
         seller_id = tables[table_id].iloc[:, 4].dropna().to_list()[0]
-        print (f"seller_name found {seller_name}")
+        print(f"seller_name found {seller_name}")
 
         return seller_name, seller_id
 
-    def get_area_from_pdf(self,tables,table_id =2 ):
+    def get_area_from_pdf(self, tables, table_id=2):
         table = tables[table_id]
-        area_as_list= table.iloc[0: 4].iloc[:, 2].dropna().tolist()
-        area=area_as_list[1]
+        area_as_list = table.iloc[0: 4].iloc[:, 2].dropna().tolist()
+        area = area_as_list[1]
         area = area[::-1]
         return area
-
-
