@@ -18,7 +18,6 @@ def main():
 
 
     utils_atable = AirTableApi(API_KEY, BASE_ID, TABLE_NAME)
-    is_valid = utils_atable.verify_or_register_license()
 
     folder = PDF_PATH
     files_list = [str(file) for file in folder.iterdir() if file.is_file()]
