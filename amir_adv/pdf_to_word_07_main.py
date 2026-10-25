@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from amir_adv.globals import PDF_PATH, WORD_TEMPLATE_PATH_1, OUTPUT_FOLDER_1, EXCEL_TEMPLATE_PATH_1, OUTPUT_FOLDER_TEMP, \
