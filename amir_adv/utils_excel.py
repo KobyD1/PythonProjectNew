@@ -83,6 +83,14 @@ class UtilsExcel:
         center_align = Alignment(horizontal="center", vertical="center")
 
         for item in section_data:
+            if any(char.isdigit() for char in str(item.get("name_2"))):
+                print ("digits found at name 2 , ignoring it ")
+                item["name_2"] = ""
+                item["id_2"] = ""
+
+
+
+
             if item.get("amount") == 2:
                 fields = ["name_1", "id_1", "amount", "name_2", "id_2", "amount"]
 

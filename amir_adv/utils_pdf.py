@@ -135,15 +135,26 @@ class UtilsPdf:
         return sections
 
     def get_buyyers_amount (self,section_text):
-        if section_text.count ("מכר")>0:
+
+
+
+        count = sum(
+            1 for line in section_text.split("<br>")
+            if "הערת אזהרה" in line and "ת.ז" in line
+        )
+
+        if count > 0:
+            return count
+
+        elif section_text.count ("מכר")>0:
             return section_text.count ("מכר")
-        elif section_text.count ("הערת אזהרה")>0:
-            return section_text.count("הערת אזהרה")
+
+
         elif section_text.count ("רישום בית משותף")>0:
             return section_text.count("רישום בית משותף")
 
-
-        return 0
+        else :
+         return 0
 
     def get_data_from_sections(self, sections, text):
         buyyer_data = []
@@ -231,10 +242,6 @@ class UtilsPdf:
                     counter += 1
                     next_row_empty = True
                     continue
-
-
-
-
 
 
                 if ( "הערת אזהרה" in row) and ( "הערת אזהרה לרישום משכנתה" not in row ) and( "סעיף 126" not in row):
