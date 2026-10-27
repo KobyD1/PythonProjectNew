@@ -25,10 +25,11 @@ def main():
             print(f"#" * 12, f"   Start Process for  PDF file   ", "#" * 12)
 
             data = utils_pdf.get_pdf_text(file)
+            sections = utils_pdf.split_by_subplot(file)
+            sections_data =utils_pdf.get_data_from_sections(sections,"ת.ז")
+
             pdf_data = utils_pdf.get_data_from_pdf(data)
 
-            buyers_tables = utils_pdf.filter_tables_by_row_and_content(file, 0, ["רישום בית משותף מדינת ישראל", "ת.ז"])
-            buyers_tables_1 = utils_pdf.filter_tables_by_row_and_content(file, 1, ["ת.ז"])
 
             plot_tables = utils_pdf.filter_tables_by_row_and_content(file, 0, ["תת חלקה"])
             area_data = utils_pdf.get_areas_from_pdf(data)
@@ -36,8 +37,6 @@ def main():
             first_page_tables = utils_pdf.get_pdf_table_data_by_page(file, 1)
             first_page_tables = utils_pdf.remove_table_by_content(first_page_tables, 'הגוש הגיע בתאריך')
             plots_data = utils_pdf.get_plots_from_tables(plot_tables)
-            buyer_data = utils_pdf.get_buyer_from_tables(buyers_tables, buyers_tables_1)
-            buyer_data = utils_pdf.arrange_buyer_data(buyer_data)
 
             seller_name, seller_id = utils_pdf.get_sellers_from_pdf(first_page_tables, 5)
             print("Analyze PDF completed")
@@ -45,7 +44,7 @@ def main():
             wb = utils_excel.add_row_to_excel(wb, plots_data, 3, 2, pdf_data["helka"] + "/")
 
             wb = utils_excel.add_row_to_excel(wb, area_data, 4, 2)
-            wb = utils_excel.add_buyer_data_to_excel(wb, buyer_data, 2, 10)
+            wb = utils_excel.add_section_data_to_excel(wb, sections_data, 2, 10)
             utils_excel.save_excel(wb, OUTPUT_FOLDER_TEMP + "ecxel_1.xlsx")
             print("Analyze Excel completed")
 
@@ -67,7 +66,7 @@ def main():
                 seller_data = [
                     [seller_name, ".ח.פ", str(seller_id[::-1])]
                 ]
-                buyyer_to_analyze = buyer_data[i]
+                buyyer_to_analyze = sections_data[i]
                 buyers_1 = [
                     [buyyer_to_analyze["name_1"], ".ת.ז", buyyer_to_analyze["id_1"], f"1/{buyyer_to_analyze["amount"]}"]]
                 utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyers_1)

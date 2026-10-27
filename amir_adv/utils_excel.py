@@ -77,18 +77,17 @@ class UtilsExcel:
 
         return wb
 
-    def add_buyer_data_to_excel(self, wb, buyyer_data, start_row, start_col):
+    def add_section_data_to_excel(self, wb, section_data, start_row, start_col):
 
         ws = wb.active
         center_align = Alignment(horizontal="center", vertical="center")
 
-        for item in buyyer_data:
-            if item["amount"] == "1":
-                fields = ["name_1", "id_1", "amount", "name_2", "id_2"]
-            else:
+        for item in section_data:
+            if item.get("amount") == 2:
                 fields = ["name_1", "id_1", "amount", "name_2", "id_2", "amount"]
-            if item["name_1"] == "מדינת ישראל":
-                item['id_1'] == '',
+
+            else:
+                fields = ["name_1", "id_1", "amount", "name_2", "id_2"]
 
             col = start_col
 
