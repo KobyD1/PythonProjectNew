@@ -1,8 +1,13 @@
-import os
-from datetime import datetime
-import unicodedata
 import sys
-# from fpdf import FPDF
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(ROOT_DIR))
+
+from winner_final.globals import EXCEL_PREFIX
+
+
+import unicodedata
 import pandas as pd
 import os
 
@@ -15,7 +20,6 @@ from bidi.algorithm import get_display
 import arabic_reshaper
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 
-from winner_final.globals import EXCEL_PREFIX
 
 
 class FilesUtils:

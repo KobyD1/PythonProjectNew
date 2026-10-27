@@ -1,8 +1,16 @@
-from winner_final.globals import DAYS, LEAGUE
-from winner_final.utils.algo_utils import AlgoUtils
-from winner_final.utils.files_utils import FilesUtils
-from winner_final.utils.football_data_api import FootballDataApi
-from winner_final.utils.playwright_telersport_ui import PlaywrightMainUI
+
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(ROOT_DIR))
+
+from globals import DAYS, LEAGUE
+from utils.algo_utils import AlgoUtils
+
+from utils.files_utils import FilesUtils
+from utils.football_data_api import FootballDataApi
+from utils.playwright_telersport_ui import PlaywrightMainUI
 
 football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()

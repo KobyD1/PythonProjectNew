@@ -42,7 +42,6 @@ import sys
 import threading
 import time
 import tkinter as tk
-import webbrowser
 from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -100,14 +99,14 @@ DEFAULT_COLORS = {
     "bg": "#f0f0f0", "log_bg": "#1e1e1e", "summary_bg": "#252b33",
     "run": "#188038", "stop": "#c5221f", "restart": "#e37400",
     "refresh": "#5f6368", "colors": "#7b1fa2",
-    "open": "#1a73e8", "clear": "#5f6368", "save": "#1a73e8", "copy": "#1a73e8",
+    "clear": "#5f6368", "save": "#1a73e8", "copy": "#1a73e8",
     "error_bg": "#c5221f", "folder": "#1a73e8",
 }
 COLOR_LABELS = {
     "bg": "רקע החלון", "log_bg": "רקע הלוג", "summary_bg": "רקע טבלת הסיכום",
     "run": "כפתור: הרץ", "stop": "כפתור: עצור", "restart": "כפתור: הפעל מחדש",
     "refresh": "כפתור: רענן", "colors": "כפתור: צבעים",
-    "open": "כפתור: פתח בדפדפן", "clear": "כפתור: נקה", "save": "כפתור: שמור לוג",
+    "clear": "כפתור: נקה", "save": "כפתור: שמור לוג",
     "copy": "כפתור: העתק סיכום", "error_bg": "רקע הודעת שגיאה (ERROR)",
     "folder": "כפתור: שנה תיקייה",
 }
@@ -562,8 +561,7 @@ class ManagerApp(tk.Tk):
         self.title_lbl.pack(side="left")
         self.state_lbl = ttk.Label(head, font=("Segoe UI", 10))
         self.state_lbl.pack(side="left", padx=12)
-        for key, text, cmd in (("open", "פתח בדפדפן", self.open_url),
-                               ("clear", "נקה לוג", self.clear_log),
+        for key, text, cmd in (("clear", "נקה לוג", self.clear_log),
                                ("save", "שמור לוג…", self.save_log)):
             self._btn(head, key, text, cmd).pack(side="right", padx=(4, 0))
 
@@ -1177,11 +1175,6 @@ class ManagerApp(tk.Tk):
             Path(fn).write_text("\n".join(line for line, _ in t.log) + "\n",
                                 encoding="utf-8")
 
-    def open_url(self) -> None:
-        t = self._cur()
-        if t and t.url:
-            webbrowser.open(t.url)
-
     # ── שדה הסיכום ──
     def _render_summary(self, t: Optional[Task]) -> None:
         w = self.sum_text
@@ -1213,7 +1206,7 @@ class ManagerApp(tk.Tk):
         if not t:
             self.title_lbl.config(text="בחר סקריפט מהרשימה")
             self.state_lbl.config(text="")
-            for k in ("run", "stop", "restart", "save", "clear", "open", "copy"):
+            for k in ("run", "stop", "restart", "save", "clear", "copy"):
                 B[k].set_enabled(False)
             return
         dark = luminance(self.colors["bg"]) < 0.5
@@ -1232,7 +1225,6 @@ class ManagerApp(tk.Tk):
         B["restart"].set_enabled(True)
         B["save"].set_enabled(True)
         B["clear"].set_enabled(True)
-        B["open"].set_enabled(bool(t.url))
         B["copy"].set_enabled(bool(t.summary))
 
     def _update_statusbar(self) -> None:

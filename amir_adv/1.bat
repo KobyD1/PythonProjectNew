@@ -1,6 +1,5 @@
 @echo off
-cd /d "%~dp0"
+REM running at relative mode
 set PYTHONPATH=%~dp0..
-call ..\.venv\Scripts\activate
 python pdf_to_word_07_main.py
 pause
