@@ -71,8 +71,9 @@ class utilsWord():
         prefix = f"{prefix}\\{folder}"
         os.makedirs(os.path.dirname(prefix), exist_ok=True)
         print(f" saving the word at {prefix}")
+        current_time = datetime.now().strftime("%M%S")
 
-        file_name = f"{prefix}\\{folder}_{suffix[0][0]}.docx"
+        file_name = f"{prefix}\\{folder}_{current_time}_{suffix[0][0]}.docx"
         if " " in file_name:
             file_name = file_name.replace(" ", "_")
         try:
