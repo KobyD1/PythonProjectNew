@@ -1,7 +1,11 @@
 import platform
 import subprocess
 import uuid
+from asyncio.windows_events import NULL
+
 from pyairtable import Api
+
+from amir_adv.globals import ENV_NAME
 
 
 class AirTableApi:
@@ -16,9 +20,12 @@ class AirTableApi:
         try:
             if platform.system() == "Windows":
                 cmd = "powershell -Command \"(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID\""
-                hw_id = subprocess.check_output(cmd, shell=True, text=True).strip()
+                # hw_id = subprocess.check_output(cmd, shell=True, text=True).strip()
+                hw_id = NULL
                 if hw_id:
                     return hw_id
+                else :
+                    return ENV_NAME
         except Exception:
             pass
 
@@ -56,12 +63,8 @@ class AirTableApi:
 
             self.table.create({
                 hw_id_field_name: hw_id,
-                status_field_name: 'pending',
+                status_field_name: 'Pending',
                 counter_field_name: 0
             })
             return False
 
-# example
-#
-#  utils_atable = AirTableApi(API_KEY, BASE_ID, TABLE_NAME)
-#     is_valid = utils_atable.verify_or_register_license()

@@ -13,3 +13,5 @@ IS_EXCEL_ONLY = False
 API_KEY = "patQlTV1Af5bsKtbe.fa94ce5ec25c8fdb3b1d0455cb065e47b68dd02faec61b5f26a16a72b1ee85ad"
 BASE_ID = "appiApqx2m8m3HmU2"
 TABLE_NAME = "Licenses"
+ENV_NAME = "Amir Environment"
+
