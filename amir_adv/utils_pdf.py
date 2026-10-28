@@ -156,13 +156,13 @@ class UtilsPdf:
         else :
          return 0
 
-    def get_data_from_sections(self, sections, text):
+    def get_data_from_sections(self, sections):
         buyyer_data = []
 
         for section in sections:
             buyyer = {}
-            buyyer["id_1"] = "not found"
-            buyyer["name_1"] = "not found"
+            buyyer["id_1"] = ""
+            buyyer["name_1"] = ""
             amount = self.get_buyyers_amount(section)
             buyyer["amount"] = amount
 
@@ -174,7 +174,6 @@ class UtilsPdf:
             next_row_empty = False
 
             for row in rows:
-                print(row)
 
                 if counter >2 :break
 

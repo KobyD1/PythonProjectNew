@@ -26,7 +26,7 @@ def main():
 
             data = utils_pdf.get_pdf_text(file)
             sections = utils_pdf.split_by_subplot(file)
-            sections_data =utils_pdf.get_data_from_sections(sections,"ת.ז")
+            sections_data =utils_pdf.get_data_from_sections(sections)
 
             pdf_data = utils_pdf.get_data_from_pdf(data)
 
