@@ -20,8 +20,7 @@ class AirTableApi:
         try:
             if platform.system() == "Windows":
                 cmd = "powershell -Command \"(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID\""
-                # hw_id = subprocess.check_output(cmd, shell=True, text=True).strip()
-                hw_id = NULL
+                hw_id = subprocess.check_output(cmd, shell=True, text=True).strip()
                 if hw_id:
                     return hw_id
                 else :
