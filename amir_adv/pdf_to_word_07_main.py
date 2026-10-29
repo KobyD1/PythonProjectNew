@@ -45,7 +45,9 @@ def main():
 
             wb = utils_excel.add_row_to_excel(wb, area_data, 4, 2)
             wb = utils_excel.add_section_data_to_excel(wb, sections_data, 2, 10)
-            utils_excel.save_excel(wb, OUTPUT_FOLDER_TEMP + "ecxel_1.xlsx")
+            excel_file = f"{pdf_data.get("gush")}_{pdf_data.get("helka")}.xlsx"
+
+            utils_excel.save_excel(wb, OUTPUT_FOLDER_TEMP + excel_file)
             print("Analyze Excel completed")
             if not IS_EXCEL_ONLY:
                 output_file_prefix = OUTPUT_FOLDER_1
@@ -73,7 +75,7 @@ def main():
                     signature_data_1 = utils_word.get_signature_data(seller_name, buyers_1)
                     utils_word.set_table_data_by_keyword(doc, "השם", signature_data_1, 2, 0)
 
-                    if buyyer_to_analyze["amount"] == "2":
+                    if buyyer_to_analyze["amount"] == 2:
                         buyer_2 = [[buyyer_to_analyze["name_2"], ".ת.ז", buyyer_to_analyze["id_2"],
                                     f"1/{buyyer_to_analyze["amount"]}"]]
                         utils_word.set_table_data_by_keyword(doc, "החלק בזכות", buyer_2, 2)

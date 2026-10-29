@@ -35,18 +35,17 @@ class UtilsPdf:
         i = 0
         while i < len(tables):
             table = tables[i]
-            # בדיקה האם הטקסט קיים בטבלה הנוכחית
             found = False
             for index, row in table.iterrows():
                 row_text = ' '.join(row.dropna().astype(str).tolist())
                 if target_text in row_text:
                     print(f'נמצאה התאמה בטבלה אינדקס {i}, שורה {index}. הטבלה הוסרה.')
-                    tables.pop(i)  # הסרת הטבלה הנוכחית
+                    tables.pop(i)
                     found = True
-                    break  # עצירת הסריקה בתוך השורות של הטבלה הנוכחית
+                    break
 
             if found:
-                break  # עצירת הסריקה של שאר הטבלאות ברגע שהטבלה הוסרה
+                break
 
             i += 1
 
@@ -136,25 +135,22 @@ class UtilsPdf:
 
     def get_buyyers_amount (self,section_text):
 
+        count = section_text.split(" ").count("ת.ז")
 
-
-        count = sum(
-            1 for line in section_text.split("<br>")
-            if "הערת אזהרה" in line and "ת.ז" in line
-        )
-
-        if count > 0:
-            return count
-
-        elif section_text.count ("מכר")>0:
-            return section_text.count ("מכר")
-
-
-        elif section_text.count ("רישום בית משותף")>0:
-            return section_text.count("רישום בית משותף")
-
-        else :
-         return 0
+        match count:
+            case amount if amount > 2:
+                print ("More than 2 buyers found")
+                return 2
+            case amount if amount > 0:
+                return amount
+            case 0:
+                match True:
+                    case _ if section_text.count("מכר") > 0:
+                        return section_text.count("מכר")
+                    case _ if section_text.count("רישום בית משותף") > 0:
+                        return section_text.count("רישום בית משותף")
+                    case _:
+                        return 0
 
     def get_data_from_sections(self, sections):
         buyyer_data = []
@@ -170,7 +166,7 @@ class UtilsPdf:
             rows = section.split("\n")
             plot = rows[0].split(" ")[2]
             buyyer["plot"] = plot
-            counter = 1
+            counter = 0
             next_row_empty = False
 
             for row in rows:
@@ -178,45 +174,50 @@ class UtilsPdf:
                 if counter >2 :break
 
                 if ("רישום בית משותף" in row) and( "מדינת ישראל"in row):
-                    buyyer[f"name_{counter}"] = "מדינת ישראל"
+                    buyyer[f"name_1"] = "מדינת ישראל"
                     buyyer["id_1"] = ""
                     break
 
 
                 if ("רישום בית משותף" in row) and( "ת.ז" in row):
+                    counter += 1
+
                     index_1 = row.index("ת.ז")
                     index_2 = row.index("רישום בית משותף")
                     buyyer[f"name_{counter}"] = row[index_2 + 15:index_1].strip()
                     id_temp = row[index_1:].strip()
                     id = id_temp.split(" ")[1]
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
 
                 if "צוואה" in row:
+                    counter += 1
+
                     index_1 = row.index("ת.ז")
                     index_2 = row.index("צוואה")
                     buyyer[f"name_{counter}"] = row[index_2 + 6:index_1].strip()
                     id_temp = row[index_1:].strip()
                     id = id_temp.split(" ")[1]
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
                     continue
 
 
 
                 if "מכר ללא תמורה" in row:
+                    counter += 1
+
                     index_1 = row.index("ת.ז")
                     index_2 = row.index("תמורה")
                     buyyer[f"name_{counter}"] = row[index_2 + 6:index_1].strip()
                     id_temp = row[index_1:].strip()
                     id = id_temp.split(" ")[1]
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
                     continue
 
 
 
                 elif   ("מכר" in row) and ("חברה"  not in row )  :
+                    counter += 1
+
                     index_1 = row.index("ת.ז") if "ת.ז" in row else None
                     index_2 = row.index("מכר") if "מכר" in row else None
 
@@ -224,13 +225,14 @@ class UtilsPdf:
                     id_temp = row[index_1:].strip()
                     id = id_temp.split(" ")[1]
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
                     next_row_empty = True
                     continue
 
 
 
                 if "סעיף 126" in row:
+                    counter += 1
+
                     index_1 = row.index("ת.ז") if "ת.ז" in row else None
                     index_2 = row.index("126") if "126" in row else None
 
@@ -238,12 +240,12 @@ class UtilsPdf:
                     id_temp = row[index_1:].strip()
                     id = id_temp.split(" ")[1]
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
                     next_row_empty = True
                     continue
 
 
                 if ( "הערת אזהרה" in row) and ( "הערת אזהרה לרישום משכנתה" not in row ) and( "סעיף 126" not in row):
+                    counter += 1
                     index_1 = row.index("ת.ז")
                     index_2 = row.index("הערת אזהרה")
 
@@ -251,13 +253,15 @@ class UtilsPdf:
                     id_temp = row[index_1:].strip()
                     id = id_temp.split(" ")[1]
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
+                    next_row_empty = True
                     continue
 
 
 
 
                 if ( "ת.ז" in row) and next_row_empty :
+                    counter += 1
+
                     index_1 = row.index("ת.ז")
 
 
@@ -266,7 +270,6 @@ class UtilsPdf:
                     buyyer["amount"] = 2
 
                     buyyer[f"id_{counter}"] = id
-                    counter += 1
 
 
 
