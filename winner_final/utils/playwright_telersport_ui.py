@@ -19,11 +19,13 @@ class PlaywrightMainUI():
             context = browser.new_context(no_viewport=True)
             page = context.new_page()
             page.goto("https://www.telesport.co.il/%D7%90%D7%96%D7%95%D7%A8%20%D7%95%D7%95%D7%99%D7%A0%D7%A8")
-            page.reload()
+            old_site_button = page.get_by_role("button", name="לאתר הישן", exact=True)
+            old_site_button.click()
             # page.locator("div.sportLive_calendar_left").wait_for(state="visible")
 
             telesport_page = telesport_main_page(page)
             for i in range(days_count):
+                print (f"Set date to {i+1} days")
                 telesport_page.set_date()
 
 
