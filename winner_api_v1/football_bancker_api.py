@@ -2,6 +2,7 @@
 import sys
 from pathlib import Path
 
+from winner_api_v1.utils.airtable_api import AirTableApi
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi
 from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
@@ -10,14 +11,15 @@ from winner_api_v1.utils.render_api import RenderApi
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(ROOT_DIR))
 
-from globals import DAYS, LEAGUE
-from utils.algo_utils import AlgoUtils
+from globals import DAYS, LEAGUE, BASE_ID, TABLE_NAME, API_KEY
 
 
 football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()
+utils_atable = AirTableApi( "patQlTV1Af5bsKtbe.fa94ce5ec25c8fdb3b1d0455cb065e47b68dd02faec61b5f26a16a72b1ee85ad", BASE_ID, TABLE_NAME)
+
+
 files_utils = FilesUtils()
-algo_utils = AlgoUtils()
 results_not_sorted =[]
 
 render_api = RenderApi()
@@ -25,9 +27,12 @@ league_code=render_api.get_league_code(LEAGUE)
 ui_config = render_api.get_ui_config()
 table_data, is_found =playwright_main.set_main_page(DAYS, 2, ui_config,LEAGUE)
 matches, standings = render_api.get_all_football_league_data(league_code)
-results = []
 
-if is_found:
+utils_atable = AirTableApi(API_KEY, BASE_ID, TABLE_NAME)
+results = []
+hw_id = utils_atable.get_hardware_id()
+is_valid = utils_atable.verify_or_register_license()
+if is_found and is_valid:
     for data in table_data:
         if data["description"]=='2 Teams Game Results':
             print (f"*** Analyze {data.get('team_a')} vs {data.get('team_b')} ***")

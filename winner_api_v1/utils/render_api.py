@@ -128,3 +128,10 @@ class RenderApi:
 
         print(f"Team data for {team_name}: {team_data}")
         return team_data
+
+
+    def check_license(self,hwid ):
+
+        response = requests.get( f"{self.render_url}/check-license/{hwid}" )
+
+        return response.json()["status"]
