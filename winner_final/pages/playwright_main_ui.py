@@ -3,7 +3,7 @@ import time
 from asyncio.windows_events import NULL
 
 
-class telesport_main_page:
+class main_page:
 
     def __init__(self,page):
         self.page = page

@@ -2,7 +2,7 @@ import time
 from playwright.sync_api import sync_playwright, expect
 
 from winner_final.globals import FILTER
-from winner_final.pages.playwright_main_ui import telesport_main_page
+from winner_final.pages.playwright_main_ui import main_page
 
 class PlaywrightMainUI():
     def __init__(self):
@@ -23,7 +23,7 @@ class PlaywrightMainUI():
             old_site_button.click()
             # page.locator("div.sportLive_calendar_left").wait_for(state="visible")
 
-            telesport_page = telesport_main_page(page)
+            telesport_page = main_page(page)
             for i in range(days_count):
                 print (f"Set date to {i+1} days")
                 telesport_page.set_date()

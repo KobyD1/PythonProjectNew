@@ -1,7 +1,7 @@
 
 from playwright.sync_api import sync_playwright, expect
 
-from winner_final.pages.playwright_main_ui import telesport_main_page
+from winner_final.pages.playwright_main_ui import main_page
 
 
 class playwrightUtils():

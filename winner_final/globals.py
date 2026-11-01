@@ -11,4 +11,6 @@ DAYS = 2
 
 FILTER = 1
 PATH_PROGRAM_TEXT = "C:/Users/Public/Winner"
+# LEAGUE = 'England-PLeague'
 LEAGUE = 'Spain'
+
