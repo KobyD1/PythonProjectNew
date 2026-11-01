@@ -35,9 +35,9 @@ class FilesUtils:
         teams_data_excel = {}
         df = pd.read_excel(EXCEL_PREFIX + excel_file)
         teams_telesport = df["Telesport"]
-        team_a_data = df[teams_telesport == team_a]
+        team_a_data = df[teams_telesport.str.contains(team_a, na=False)]
         result_a = team_a_data.iloc[0].to_dict()
-        team_b_data = df[teams_telesport == team_b]
+        team_b_data = df[teams_telesport.str.contains(team_b, na=False)]
 
         result_b = team_b_data.iloc[0].to_dict()
         teams_data_excel["team_a"] = result_a["Team"].strip()
@@ -114,6 +114,8 @@ class FilesUtils:
                     f"{item['score']:.2f}",
                     str(item["bet"]),
                     str(item["avg_total"]) ,
+                    str(item.get("home_count",0)),
+                    str(item.get("away_count", 0))
                 ]
                 for item in results_sorted
             ]

@@ -11,7 +11,7 @@ from winner_api_v1.utils.render_api import RenderApi
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(ROOT_DIR))
 
-from globals import DAYS, LEAGUE, BASE_ID, TABLE_NAME, API_KEY
+from globals import DAYS, LEAGUE
 
 
 football_data_api = FootballDataApi()

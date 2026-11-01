@@ -40,6 +40,10 @@ class main_page:
 
             case "England-PLeague":
                 loc = self.page.get_by_role("checkbox", name="אנגליה - פרמייר ליג")
+
+            case "Italy-Serie A":
+                 loc = self.page.get_by_role("checkbox", name="איטליה - סרייה א").all()[0]
+
             case _:
                 print("league not found")
                 loc = None

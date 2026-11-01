@@ -3,8 +3,8 @@
   "args": {},
   "names": {
     "all_wnba_v1.bat": "נשים NBA",
-    "football_under_over_final.py": "כדורגל אירופה - מעל/מתחת",
-    "league_bancker_final.py": "כדורגל אירופה - בנקר",
+    "football_under_over_api.py": "כדורגל אירופה - מעל/מתחת",
+    "football_bancker_api.py": "כדורגל אירופה - בנקר",
     "basketball_under.py": "כדורסל - מעל/מתחת"
   },
   "visible": {
@@ -31,11 +31,12 @@
     "2",
     "3"
   ],
-  "last_days": "0",
+  "last_days": "1",
   "league_var": "LEAGUE",
   "league_options": [
     "Spain",
     "England-PLeague",
+    "Italy-Serie A",
     "NBA"
   ],
   "last_league": "England-PLeague"
