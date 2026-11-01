@@ -11,10 +11,10 @@ from amir_adv.globals import ENV_NAME
 
 
 class AirTableApi:
-    def __init__(self, api_key, base_id, table_name):
-        self.api_key = api_key
-        self.base_id = base_id
-        self.table_name = table_name
+    def __init__(self, config):
+        self.api_key = config["airtable_api_key"]
+        self.base_id = config["airtable_base_id"]
+        self.table_name = config["airtable_table_name"]
         self.api = Api(self.api_key)
         self.table = self.api.table(self.base_id, self.table_name)
 # supported at Win 11

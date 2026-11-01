@@ -1,4 +1,5 @@
 from winner_api_v1.globals import DAYS, LEAGUE
+from winner_api_v1.utils.airtable_api import AirTableApi
 from winner_api_v1.utils.render_api import RenderApi
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi
@@ -11,11 +12,12 @@ results_not_sorted =[]
 
 render_api = RenderApi()
 league_code=render_api.get_league_code(LEAGUE)
-ui_config = render_api.get_ui_config()
-table_data, is_found =playwright_main.set_main_page(DAYS, 2, ui_config,LEAGUE)
+config = render_api.get_config()
+is_valid = AirTableApi(config).verify_or_register_license()
+table_data, is_found =playwright_main.set_main_page(DAYS, 2, config,LEAGUE)
 matches, standings = render_api.get_all_football_league_data(league_code)
 
-if is_found:
+if is_found and is_valid:
     for data in table_data:
         print (f"******* Game : {data["game"]} - {data['team_a']} VS {data['team_b']} *******")
         if data["description"] == '2 Teams Under/Over 2-3 Range':

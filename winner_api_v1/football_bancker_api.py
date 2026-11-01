@@ -16,16 +16,18 @@ from globals import DAYS, LEAGUE, BASE_ID, TABLE_NAME, API_KEY
 
 football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()
-utils_atable = AirTableApi( "patQlTV1Af5bsKtbe.fa94ce5ec25c8fdb3b1d0455cb065e47b68dd02faec61b5f26a16a72b1ee85ad", BASE_ID, TABLE_NAME)
+render_api = RenderApi()
+
+config = render_api.get_config()
+
+is_valid = AirTableApi( config).verify_or_register_license()
 
 
 files_utils = FilesUtils()
 results_not_sorted =[]
 
-render_api = RenderApi()
 league_code=render_api.get_league_code(LEAGUE)
-ui_config = render_api.get_ui_config()
-table_data, is_found =playwright_main.set_main_page(DAYS, 2, ui_config,LEAGUE)
+table_data, is_found =playwright_main.set_main_page(DAYS, 2, config,LEAGUE)
 matches, standings = render_api.get_all_football_league_data(league_code)
 
 utils_atable = AirTableApi(API_KEY, BASE_ID, TABLE_NAME)

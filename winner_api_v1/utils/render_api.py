@@ -35,8 +35,8 @@ class RenderApi:
 
         return response_json["score"], response_json["favorite"]
 
-    def get_ui_config(self):
-        response = requests.get(f"{self.render_url}/ui/config")
+    def get_config(self):
+        response = requests.get(f"{self.render_url}/config")
         if response.status_code == 200:
             return response.json()
         else:
