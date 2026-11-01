@@ -31,11 +31,13 @@ if is_found and is_valid:
                 bet = data[f"bet{favorite}"]
                 if favorite == 3: favorite = "X"
                 results_not_sorted.append({"bet": bet, "score":under_response["score"], "favorite": under_response["favorite"], "plan": data["game"],
-                                           'game': data["game_in_program"], "avg_total": under_response["avg_total"]})
+                                           'game': data["game_in_program"], "avg_total": under_response["avg_total"],"away_count": under_response["away_count"],"home_count": under_response["home_count"]})
 
-    headers =  ["Favorite", "Game", "Plan", "Score", "Bet", "Avg Goals"]
+    headers =  ["Favorite", "Game", "Plan", "Score", "Bet", "Avg Goals", "Home Count %", "Away Count %"]
     results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
     files_utils.print_results(results_sorted,headers,"** Summery Results for Under-Over 2-3 goals **")
 
 
-print ("********  End  *********")
+
+
+

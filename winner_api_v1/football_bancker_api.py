@@ -30,10 +30,8 @@ league_code=render_api.get_league_code(LEAGUE)
 table_data, is_found =playwright_main.set_main_page(DAYS, 2, config,LEAGUE)
 matches, standings = render_api.get_all_football_league_data(league_code)
 
-utils_atable = AirTableApi(API_KEY, BASE_ID, TABLE_NAME)
 results = []
-hw_id = utils_atable.get_hardware_id()
-is_valid = utils_atable.verify_or_register_license()
+
 if is_found and is_valid:
     for data in table_data:
         if data["description"]=='2 Teams Game Results':
