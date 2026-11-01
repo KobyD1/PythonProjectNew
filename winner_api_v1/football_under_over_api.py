@@ -3,7 +3,7 @@ from winner_api_v1.utils.render_api import RenderApi
 from winner_api_v1.utils.algo_utils import AlgoUtils
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi
-from winner_api_v1.utils.playwright_telersport_ui import PlaywrightMainUI
+from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
 
 football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()
@@ -14,7 +14,8 @@ results_not_sorted =[]
 league_code = files_utils.get_league_code(LEAGUE)
 render_api = RenderApi(league_code)
 render_api.get_teams()
-table_data, is_found =playwright_main.set_telesport_page( DAYS,2,LEAGUE)
+ui_config = render_api.get_ui_config()
+table_data, is_found =playwright_main.set_main_page(DAYS, 2, ui_config,LEAGUE)
 matches, standings = render_api.get_all_football_league_data()
 
 if is_found:
@@ -27,7 +28,6 @@ if is_found:
             team_data_b =render_api.get_teams_data(teams_data_excel.get("team_b"),matches,standings)
             under_response = render_api.calc_football_under(team_data_a, team_data_b, data["description"])
             favorite = under_response["favorite"]
-            # score , favorite ,avg_total = algo_utils.calc_football_under_over_api_algo(team_data_a, team_data_b,data["description"])
             if (favorite != 0):
                 bet = data[f"bet{favorite}"]
                 if favorite == 3: favorite = "X"

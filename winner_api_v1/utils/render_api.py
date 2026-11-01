@@ -7,9 +7,6 @@ class RenderApi:
         self.render_url = "https://pythonprojectnew-ps0h.onrender.com"
         self.league_code = league_code
 
-    import requests
-
-
 
     def calc_football_under(self,team_a,team_b,desc="2 Teams Under/Over 2-3 Range"):
 
@@ -21,16 +18,21 @@ class RenderApi:
 
         response = requests.post(f"{self.render_url}/football-under",json=payload)
 
-
         return response.json()
 
+    def get_ui_config(self):
+        response = requests.get(f"{self.render_url}/ui/config")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Error fetching UI config: {response.status_code}")
+            return None
+
     def get_teams(self):
+        print("sending wake up get request to server  can take 30 sec.")
 
-        data = requests.get(
-            f"{self.render_url}/{self.league_code}/teams"
-        ).json()
+        requests.get(f"{self.render_url}/{self.league_code}/teams")
 
-        return data["teams"]
 
     def get_all_football_league_data(self):
 
@@ -97,26 +99,12 @@ class RenderApi:
 
             else:
                 count_4_plus += 1
+        if games >0 :
+            avg_goals = total_goals_sum / games
+            pct_0_1 = count_0_1 / games * 100
+            pct_2_3 = count_2_3 / games * 100
+            pct_4_plus = count_4_plus / games * 100
 
-        avg_goals = (
-            total_goals_sum / games
-            if games > 0 else 0
-        )
-
-        pct_0_1 = (
-            count_0_1 / games * 100
-            if games > 0 else 0
-        )
-
-        pct_2_3 = (
-            count_2_3 / games * 100
-            if games > 0 else 0
-        )
-
-        pct_4_plus = (
-            count_4_plus / games * 100
-            if games > 0 else 0
-        )
 
         team_data = {
             "Position": int(team_table_data["position"]),
