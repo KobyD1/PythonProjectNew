@@ -1,3 +1,4 @@
+import datetime
 import sys
 from pathlib import Path
 
@@ -25,16 +26,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 class FilesUtils:
     def __init__(self):
         pass
-    def get_league_code(self, league_name: str) -> str:
-        match league_name:
-            case "Spain":
-                return "PD"
-            case "England-PLeague":
-                return "PL"
-            case "NBA":
-                return "NBA"
-            case _:
-                raise ValueError(f"Unknown league name: {league_name}")
+
 
 
     def get_teams_names_from_excel(self,excel_file: str, team_a: str, team_b: str):

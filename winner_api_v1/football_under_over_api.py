@@ -1,6 +1,5 @@
 from winner_api_v1.globals import DAYS, LEAGUE
 from winner_api_v1.utils.render_api import RenderApi
-from winner_api_v1.utils.algo_utils import AlgoUtils
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi
 from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
@@ -8,15 +7,13 @@ from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
 football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
-algo_utils = AlgoUtils()
 results_not_sorted =[]
 
-league_code = files_utils.get_league_code(LEAGUE)
-render_api = RenderApi(league_code)
-render_api.get_teams()
+render_api = RenderApi()
+league_code=render_api.get_league_code(LEAGUE)
 ui_config = render_api.get_ui_config()
 table_data, is_found =playwright_main.set_main_page(DAYS, 2, ui_config,LEAGUE)
-matches, standings = render_api.get_all_football_league_data()
+matches, standings = render_api.get_all_football_league_data(league_code)
 
 if is_found:
     for data in table_data:

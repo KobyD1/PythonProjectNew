@@ -3,9 +3,12 @@ import requests
 
 class RenderApi:
 
-    def __init__(self, league_code="PL"):
+    def __init__(self):
         self.render_url = "https://pythonprojectnew-ps0h.onrender.com"
-        self.league_code = league_code
+
+    def get_league_code(self, league_name):
+        response = requests.get(f"{self.render_url}/league-code/{league_name}")
+        return response.json().get("league_code", None)
 
 
     def calc_football_under(self,team_a,team_b,desc="2 Teams Under/Over 2-3 Range"):
@@ -20,6 +23,18 @@ class RenderApi:
 
         return response.json()
 
+    def calc_football_banker(self,team_a_data,team_b_data):
+
+
+        payload = {
+            "team_a": team_a_data,
+            "team_b": team_b_data
+        }
+
+        response_json = requests.post(f"{self.render_url}/football-banker",json=payload).json()
+
+        return response_json["score"], response_json["favorite"]
+
     def get_ui_config(self):
         response = requests.get(f"{self.render_url}/ui/config")
         if response.status_code == 200:
@@ -28,23 +43,18 @@ class RenderApi:
             print(f"Error fetching UI config: {response.status_code}")
             return None
 
-    def get_teams(self):
+    def get_teams(self,league_code):
         print("sending wake up get request to server  can take 30 sec.")
 
-        requests.get(f"{self.render_url}/{self.league_code}/teams")
+        requests.get(f"{self.render_url}/{league_code}/teams")
 
 
-    def get_all_football_league_data(self):
+    def get_all_football_league_data(self,league_code):
 
         print("getting all data from server , can take 30 sec.")
 
-        standings_response = requests.get(
-            f"{self.render_url}/{self.league_code}/standings"
-        ).json()
-
-        matches_response = requests.get(
-            f"{self.render_url}/{self.league_code}/results"
-        ).json()
+        standings_response = requests.get(f"{self.render_url}/{league_code}/standings").json()
+        matches_response = requests.get(f"{self.render_url}/{league_code}/results").json()
 
         standings = standings_response["standings"]
         matches = matches_response["results"]
