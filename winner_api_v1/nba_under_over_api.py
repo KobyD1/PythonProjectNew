@@ -1,5 +1,5 @@
 
-from winner_api_v1.globals import DAYS, LEAGUE
+from winner_api_v1.globals import DAYS, LEAGUE, OFFSET
 from winner_api_v1.utils.atable_api import AirTableApi
 from winner_api_v1.utils.nba_api import nbaApi
 from winner_api_v1.utils.render_api import RenderApi
@@ -24,9 +24,13 @@ if is_found and is_table:
 
             teams_data_excel= files_utils.get_teams_names_from_excel("nba.xlsx",data.get("team_a"),data.get("team_b") )
             df, season = nba_api_utils.get_nba_teams_data()
-            print(f"ניתוח תוצאות לעונת  {season}")
 
-            server_data = render_api.get_nba_teams_data(df,data,teams_data_excel, season)
+            server_data = render_api.analyze_nba_teams_data(df, data, teams_data_excel, season,OFFSET)
+            print(f" :ניתוח משחק {server_data["game"]}: תוצאה- {server_data["rate"]} :ממוצע קבוצות , {server_data["avg_pts"]}   ")
+            server_data["rate"]
+            server_data["avg_pts"]
+
+
             favorite = server_data["favorite"]
             if (favorite != 0):
                 bet = data[f"bet{favorite}"]
@@ -34,7 +38,7 @@ if is_found and is_table:
                 results_not_sorted.append(server_data)
                 print (f"נמצאה התאמה  {data.get('team_a')} נגד  {data.get('team_b')} ערך {favorite} יחס {bet}")
 
-    result_sorted = render_api.analayze_nba_data(results_not_sorted)
+    result_sorted = render_api.filter_nba_data(results_not_sorted)
     files_utils.print_results_by_row( result_sorted)
 
 
