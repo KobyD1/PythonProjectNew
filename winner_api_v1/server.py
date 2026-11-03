@@ -1,6 +1,8 @@
 from flask import Flask, jsonify
 from flask import request
 from pyairtable import Api
+from nba_api.stats.endpoints import LeagueDashTeamStats
+
 import os
 
 import requests
@@ -440,6 +442,53 @@ def all_stats(league_code):
         "competition": league_code,
         "teams": teams
     })
+
+# nba
+@app.route("/nba/compare-teams", methods=["POST"])
+def compare_nba_teams():
+
+    data = request.get_json()
+
+    team1 = data["team1"]
+    team2 = data["team2"]
+    season = data.get("season", "2025-26")
+
+    try:
+        df = LeagueDashTeamStats(
+            per_mode_detailed="PerGame",
+            season=season
+        ).get_data_frames()[0]
+
+        row1 = df[df["TEAM_NAME"] == team1].iloc[0]
+        row2 = df[df["TEAM_NAME"] == team2].iloc[0]
+
+        avg_pts = (row1["PTS"] + row2["PTS"]) / 2
+        avg_3pm = (row1["FG3M"] + row2["FG3M"]) / 2
+
+        return jsonify({
+            "team_a": {
+                "name": team1,
+                "PTS": float(row1["PTS"]),
+                "FG3M": float(row1["FG3M"])
+            },
+            "team_b": {
+                "name": team2,
+                "PTS": float(row2["PTS"]),
+                "FG3M": float(row2["FG3M"])
+            },
+            "avg_pts": round(avg_pts, 2),
+            "avg_3pm": round(avg_3pm, 2)
+        })
+
+    except IndexError:
+        return jsonify({
+            "error": "One or both teams not found"
+        }), 404
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 @app.route("/config")
 def config():

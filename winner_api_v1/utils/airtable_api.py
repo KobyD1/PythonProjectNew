@@ -32,7 +32,7 @@ class AirTableApi:
 
         return str(uuid.getnode())
 
-    def verify_or_register_license(self, hw_id_field_name="HWID", status_field_name="Status",
+    def check_atable(self, hw_id_field_name="HWID", status_field_name="Status",
                                    counter_field_name="Counter"):
 
         hw_id = self.get_hardware_id()
@@ -57,7 +57,7 @@ class AirTableApi:
                 })
                 return True
             else:
-                print ("License Expired Found")
+                print ("Table issue found, status is not valid")
                 return False
         else:
             print("HW ID not Found creating new one")

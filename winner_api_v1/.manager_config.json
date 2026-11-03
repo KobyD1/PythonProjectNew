@@ -31,7 +31,7 @@
     "2",
     "3"
   ],
-  "last_days": "1",
+  "last_days": "0",
   "league_var": "LEAGUE",
   "league_options": [
     "Spain",
@@ -39,5 +39,5 @@
     "Italy-Serie A",
     "NBA"
   ],
-  "last_league": "England-PLeague"
+  "last_league": "Italy-Serie A"
 }
