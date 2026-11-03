@@ -1,5 +1,5 @@
 from winner_api_v1.globals import DAYS, LEAGUE
-from winner_api_v1.utils.airtable_api import AirTableApi
+from winner_api_v1.utils.atable_api import AirTableApi
 from winner_api_v1.utils.render_api import RenderApi
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi

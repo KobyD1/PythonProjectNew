@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 
-from winner_api_v1.utils.airtable_api import AirTableApi
+from winner_api_v1.utils.atable_api import AirTableApi
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi
 from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
