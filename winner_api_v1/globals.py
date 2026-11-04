@@ -1,6 +1,6 @@
 EXCEL_PREFIX = "../winner_api_v1/data/"
 
-DAYS = 1
+DAYS = 2
 # Filters
 # gov_1- כדורסל
 # 2 - כדורגל
@@ -9,8 +9,8 @@ DAYS = 1
 FILTER = 1
 PATH_PROGRAM_TEXT = "C:/Users/Public/Winner"
 # LEAGUE = 'England-PLeague','Spain',Italy-Serie A,'NBA'
-OFFSET = 8
+OFFSET = 0
 LEAGUE = 'NBA'
 TABLE_NAME = "Licenses"
 ENV_NAME = "Koby"
-
+HEADLESS = False

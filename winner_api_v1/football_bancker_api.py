@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 
-from winner_api_v1.utils.atable_api import AirTableApi
+from winner_api_v1.utils.atable_api import tableApi
 from winner_api_v1.utils.files_utils import FilesUtils
 from winner_api_v1.utils.football_data_api import FootballDataApi
 from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
@@ -19,8 +19,7 @@ playwright_main = PlaywrightMainUI()
 render_api = RenderApi()
 
 config = render_api.get_config()
-
-is_valid = AirTableApi( config).verify_or_register_license()
+is_table = tableApi(config).check_atable()
 
 
 files_utils = FilesUtils()
@@ -32,7 +31,7 @@ matches, standings = render_api.get_all_football_league_data(league_code)
 
 results = []
 
-if is_found and is_valid:
+if is_found and is_table:
     for data in table_data:
         if data["description"]=='2 Teams Game Results':
             print (f"*** Analyze {data.get('team_a')} vs {data.get('team_b')} ***")

@@ -6,9 +6,34 @@ class RenderApi:
     def __init__(self):
         self.render_url = "https://pythonprojectnew-ps0h.onrender.com"
         print ("send wake up ")
-        requests.get(self.render_url)
+        try:
+            requests.get(self.render_url, timeout=0.001)
+        except requests.exceptions.Timeout:
+            pass
         print ("after  wake up ")
 
+    def get_israel_league_data(self,data):
+        response = requests.post(f"{self.render_url}/israel-corners/translate-teams",json=data)
+        new_data = response.json()
+        return new_data
+
+    def sort_and_prapre_to_print(self,data_not_sorted):
+        payload = data_not_sorted
+        response = requests.post(f"{self.render_url}/sort_and_prapare_print",json=payload)
+        return response.json()
+
+
+
+    def analyze_israel_corner_data(self,table_data, corner_data,offset):
+        payload = {
+            "table_data": table_data,
+            "corner_data": corner_data,
+            "offset": offset
+        }
+        response = requests.post(f"{self.render_url}/israel-corners/analyze",json=payload)
+        if response.status_code != 200:print ("response code with failure at analyze israel corners ")
+        new_data = response.json()
+        return new_data
 
 
     def get_league_code(self, league_name):

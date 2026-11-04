@@ -10,7 +10,7 @@ from pyairtable import Api
 from amir_adv.globals import ENV_NAME
 
 
-class AirTableApi:
+class tableApi:
     def __init__(self, config):
         self.api_key = config["airtable_api_key"]
         self.base_id = config["airtable_base_id"]

@@ -5,6 +5,8 @@
     "all_wnba_v1.bat": "נשים NBA",
     "football_under_over_api.py": "כדורגל אירופה - מעל/מתחת",
     "football_bancker_api.py": "כדורגל אירופה - בנקר",
+    "corners_under_over_api.py": "קרנות - מעל/מתחת",
+
     "nba_under_over_api.py": "כדורסל - מעל/מתחת"
   },
   "visible": {

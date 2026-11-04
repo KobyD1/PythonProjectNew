@@ -1,6 +1,6 @@
 
 from winner_api_v1.globals import DAYS, LEAGUE, OFFSET
-from winner_api_v1.utils.atable_api import AirTableApi
+from winner_api_v1.utils.atable_api import tableApi
 from winner_api_v1.utils.nba_api import nbaApi
 from winner_api_v1.utils.render_api import RenderApi
 from winner_api_v1.utils.files_utils import FilesUtils
@@ -15,7 +15,7 @@ results_not_sorted =[]
 
 render_api = RenderApi()
 config = render_api.get_config()
-is_table = AirTableApi(config).check_atable()
+is_table = tableApi(config).check_atable()
 table_data, is_found =playwright_main.set_main_page(DAYS, 1, config,LEAGUE)
 if is_found and is_table:
     for data in table_data:
