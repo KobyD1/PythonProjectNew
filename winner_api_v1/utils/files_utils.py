@@ -35,10 +35,10 @@ class FilesUtils:
 
         teams_data_excel = {}
         df = pd.read_excel(EXCEL_PREFIX + excel_file)
-        teams_telesport = df["Telesport"]
-        team_a_data = df[teams_telesport.str.contains(team_a, na=False)]
+        teams_page = df["Page"]
+        team_a_data = df[teams_page.str.contains(team_a, na=False)]
         result_a = team_a_data.iloc[0].to_dict()
-        team_b_data = df[teams_telesport.str.contains(team_b, na=False)]
+        team_b_data = df[teams_page.str.contains(team_b, na=False)]
 
         result_b = team_b_data.iloc[0].to_dict()
         teams_data_excel["team_a"] = result_a["Team"].strip()
@@ -57,11 +57,11 @@ class FilesUtils:
         try:
 
             df = pd.read_excel(excel_path)
-            teams_telesport = df["Telesport"]
-            team_a_data = df[teams_telesport == team_a]
+            teams_page = df["Page"]
+            team_a_data = df[teams_page == team_a]
             result_a = team_a_data.iloc[0].to_dict()
 
-            team_b_data = df[teams_telesport == team_b]
+            team_b_data = df[teams_page == team_b]
             result_b = team_b_data.iloc[0].to_dict()
             teams_data_excel["Team_A"]= result_a["Team"]
             teams_data_excel["ID_A"]= str(result_a["ESPN_Team_ID"]).split(".")[0]
@@ -77,7 +77,7 @@ class FilesUtils:
 
     def get_teams(self,team_a,team_b, excel_file):
         path = EXCEL_PREFIX + excel_file
-        teams_telesport = self.get_team_data_from_excel(path, team_a, team_b)
+        teams_page = self.get_team_data_from_excel(path, team_a, team_b)
         print ("break")
 
     def get_team_ids(self,table_data, excel_file="wnba.xlsx"):
@@ -85,11 +85,11 @@ class FilesUtils:
         if table_data:
             team_a = table_data["team_a"]
             team_b =  table_data["team_b"]
-            teams_telesport = self.get_team_data_from_excel(path,team_a,team_b)
-            table_data["Team_A"] =teams_telesport["Team_A"]
-            table_data["ID_A"] =teams_telesport["ID_A"]
-            table_data["Team_B"] = teams_telesport["Team_B"]
-            table_data["ID_B"] = teams_telesport["ID_B"]
+            teams_page = self.get_team_data_from_excel(path,team_a,team_b)
+            table_data["Team_A"] =teams_page["Team_A"]
+            table_data["ID_A"] =teams_page["ID_A"]
+            table_data["Team_B"] = teams_page["Team_B"]
+            table_data["ID_B"] = teams_page["ID_B"]
 
             return table_data
         else:

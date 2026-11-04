@@ -5,6 +5,11 @@ class RenderApi:
 
     def __init__(self):
         self.render_url = "https://pythonprojectnew-ps0h.onrender.com"
+        print ("send wake up ")
+        requests.get(self.render_url)
+        print ("after  wake up ")
+
+
 
     def get_league_code(self, league_name):
         response = requests.get(f"{self.render_url}/league-code/{league_name}")

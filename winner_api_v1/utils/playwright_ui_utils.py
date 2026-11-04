@@ -8,11 +8,16 @@ class PlaywrightMainUI():
         pass
 
 
-    def set_main_page(self, days_count, type,ui_config, league="nba"):
+    def set_main_page(self, days_count, type,ui_config, league):
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=False,args=["--start-maximized"])
+            browser = p.chromium.launch(headless=ui_config["headless"])
 
-            context = browser.new_context(no_viewport=True)
+            context = browser.new_context(
+                viewport={
+                    "width": 1920,
+                    "height": 1080
+                }
+            )
             page = context.new_page()
             page.goto(ui_config["ui_base_url"])
             page.reload()
