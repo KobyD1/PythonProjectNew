@@ -28,41 +28,34 @@ class PlaywrightMainUI():
 
     def get_corners_table(self,ui_config):
         with sync_playwright() as p:
-            is_headless = (
-                ui_config["headless"] if HEADLESS is None else HEADLESS
-            )
+            print ("start analyze for corners")
+            is_headless = (ui_config["headless"] if HEADLESS is None else HEADLESS)
             browser = p.chromium.launch(headless=is_headless)
+            context = browser.new_context(viewport={ "width": 1920,"height": 1080 })
 
-            context = browser.new_context(
-                viewport={
-                    "width": 1920,
-                    "height": 1080
-                }
-            )
             page = context.new_page()
             page.goto(ui_config["ui_corner_url"])
             page.reload()
             page.locator("//div[./span[text()='Corners Per Game']]//button[normalize-space()='See all']").first.click()
             ui_corner_page = CornersPage(page)
-            table_data = ui_corner_page.get_corners_data()
-            is_valid = len(table_data) > 0
-            return table_data , is_valid
+            corner_data = ui_corner_page.get_corners_data()
+            is_corner_found = len(corner_data) > 0
+            if is_corner_found:
+                print (f"******* Corners data Completed - found {len(corner_data)} games *******")
+            else:
+                print (f"*****  Corners data Completed - no Corners games found *****")
 
+
+            return corner_data , is_corner_found
 
 
     def set_main_page(self, days_count, type,ui_config, league):
         with sync_playwright() as p:
-            is_headless = (
-                ui_config["headless"] if HEADLESS is None else HEADLESS
-            )
+            print ("start analyze for games")
+            is_headless = (ui_config["headless"] if HEADLESS is None else HEADLESS)
             browser = p.chromium.launch(headless=is_headless)
+            context = browser.new_context(viewport={"width": 1920, "height": 1080})
 
-            context = browser.new_context(
-                viewport={
-                    "width": 1920,
-                    "height": 1080
-                }
-            )
             page = context.new_page()
             page.goto(ui_config["ui_base_url"])
             page.reload()
@@ -97,11 +90,11 @@ class PlaywrightMainUI():
             if is_found:
                 table_data = ui_main_page.get_filterd_table_content()
                 print (57 * "*")
-                print (f"******* Winner Analyzer Completed - found {len(table_data)} games *******")
+                print (f"******* Games Analyzer Completed - found {len(table_data)} games *******")
                 print (57 * "*")
             else:
                 print (57 * "*")
-                print (f"****** Winner Analyzer Completed - no games found *******")
+                print (f"****** Games Analyzer Completed - no games found *******")
                 print (57 * "*")
 
             return table_data, is_found

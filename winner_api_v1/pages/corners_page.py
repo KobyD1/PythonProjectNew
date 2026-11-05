@@ -12,7 +12,6 @@ class CornersPage():
         first_team_split = first_team_text.split("\n")
         table_data[first_team_split[1]] = first_team_split[3]
         for team in second_teams:
-            print (team.inner_text())
             team_split = team.inner_text().split("\n")
             table_data[team_split[1]] = team_split[3]
 

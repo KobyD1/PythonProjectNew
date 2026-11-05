@@ -15,7 +15,7 @@ config = render_api.get_config()
 is_table = tableApi(config).check_atable()
 table_data, is_found =playwright_main.set_main_page(DAYS, 2, config,"IsraelCorner")
 
-corner_data, is_found =playwright_main.get_corners_table(config)
+corner_data, is_corner =playwright_main.get_corners_table(config)
 table_data_converted = render_api.get_israel_league_data(table_data)
 if is_found and is_table:
     results_not_sorted = render_api.analyze_israel_corner_data(table_data_converted,corner_data,OFFSET)

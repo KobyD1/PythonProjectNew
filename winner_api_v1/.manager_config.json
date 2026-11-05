@@ -6,7 +6,6 @@
     "football_under_over_api.py": "כדורגל אירופה - מעל/מתחת",
     "football_bancker_api.py": "כדורגל אירופה - בנקר",
     "corners_under_over_api.py": "קרנות - מעל/מתחת",
-
     "nba_under_over_api.py": "כדורסל - מעל/מתחת"
   },
   "visible": {
@@ -35,7 +34,7 @@
     "2",
     "3"
   ],
-  "last_days": "1",
+  "last_days": "2",
   "league_var": "LEAGUE",
   "league_options": [
     "Spain",
@@ -43,7 +42,7 @@
     "Italy-Serie A",
     "NBA"
   ],
-  "last_league": "NBA",
+  "last_league": "England-PLeague",
   "offset_var": "OFFSET",
   "offset_options": [
     "2",
@@ -53,5 +52,5 @@
     "-1",
     "0"
   ],
-  "last_offset": "8"
+  "last_offset": "2"
 }

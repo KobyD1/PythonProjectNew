@@ -202,21 +202,16 @@ class MainPage:
             if  ":"  in row_data["status_time"] and len(row_data)>0 and bet_empty_counter <1:
                 print(f"---- משחק פעיל נמצא בתכניה ----")
                 if "bet3" in row_data:
-                    print(
-                        f" יחסי הימורים ל: תיקו- {row_data['bet2']}, "
-                        f"2 - {row_data['bet3']}, "
-                        f"gov_1 - {row_data['bet1']}"
-                    )
+                    print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']},x-- {row_data['bet3']}")
 
 
                 else:
-                    print(f"יחסי הימורים: 2- {row_data['bet2']} , gov_1- {row_data['bet1']}")
+                    print(f"יחסי הימורים: 2- {row_data['bet2']} , 1- {row_data['bet1']}")
 
 
-                print(f" שעת משחק: {row_data["status_time"]}")
                 print(f"  משחק: {teams}")
 
-                print(f"  פרטי משחק (תכניה-משחק): {row_data["program"]} - {row_data["game_in_program"]}")
+                print(f"   משחק (תכניה-משחק): {row_data["program"]} - {row_data["game_in_program"]}")
                 row_data["team_with_added_points"] = team_with_added_points
                 table_content.append(row_data)
             actual_index += 1

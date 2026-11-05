@@ -30,10 +30,16 @@ class RenderApi:
             "corner_data": corner_data,
             "offset": offset
         }
-        response = requests.post(f"{self.render_url}/israel-corners/analyze",json=payload)
-        if response.status_code != 200:print ("response code with failure at analyze israel corners ")
-        new_data = response.json()
-        return new_data
+        response = requests.post(
+            f"{self.render_url}/israel-corners/analyze",
+            json=payload,
+        )
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"Corners analysis failed with status "
+                f"{response.status_code}: {response.text}"
+            )
+        return response.json()
 
 
     def get_league_code(self, league_name):
