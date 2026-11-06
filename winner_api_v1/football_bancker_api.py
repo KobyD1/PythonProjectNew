@@ -54,11 +54,7 @@ if is_found and is_table:
                     "avg_total":"-"
                 })
 
+    results_sorted = render_api.sort_and_prapre_to_print(results_not_sorted)
+    if results_sorted: files_utils.print_results_by_row(results_sorted)
 
-
-
-    headers = ["Favorite", "Game", "Plan", "Score", "Bet", "Avg Goals"]
-    results_sorted = sorted(results, key=lambda x: x["score"], reverse=True)
-
-    files_utils.print_results(results_sorted, headers, "** Summary Results for Bancker **")
 print ("********  End  *********")

@@ -20,7 +20,7 @@ table_data_converted = render_api.get_israel_league_data(table_data)
 if is_found and is_table:
     results_not_sorted = render_api.analyze_israel_corner_data(table_data_converted,corner_data,OFFSET)
     results_sorted = render_api.sort_and_prapre_to_print(results_not_sorted)
-    files_utils.print_results_by_row(results_sorted)
+    if results_sorted:files_utils.print_results_by_row(results_sorted)
 
 
 

@@ -18,9 +18,32 @@ class RenderApi:
         return new_data
 
     def sort_and_prapre_to_print(self,data_not_sorted):
-        payload = data_not_sorted
-        response = requests.post(f"{self.render_url}/sort_and_prapare_print",json=payload)
-        return response.json()
+        response = requests.post(
+            f"{self.render_url}/sort_and_prapare_print",
+            json=data_not_sorted,
+        )
+        if response.status_code == 200:
+            return response.json()
+
+        status_messages = {
+            400: "The request was invalid.",
+            401: "Authentication is required.",
+            403: "The server refused the request.",
+            404: "The requested endpoint or data was not found.",
+            429: "Too many requests; try again later.",
+            500: "The server encountered an internal error.",
+            502: "The server received an invalid response from an upstream service.",
+            503: "The server is temporarily unavailable.",
+        }
+        message = status_messages.get(
+            response.status_code,
+            f"Unexpected HTTP response ({response.reason}).",
+        )
+        if response.text:
+            message = f"{message} Server response: {response.text}"
+
+        print(f"Sorting data failed ({response.status_code}): {message}")
+        return None
 
 
 
@@ -39,6 +62,7 @@ class RenderApi:
                 f"Corners analysis failed with status "
                 f"{response.status_code}: {response.text}"
             )
+            return None
         return response.json()
 
 
@@ -56,6 +80,10 @@ class RenderApi:
         }
 
         response = requests.post(f"{self.render_url}/football-under",json=payload)
+        if response.status_code != 200:
+            print (f"calc_football_under analysis failed with status {response.status_code}: {response.text}")
+
+            return None
 
         return response.json()
 

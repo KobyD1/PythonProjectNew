@@ -29,24 +29,53 @@ class FilesUtils:
 
 
 
-    def get_teams_names_from_excel(self,excel_file: str, team_a: str, team_b: str):
-
+    def get_teams_names_from_excel(self,excel_file: str, team_a: str, team_b: str , filter = None):
 
         teams_data_excel = {}
         df = pd.read_excel(EXCEL_PREFIX + excel_file)
-        teams_page = df["Page"]
-        team_a_data = df[teams_page.str.contains(team_a, na=False)]
-        result_a = team_a_data.iloc[0].to_dict()
-        team_b_data = df[teams_page.str.contains(team_b, na=False)]
+        teams_telesport = df["Page"]
 
+        # if filter:
+        #     team_a_data = df[(df["Page"].str.contains(team_a, na=False)) &(df["Filter"] == filter)]
+        #     team_b_data = df[(df["Page"].str.contains(team_b, na=False)) &(df["Filter"] == filter)]
+        # else:
+        # team_a_data = df[teams_telesport.str.contains(team_a, na=False)]
+        #
+        # team_b_data = df[teams_telesport.str.contains(team_b, na=False)]
+        mask = df["Filter"].fillna("")
+
+        team_a_data = df[
+            (df["Page"].str.contains(team_a, na=False)) &
+            (
+                    (mask == filter) |
+                    (mask == "")
+            )
+            ]
+        mask = df["Filter"].fillna("")
+
+        team_b_data = df[
+            (df["Page"].str.contains(team_b, na=False)) &
+            (
+                    (mask == filter) |
+                    (mask == "")
+            )
+            ]
+        result_a = team_a_data.iloc[0].to_dict()
         result_b = team_b_data.iloc[0].to_dict()
+
+
+
+
+
+
+
+
         teams_data_excel["team_a"] = result_a["Team"].strip()
         teams_data_excel["team_b"] = result_b["Team"].strip()
         if pd.notna(result_a["League"]):
             teams_data_excel["League"] = result_a["League"].strip()
 
         return teams_data_excel
-
 
 
 

@@ -7,8 +7,7 @@
 - **Suffix:** every message will end with "Thanks!" and the name of the agent that is responding. For example, "Thanks! @playwright-agent" or "Thanks! @api-agent".
 - **Agents:** in case of coding response Use the appropriate agent for the task. For example, use `@playwright-agent` for UI automation and `@api-agent` for API testing.
 - **Explanations:** do not provide explanations or reasoning unless explicitly requested. Only provide code and instructions.
-
-
+- **Run Command :** do not provide menu with Run Command  
 
 ## Locator Strategy (Strictly NO XPATH)
 - **Zero XPath Policy:** XPath locators are **strictly forbidden** under any circumstances. Never generate or suggest XPath expressions.

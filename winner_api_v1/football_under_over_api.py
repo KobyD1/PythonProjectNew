@@ -22,7 +22,7 @@ if is_found and is_table:
         print (f"******* Game : {data["game"]} - {data['team_a']} VS {data['team_b']} *******")
         if data["description"] == '2 Teams Under/Over 2-3 Range':
 
-            teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b") )
+            teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b"),"Italy-Serie A" )
             team_data_a =render_api.get_teams_data(teams_data_excel.get("team_a"),matches,standings)
             team_data_b =render_api.get_teams_data(teams_data_excel.get("team_b"),matches,standings)
             under_response = render_api.calc_football_under(team_data_a, team_data_b, data["description"])
@@ -30,7 +30,7 @@ if is_found and is_table:
             if (favorite != 0):
                 bet = data[f"bet{favorite}"]
                 if favorite == 3: favorite = "X"
-                results_not_sorted.append({"bet": bet, "score":under_response["score"], "favorite": under_response["favorite"], "plan": data["game"],
+                results_not_sorted.append({"bet": bet, "score":under_response["score"], "favorite":favorite, "plan": data["game"],
                                            'game': data["game_in_program"], "avg_total": under_response["avg_total"],"away_count": under_response["away_count"],"home_count": under_response["home_count"]})
 
     headers =  ["Favorite", "Game", "Plan", "Score", "Bet", "Avg Goals", "Home Count %", "Away Count %"]
