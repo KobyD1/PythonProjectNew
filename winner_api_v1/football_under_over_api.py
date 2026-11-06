@@ -22,7 +22,7 @@ if is_found and is_table:
         print (f"******* Game : {data["game"]} - {data['team_a']} VS {data['team_b']} *******")
         if data["description"] == '2 Teams Under/Over 2-3 Range':
 
-            teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b"),"Italy-Serie A" )
+            teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b"),LEAGUE )
             team_data_a =render_api.get_teams_data(teams_data_excel.get("team_a"),matches,standings)
             team_data_b =render_api.get_teams_data(teams_data_excel.get("team_b"),matches,standings)
             under_response = render_api.calc_football_under(team_data_a, team_data_b, data["description"])

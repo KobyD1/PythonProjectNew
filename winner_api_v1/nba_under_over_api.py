@@ -22,7 +22,7 @@ if is_found and is_table:
         print (f"******* Game : {data["game"]} - {data['team_a']} VS {data['team_b']} *******")
         if data["description"] == '2 Teams Under/Over':
 
-            teams_data_excel= files_utils.get_teams_names_from_excel("nba.xlsx",data.get("team_a"),data.get("team_b") )
+            teams_data_excel= files_utils.get_teams_names_from_excel("nba.xlsx",data.get("team_a"),data.get("team_b"),LEAGUE )
             df, season = nba_api_utils.get_nba_teams_data()
 
             server_data = render_api.analyze_nba_teams_data(df, data, teams_data_excel, season,OFFSET)

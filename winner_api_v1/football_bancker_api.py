@@ -35,7 +35,7 @@ if is_found and is_table:
     for data in table_data:
         if data["description"]=='2 Teams Game Results':
             print (f"*** Analyze {data.get('team_a')} vs {data.get('team_b')} ***")
-            teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b") )
+            teams_data_excel= files_utils.get_teams_names_from_excel("football_all.xlsx",data.get("team_a"),data.get("team_b"),LEAGUE )
 
             team_data_a =render_api.get_teams_data(teams_data_excel.get("team_a"),matches,standings)
             team_data_b =render_api.get_teams_data(teams_data_excel.get("team_b"),matches,standings)
