@@ -72,7 +72,7 @@ DEFAULT_DAYS_OPTIONS = ["0","1", "2", "3",]
 DEFAULT_LEAGUE_VAR = "LEAGUE"
 DEFAULT_LEAGUE_OPTIONS = ["Spain", "England-PLeague", "NBA"]
 DEFAULT_OFFSET_VAR = "OFFSET"
-DEFAULT_OFFSET_OPTIONS = ["-2", "-1", "0", "1", "2", "3", "5"]
+DEFAULT_OFFSET_OPTIONS = [ "0", "1", "2", "3", "5"]
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 ERR_RE = re.compile(r"\b(error|exception|critical|fatal|failed)\b", re.I)

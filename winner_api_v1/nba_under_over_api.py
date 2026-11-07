@@ -12,7 +12,7 @@ playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
 nba_api_utils = nbaApi()
 results_not_sorted =[]
-
+LEAGUE = "NBA"
 render_api = RenderApi()
 config = render_api.get_config()
 is_table = tableApi(config).check_atable()

@@ -8,9 +8,9 @@ DAYS = 1
 
 FILTER = 2
 PATH_PROGRAM_TEXT = "C:/Users/Public/Winner"
-# LEAGUE = 'England-PLeague','Spain',Italy-Serie A,'NBA'
-OFFSET = 2
-LEAGUE = 'NBA'
+# LEAGUE = 'England-PLeague','Spain',Italy-Serie A,'NBA',all
+OFFSET = 5
+LEAGUE = 'All'
 TABLE_NAME = "Licenses"
 ENV_NAME = "Koby"
 HEADLESS = False

@@ -9,11 +9,12 @@ football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
 results_not_sorted =[]
+LEAGUE = "IsraelCorner"
 
 render_api = RenderApi()
 config = render_api.get_config()
 is_table = tableApi(config).check_atable()
-table_data, is_found =playwright_main.set_main_page(DAYS, 2, config,"IsraelCorner")
+table_data, is_found =playwright_main.set_main_page(DAYS, 2, config,LEAGUE)
 
 corner_data, is_corner =playwright_main.get_corners_table(config)
 table_data_converted = render_api.get_israel_league_data(table_data)
