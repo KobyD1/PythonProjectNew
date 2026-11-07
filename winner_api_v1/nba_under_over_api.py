@@ -4,10 +4,8 @@ from winner_api_v1.utils.atable_api import tableApi
 from winner_api_v1.utils.nba_api import nbaApi
 from winner_api_v1.utils.render_api import RenderApi
 from winner_api_v1.utils.files_utils import FilesUtils
-from winner_api_v1.utils.football_data_api import FootballDataApi
 from winner_api_v1.utils.playwright_ui_utils import PlaywrightMainUI
 
-football_data_api = FootballDataApi()
 playwright_main = PlaywrightMainUI()
 files_utils = FilesUtils()
 nba_api_utils = nbaApi()

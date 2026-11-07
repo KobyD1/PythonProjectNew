@@ -554,7 +554,7 @@ class ManagerApp(tk.Tk):
         self.league_note = ttk.Label(opts, foreground="#188038")
         self.league_note.grid(row=4, column=0, columnspan=2, sticky="w")
 
-        self.offset_lbl = ttk.Label(opts, text=f"היסט ({self.offset_var_name}):")
+        self.offset_lbl = ttk.Label(opts, text=f"היסט(1-:מצב אוטומטי)  ({self.offset_var_name}):")
         self.offset_lbl.grid(row=5, column=0, sticky="w", pady=(6, 0))
         self.offset_cb = ttk.Combobox(opts, values=self.offset_options,
                                       textvariable=self.offset_value, width=12)

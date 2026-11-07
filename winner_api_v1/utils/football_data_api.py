@@ -7,7 +7,6 @@ class FootballDataApi:
     def __init__(self):
 
         self.url = f"https://api.football-data.org/v4/competitions/"
-        self.headers = {"X-Auth-Token": "6e8b3c65a58f4a05b874d72fe4170fd7"}
 
     def get_teams_data(self, league, teams=None) -> list[dict]:
         response = requests.get(
