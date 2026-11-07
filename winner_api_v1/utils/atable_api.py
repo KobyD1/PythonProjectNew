@@ -3,11 +3,10 @@ from pyairtable import Api
 import platform
 import subprocess
 import uuid
-from asyncio.windows_events import NULL
 
 from pyairtable import Api
 
-from amir_adv.globals import ENV_NAME
+from winner_api_v1.globals import ENV_NAME
 
 
 class tableApi:
