@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from flask import request
 from pyairtable import Api
-from nba_api.stats.endpoints import LeagueDashTeamStats
 
 import logging
 
@@ -10,15 +9,35 @@ import os
 
 app = Flask(__name__)
 
-API_KEY = os.getenv("FOOTBALL_API_KEY")
+FOOTBALL_API_KEY = os.getenv("FOOTBALL_API_KEY")
 
-BASE_URL = "https://api.football-data.org/v4"
-
+FOOTBALL_BASE_URL = "https://api.football-data.org/v4"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 def get_headers():
-    return {"X-Auth-Token": API_KEY}
+    return {"X-Auth-Token": FOOTBALL_API_KEY}
+
+
+
+
+HEBREW_TO_ENGLISH_TEAMS = {
+    "מכבי תל אביב": "Maccabi Tel Aviv",
+    "מכבי חיפה": "Maccabi Haifa",
+    "מכבי נתניה": "Maccabi Netanya",
+    "הפועל באר שבע": "H. Be'er Sheva",
+    'בית"ר ירושלים': "Beitar Jerusalem",
+    "הפועל תל אביב": "Hapoel Tel Aviv",
+    "הפועל חיפה": "Hapoel Haifa",
+    "בני סכנין": "Bnei Sakhnin",
+    "מכבי פתח תקווה": "Maccabi Petah Tikva",
+    "הפועל רמת גן": "Hapoel Ramat Gan",
+    "הפועל קרית שמונה": "Ironi Kiryat Shmona",
+    "הפועל פתח תקווה": "Hapoel Petah Tikva",
+    "הפועל ירושלים": "Hapoel Jerusalem",
+    "עירוני טבריה": "Ironi Tiberias"
+
+}
 
 
 @app.route("/")
@@ -27,6 +46,147 @@ def home():
         "status": "online",
         "api": "Football Data API"
     })
+
+
+@app.route("/analyze", methods=["POST"])
+def sort_and_analyze_results():
+    req_data = request.get_json()
+    results_not_sorted =req_data["results_not_sorted"]
+    results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
+
+    headers =  ["Favor.", "Game", "Score", "Bet", " Under/Over Rate","Teams Rate","Home Points", "Home - Game Points","Away Points", "Away - Game Points"]
+    rows = [
+        [
+            str(item["favorite"]),
+            str(item["game"]),
+            f"{item['score']:.2f}",
+            str(item["bet"]),
+            str(item["rate"]),
+            str(item["avg_pts"]),
+            str(item["team_a"].get("PTS", 0)),
+            str(item["team_a"].get("PTS_GAME", 0)),
+
+            str(item["team_b"].get("PTS", 0)),
+            str(item["team_b"].get("PTS_GAME", 0)),
+
+        ]
+        for item in results_sorted
+    ]
+
+
+    return jsonify({
+            "results_sorted": results_sorted,
+            "headers": headers,
+            "rows": rows,
+        }), 200
+@app.route('/sort_and_prapare_print', methods=['POST'])
+def sort_and_prapare_to_print():
+
+    results_not_sorted = request.get_json()
+    results_sorted = sorted(
+        results_not_sorted,
+        key=lambda x: x.get("Points", {}).get("value", 0),
+        reverse=True
+    )
+    headers = [k for k, v in sorted(results_sorted[0].items(), key=lambda x: x[1]["id"])]
+    rows = [
+        [
+            str(v["value"])
+            for _, v in sorted(item.items(), key=lambda x: x[1]["id"])
+        ]
+        for item in results_sorted
+    ]
+
+    return jsonify({
+        "results_sorted": results_sorted,
+        "headers": headers,
+        "rows": rows,
+    }), 200
+
+@app.route('/israel-corners/analyze', methods=['POST'])
+def analyze_corners():
+    data = request.get_json()
+    table_data_converted=data.get("table_data")
+    corner_data = data.get("corner_data")
+    offset = data.get("offset", 2)
+    if offset == -1 : offset = 2
+    logger.info(f"running with offset {offset}")
+
+
+    results_not_sorted = []
+
+    for item in table_data_converted["data"]:
+        if item["description"] != "Corners 2 Teams":
+            continue
+
+        corner_a = float(corner_data.get(item["team_a"], 0))
+        corner_b = float(corner_data.get(item["team_b"], 0))
+        logger.info(f"Corner teams values :corner_a ={corner_a} ,corner_b ={corner_b} ")
+
+        total_corner = corner_a + corner_b
+        favorite = 0
+        rate = ""
+        points = 0
+
+        if total_corner < (9 - offset):
+            favorite = 1
+            rate = "under 9-11"
+
+        elif total_corner > (11 + offset):
+            favorite = 2
+            rate = "over 9-11"
+
+        if total_corner > 14 or total_corner < 6:
+            points += 25
+
+        if abs(corner_a - corner_b) < 3:
+            points += 15
+        if (favorite!= 0 ):
+            result_data = {}
+            logger.info(f"Corner game favorite found the value is   {favorite}  ")
+            for i, (name, value) in enumerate({
+                                                  "Favorite": favorite,
+                                                  "Game": item.get("game"),
+                                                  "Points": points,
+                                                  "Bet": item.get(f"bet{favorite}") if favorite != 0 else "",
+                                                  "Rate": rate,
+                                                  "Teams Corners": round(corner_a + corner_b,2),
+                                                  "Team Home": f"{item.get("team_a")} ({corner_a})",
+                                                  "Team Away": f"{item.get("team_b")} ({corner_b})",
+
+                                              }.items(), start=1):
+                result_data[name] = {
+                    "id": i,
+                    "value": value
+                }
+            results_not_sorted.append(result_data)
+
+    return jsonify(results_not_sorted)
+
+@app.route('/israel-corners/translate-teams', methods=['POST'])
+def translate_teams():
+    data = request.get_json()
+
+    logger.info(f"/israel-corners/translate-teams -Total get  {len(data)} games ")
+
+    updated_data = []
+    for item in data:
+        new_item = item.copy()
+
+        if "team_a" in new_item and new_item["team_a"] in HEBREW_TO_ENGLISH_TEAMS:
+            new_item["team_a"] = HEBREW_TO_ENGLISH_TEAMS[new_item["team_a"]]
+
+        if "team_b" in new_item and new_item["team_b"] in HEBREW_TO_ENGLISH_TEAMS:
+            new_item["team_b"] = HEBREW_TO_ENGLISH_TEAMS[new_item["team_b"]]
+
+        updated_data.append(new_item)
+
+    logger.info(f"Total found : {len(updated_data)} games ")
+
+    return jsonify({"status": "success", "data": updated_data}), 200
+
+
+
 
 
 @app.route("/league-code/<league_name>")
@@ -81,34 +241,28 @@ def calc_football_banker_algo():
     points_diff = abs(points_diff)
 
     if position_diff_abs > 9:
-        logger.info(f"Teams found for Banker Algo by position: {position_diff_abs}")
+        logger.info(f"Teams found for Banker Algo by position diff: {position_diff_abs}")
 
 
         scores += position_diff_abs * 10
 
     if (position_diff_abs > 9) and (points_diff > 9):
 
-        logger.info(f"Teams found for Banker Algo by points: {points_diff}")
 
         scores += points_diff * 10
 
     # team_a better ranked
-    if (
-        position_diff < 0 and
-        position_diff_abs > 9
-    ):
+    if (position_diff > 0) and (position_diff_abs > 9):
+        logger.info(f"Teams found for Banker Algo by Home Team: {points_diff}")
 
         scores += 20
-        favorite = 1
+        favorite = 2
 
     # team_b better ranked
-    elif (
-        position_diff > 0 and
-        position_diff_abs > 9
-    ):
+    elif (position_diff < 0 ) and (position_diff_abs>9):
 
-        logger.info(f"Teams found for Banker Algo: {position_diff_abs}")
-        favorite = 2
+        logger.info(f"Teams found for Banker Algo by Away Team: {points_diff}")
+        favorite = 1
 
     print(
         f"{scores} scores found "
@@ -124,11 +278,14 @@ def calc_football_banker_algo():
 @app.route("/football-under", methods=["POST"])
 def calc_football_under_over_api_algo():
     data = request.get_json()
+    logger.info(f"into /football-under ")
 
     team_a = data["team_a"]
     team_b = data["team_b"]
     desc = data["desc"]
-
+    offset = data.get("offset",0)
+    if offset == -1 :offset = 0
+    logger.info(f"running with offset {offset}")
     bonus = 0
     favorite = 0
 
@@ -159,7 +316,7 @@ def calc_football_under_over_api_algo():
     if desc == "2 Teams Under/Over 2-3 Range":
 
         match avg_total:
-            case x if x < 1.0:
+            case x if x < 0.9-offset:
                 favorite = 1
                 bonus += 20
                 home_count = team_a.get("count_0_1", 0)
@@ -170,7 +327,7 @@ def calc_football_under_over_api_algo():
                 home_count = team_a.get("count_2_3", 0)
                 away_count = team_b.get("count_2_3", 0)
 
-            case x if x > 3.1:
+            case x if x > 3.1+offset:
                 favorite = 2
                 high_bonus = (avg_total - 3) * 15
                 home_count = team_a.get("count_4_plus", 0)
@@ -205,7 +362,7 @@ def calc_football_under_over_api_algo():
 
 @app.route("/<league_code>/teams")
 def get_teams(league_code):
-    url = f"{BASE_URL}/competitions/{league_code}/teams"
+    url = f"{FOOTBALL_BASE_URL}/competitions/{league_code}/teams"
 
     response = requests.get(url, headers=get_headers())
 
@@ -236,7 +393,7 @@ def get_teams(league_code):
 
 @app.route("/<league_code>/matches")
 def matches(league_code):
-    url = f"{BASE_URL}/competitions/{league_code}/matches"
+    url = f"{FOOTBALL_BASE_URL}/competitions/{league_code}/matches"
 
     response = requests.get(url, headers=get_headers())
 
@@ -275,7 +432,7 @@ def matches(league_code):
 
 @app.route("/<league_code>/results")
 def results(league_code):
-    url = f"{BASE_URL}/competitions/{league_code}/matches"
+    url = f"{FOOTBALL_BASE_URL}/competitions/{league_code}/matches"
 
     response = requests.get(url, headers=get_headers())
 
@@ -317,7 +474,7 @@ def results(league_code):
 
 @app.route("/<league_code>/standings")
 def standings(league_code):
-    url = f"{BASE_URL}/competitions/{league_code}/standings"
+    url = f"{FOOTBALL_BASE_URL}/competitions/{league_code}/standings"
 
     response = requests.get(url, headers=get_headers())
 
@@ -353,8 +510,8 @@ def standings(league_code):
 
 @app.route("/<league_code>/all-stats")
 def all_stats(league_code):
-    standings_url = (f"{BASE_URL}/competitions/{league_code}/standings")
-    matches_url = (f"{BASE_URL}/competitions/{league_code}/matches")
+    standings_url = (f"{FOOTBALL_BASE_URL}/competitions/{league_code}/standings")
+    matches_url = (f"{FOOTBALL_BASE_URL}/competitions/{league_code}/matches")
 
     standings_response = requests.get(standings_url,headers=get_headers())
     matches_response = requests.get(matches_url,headers=get_headers())
@@ -436,6 +593,9 @@ def all_stats(league_code):
 @app.route("/nba/calc-under", methods=["POST"])
 def calc_under():
     req_data = request.get_json()
+    app.logger.info("Request  calc-under received")
+
+
 
     if not req_data:
         return jsonify({"error": "data not found at request"}), 400
@@ -443,64 +603,74 @@ def calc_under():
     rate = req_data["table_data"]["rate"]
     team1 = req_data.get("team1")
     team2 = req_data.get("team2")
-    season = req_data.get("season", "2025-26")
+    favorite = req_data.get("favorite")
+    offset = req_data.get("offset",8)
+    if offset == -1 : offset = 8
+    logger.info(f"running with offset {offset}")
+
     data = req_data.get("data", [])
 
     row1 = next((item for item in data if item.get("TEAM_NAME") == team1), None)
     row2 = next((item for item in data if item.get("TEAM_NAME") == team2), None)
 
-    if not row1 or not row2:
-        return jsonify({"error": "one or more team not found"}), 404
+    logger.info(f"game -  {game},home : {team1}, away: {team2}")
+    logger.info(f"Home team - PTS: {row1['PTS']},3PM: {row1['FG3M']}, PLUS_MINUS: {row1['PLUS_MINUS']}")
+    logger.info(f"Away team - PTS: {row2['PTS']},3PM: {row2['FG3M']}, PLUS_MINUS: {row2['PLUS_MINUS']}")
 
-    avg_pts = (row1["PTS"] + row2["PTS"])
+    avg_pts_team1 = row1["PTS"]
+    avg_pts_team2 = row2["PTS"]
+
+    avg_pts_team1_other = (avg_pts_team1- row1["PLUS_MINUS"])
+    avg_pts_team2_other = (avg_pts_team2 - row2["PLUS_MINUS"])
+
+    avg_pts_team1_all = avg_pts_team1_other + avg_pts_team1
+    avg_pts_team2_all = avg_pts_team2_other + avg_pts_team2
+    logger.info(f" avg_pts_team1_all: {avg_pts_team1_all},avg_pts_team2_all: {avg_pts_team2_all}")
+    avg_pts = (avg_pts_team1_all +avg_pts_team2_all) / 2
+    logger.info(f" avg_pts: {avg_pts},rate: {rate}")
+
+
     avg_3pm = (row1["FG3M"] + row2["FG3M"])
     score = 0
 
-    if avg_pts - rate > 8:
-        favorite = 1
+    if avg_pts - rate > offset:
+        favorite = 2
         score = avg_pts - rate
 
-    elif rate - avg_pts > 8:
-        favorite = 2
+    if rate - avg_pts > offset:
+        favorite = 1
         score = rate - avg_pts
 
-    else:
-        favorite = 0
 
     if abs(avg_pts - rate) > 15:
         score = 20
+
     if abs(row1["PTS"] - row2["PTS"]) < 10:
         score = 10 +abs(row1["PTS"] - row2["PTS"])
 
-    logger.info(f"Comparing {team1} and {team2}  in season: {season}")
-    logger.info(f"\n{team1}")
-    logger.info(f"PTS: {row1['PTS']:.1f},3PM: {row1['FG3M']:.1f}")
+    if abs(avg_pts_team1_all-avg_pts_team2_all) < 10:
+        score = 10 + abs(avg_pts_team1_all-avg_pts_team2_all)
 
-    logger.info(f"\n{team2}")
-    logger.info(f"PTS: {row2['PTS']:.1f},3PM: {row2['FG3M']:.1f}")
-
-    logger.info(f"Avg. combined")
-    logger.info(f"PTS: {avg_pts:.1f},3PM: {avg_3pm:.1f}")
-    logger.info(f"Favorite: {favorite}, Game: {game}, Rate: {rate}, Score: {score}")
 
     return jsonify({
-        "season": season,
         "team_a": {
             "name": team1,
-            "PTS": float(row1["PTS"]),
+            "PTS": round(float(avg_pts_team1), 2),
+            "PTS_GAME": round(float(avg_pts_team1_all), 2),
             "FG3M": float(row1["FG3M"])
         },
         "team_b": {
             "name": team2,
-            "PTS": float(row2["PTS"]),
+            "PTS": round(float(avg_pts_team2), 2),
+            "PTS_GAME": round(float(avg_pts_team2_all), 2),
             "FG3M": float(row2["FG3M"])
         },
-        "avg_pts": round(float(avg_pts), 1),
-        "avg_3pm": round(float(avg_3pm), 1),
+        "avg_pts": round(float(avg_pts), 2),
+        "avg_3pm": round(float(avg_3pm), 2),
         "favorite": favorite,
         "game": game,
         "rate": rate,
-        "score": score
+        "score": round(float(score), 2),
 
     }), 200
 @app.route("/nba/analyze", methods=["POST"])
@@ -508,7 +678,8 @@ def sort_results():
     req_data = request.get_json()
     results_not_sorted =req_data["results_not_sorted"]
     results_sorted = sorted(results_not_sorted, key=lambda x: x["score"], reverse=True)
-    headers =  ["Favorite", "Game", "Score", "Bet", " Under/Over Rate", "Home Avg.", "Away Avg."]
+
+    headers =  ["Favor.", "Game", "Score", "Bet", " Under/Over Rate","Teams Rate","Home Points", "Home - Game Points","Away Points", "Away - Game Points"]
     rows = [
         [
             str(item["favorite"]),
@@ -516,8 +687,12 @@ def sort_results():
             f"{item['score']:.2f}",
             str(item["bet"]),
             str(item["rate"]),
+            str(item["avg_pts"]),
             str(item["team_a"].get("PTS", 0)),
-            str(item["team_b"].get("PTS", 0))
+            str(item["team_a"].get("PTS_GAME", 0)),
+
+            str(item["team_b"].get("PTS", 0)),
+            str(item["team_b"].get("PTS_GAME", 0)),
 
         ]
         for item in results_sorted
@@ -535,15 +710,19 @@ def sort_results():
 
 @app.route("/config")
 def config():
-    BASE_URL = os.getenv("URL_WINNER")
+    UI_BASE_URL = os.getenv("URL_WINNER")
+    CORNER_URL = os.getenv("URL_CORNER")
     AIRTABLE_API_KEY = os.getenv("AIR_TABLE_API_KEY")
     AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
     AIRTABLE_TABLE_NAME = os.getenv("AIRTABLE_TABLE_NAME")
 
+
     return jsonify({
-        "ui_base_url": BASE_URL,
+        "ui_base_url": UI_BASE_URL,
+        "ui_corner_url" : CORNER_URL,
         "airtable_api_key": AIRTABLE_API_KEY,
         "airtable_base_id": AIRTABLE_BASE_ID,
+        "headless": True,
         "airtable_table_name": AIRTABLE_TABLE_NAME
     })
 
